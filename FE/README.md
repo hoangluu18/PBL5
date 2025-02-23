@@ -48,3 +48,4 @@ export default tseslint.config({
   },
 })
 ```
+# npm i --save-exact antd@5.18.1 @ant-design/icons@5.3.7
