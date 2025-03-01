@@ -1,5 +1,5 @@
 import { Menu, MenuProps } from "antd";
-import './style.css'
+import '../../css/style.css'
 
 const HeaderMenu = () => {
 

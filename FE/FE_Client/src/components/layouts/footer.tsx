@@ -1,5 +1,5 @@
 import { Col, Row } from 'antd';
-import './style.css'
+import '../../css/style.css'
 import logo from '../../assets/logo.jpg'
 import { Link } from 'react-router-dom';
 import { FacebookFilled, GoogleCircleFilled } from '@ant-design/icons';
