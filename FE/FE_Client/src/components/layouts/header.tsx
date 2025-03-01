@@ -2,7 +2,7 @@ import { Layout, Input, Badge, Space } from "antd";
 import { SearchOutlined, ShoppingCartOutlined, BellOutlined, UserOutlined } from "@ant-design/icons";
 import "antd/dist/reset.css";
 import logo from '../../assets/logo.jpg'
-import './style.css'
+import '../../css/style.css'
 import HeaderMenu from "./menu";
 import Category from "./category";
 

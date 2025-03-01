@@ -2,6 +2,10 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import LoginPage from './pages/login.tsx';
+import RegisterPage from './pages/register.tsx';
+import ForgotPasswordPage from './pages/forgot_password.tsx';
+
 
 const router = createBrowserRouter([
   {
@@ -26,11 +30,15 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <div>login page</div>
+    element: <LoginPage />
   },
   {
     path: "/register",
-    element: <div>register page</div>
+    element: <RegisterPage />
+  },
+  {
+    path: "/forgot_password",
+    element: <ForgotPasswordPage />
   }
 ]);
 
