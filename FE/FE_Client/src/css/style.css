@@ -20,16 +20,10 @@ a:hover {
     text-decoration: underline;
 }
 
-
-
-.container {
-    width: 1200px;
-    margin: 0 auto;
-}
-
 :root {
     --primary-color: #F5F7FA;
     --footer-color: #EFF2F6;
+    --blue-color: rgb(56, 116, 255);
 }
 
 .bg-footer {
@@ -50,6 +44,18 @@ a:hover {
 
 .hover-underline:hover {
     text-decoration: underline;
+}
+
+.title_underline:hover {
+    text-decoration: underline;
+    color: rgb(56, 116 255);
+}
+
+.line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 #footer {

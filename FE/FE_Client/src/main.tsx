@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import LoginPage from './pages/login.tsx';
 import RegisterPage from './pages/register.tsx';
 import ForgotPasswordPage from './pages/forgot_password.tsx';
+import Homepage from './pages/homepage.tsx';
 
 
 const router = createBrowserRouter([
@@ -15,7 +16,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <div>fadf</div>
+        element: <Homepage />
       },
       {
         path: "/checkout",

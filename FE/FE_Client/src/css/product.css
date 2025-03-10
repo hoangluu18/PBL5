@@ -1,0 +1,30 @@
+.product-title {
+    transition: text-decoration 0.3s ease-in-out;
+}
+
+.product-card:hover .product-title {
+    text-decoration: underline;
+    color: rgb(56, 116, 255);
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+.product-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.favorite:hover {
+    background-color: rgb(56, 116, 255);
+}
+
+.favorite:hover * {
+    color: white;
+}
