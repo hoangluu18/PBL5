@@ -6,6 +6,7 @@ import LoginPage from './pages/login.tsx';
 import RegisterPage from './pages/register.tsx';
 import ForgotPasswordPage from './pages/forgot_password.tsx';
 import Homepage from './pages/homepage.tsx';
+import Checkout from './pages/checkout.tsx';
 
 
 const router = createBrowserRouter([
@@ -19,12 +20,12 @@ const router = createBrowserRouter([
         element: <Homepage />
       },
       {
-        path: "/checkout",
+        path: "/account",
         element: <div>abcdfafds</div>
       },
       {
-        path: "/account",
-        element: <div>abcdfafds</div>
+        path: "/checkout",
+        element: <Checkout />
       }
 
     ]
