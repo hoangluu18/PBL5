@@ -8,16 +8,15 @@ import { FacebookFilled, GoogleCircleFilled } from '@ant-design/icons';
 const Footer = () => {
     return (
         <>
-            <div className="bg-footer" id='footer'>
-                <div className='container'>
-                    <Row style={{ padding: "20px 0" }} gutter={[20, 10]}>
+            <div className="bg-footer">
+                <div className='container p-3'>
+                    <Row gutter={[20, 0]}>
                         <Col span={8}>
                             <div style={{ width: "100px", height: "100px", marginBottom: "20px" }}>
                                 <img src={logo} style={{ width: "100%", height: "100%", }} />
                             </div>
                             <div >
                                 Phoenix is an admin dashboard template with fascinating features and amazing layout.
-                                The template is responsive to all major browsers and is compatible with all available devices and screen sizes.
                             </div>
                         </Col>
                         <Col span={4}>

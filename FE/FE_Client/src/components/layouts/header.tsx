@@ -54,10 +54,12 @@ const App = () => {
                 </div>
             </div >
             <div>
-                <div className="container">
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                        <Category />
-                        <HeaderMenu />
+                <div className="container-fluid bg-white">
+                    <div className="container">
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <Category />
+                            <HeaderMenu />
+                        </div>
                     </div>
                 </div>
             </div>
