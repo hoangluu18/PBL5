@@ -3,7 +3,49 @@ import { Card, List, Avatar, Divider, Typography, Button } from 'antd';
 
 const { Title, Text } = Typography;
 
-const OrderSummary: React.FC<{ orderItems: any[], subtotal: number, discount: number, tax: number, shippingCost: number, total: number }> = ({ orderItems, subtotal, discount, tax, shippingCost, total }) => {
+// Cập nhật kiểu dữ liệu để hỗ trợ phân loại theo shop
+interface OrderItem {
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+    image: string;
+    shopId: number;
+    shopName: string;
+}
+
+interface OrderSummaryProps {
+    orderItems: OrderItem[];
+    subtotal: number;
+    discount: number;
+    tax: number;
+    shippingCost: number;
+    total: number;
+}
+
+const OrderSummary: React.FC<OrderSummaryProps> = ({ 
+    orderItems, 
+    subtotal, 
+    discount, 
+    tax, 
+    shippingCost, 
+    total 
+}) => {
+    // Nhóm các sản phẩm theo shop
+    const itemsByShop: {[key: number]: {shopName: string, items: OrderItem[], subtotal: number}} = {};
+    
+    orderItems.forEach(item => {
+        if (!itemsByShop[item.shopId]) {
+            itemsByShop[item.shopId] = {
+                shopName: item.shopName,
+                items: [],
+                subtotal: 0
+            };
+        }
+        itemsByShop[item.shopId].items.push(item);
+        itemsByShop[item.shopId].subtotal += item.price * item.quantity;
+    });
+
     return (
         <Card
             title="Đơn hàng"
@@ -11,57 +53,68 @@ const OrderSummary: React.FC<{ orderItems: any[], subtotal: number, discount: nu
             bordered={false}
             style={{ marginBottom: '20px' }}
         >
-            <List
-                itemLayout="horizontal"
-                dataSource={orderItems}
-                renderItem={item => (
-                    <List.Item>
-                        <List.Item.Meta
-                            avatar={
-                                <div style={{ width: '60px', height: '60px', marginRight: '10px' }}>
-                                    <Avatar shape="square" size={60} src={item.image} />
-                                </div>
-                            }
-                            title={<div style={{ fontSize: '14px' }}>{item.name}</div>}
-                            description={<div style={{ marginTop: '5px' }}>{item.price}đ</div>}
-                        />
-                        <div>x{item.quantity}</div>
-                    </List.Item>
-                )}
-            />
-
-            <Divider />
+            {/* Hiển thị sản phẩm theo từng shop */}
+            {Object.entries(itemsByShop).map(([shopId, shop]) => (
+                <div key={shopId} style={{ marginBottom: '20px' }}>
+                    <Title level={5} style={{ marginBottom: '10px' }}>
+                        {shop.shopName}
+                    </Title>
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={shop.items}
+                        renderItem={item => (
+                            <List.Item>
+                                <List.Item.Meta
+                                    avatar={
+                                        <div style={{ width: '60px', height: '60px', marginRight: '10px' }}>
+                                            <Avatar shape="square" size={60} src={item.image} />
+                                        </div>
+                                    }
+                                    title={<div style={{ fontSize: '14px' }}>{item.name}</div>}
+                                    description={<div style={{ marginTop: '5px' }}>{item.price.toLocaleString()}đ</div>}
+                                />
+                                <div>x{item.quantity}</div>
+                            </List.Item>
+                        )}
+                    />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0' }}>
+                        <Text strong>Tổng tiền shop:</Text>
+                        <Text strong>{shop.subtotal.toLocaleString()}đ</Text>
+                    </div>
+                    <Divider style={{ margin: '10px 0' }} />
+                </div>
+            ))}
 
             <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
                 <Text>Tổng sản phẩm:</Text>
-                <Text>{subtotal}đ</Text>
+                <Text>{subtotal.toLocaleString()}đ</Text>
             </div>
 
             <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
                 <Text>Giảm giá:</Text>
-                <Text style={{ color: 'green' }}>-{discount}đ</Text>
+                <Text style={{ color: 'green' }}>-{discount.toLocaleString()}đ</Text>
             </div>
 
             <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
                 <Text>Thuế:</Text>
-                <Text>{tax.toFixed(2)}đ</Text>
+                <Text>{tax.toLocaleString()}đ</Text>
             </div>
 
             <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
                 <Text>Tạm tính:</Text>
-                <Text>{(subtotal - discount + tax).toFixed(2)}đ</Text>
+                <Text>{(subtotal - discount + tax).toLocaleString()}đ</Text>
             </div>
 
             <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
                 <Text>Phí vận chuyển:</Text>
-                <Text>{shippingCost}đ</Text>
+                <Text>{shippingCost.toLocaleString()}đ</Text>
             </div>
 
             <Divider />
 
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Title level={5} style={{ margin: 0 }}>Tổng cộng:</Title>
-                <Title level={4} style={{ margin: 0 }}>{total.toFixed(2)}đ</Title>
+                <Title level={4} style={{ margin: 0 }}>{total.toLocaleString()}đ</Title>
             </div>
         </Card>
     );
