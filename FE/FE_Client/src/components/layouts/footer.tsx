@@ -8,7 +8,7 @@ import { FacebookFilled, GoogleCircleFilled } from '@ant-design/icons';
 const Footer = () => {
     return (
         <>
-            <div className="bg-footer">
+            <div className="bg-footer mt-5">
                 <div className='container p-3'>
                     <Row gutter={[20, 0]}>
                         <Col span={8}>

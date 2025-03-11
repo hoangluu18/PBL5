@@ -28,3 +28,7 @@
 .favorite:hover * {
     color: white;
 }
+
+.customize-star-spacing li.ant-rate-star {
+    margin-inline-end: 0 !important;
+}

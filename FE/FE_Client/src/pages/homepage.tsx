@@ -1,10 +1,10 @@
 import CarouselComponent from "../utils/Carousel";
 import { Col, Divider, Row } from "antd";
-import ProductList from "../components/ProductCard";
 import SectionHeader from "../utils/SectionHeader";
 import CategorySection from "../components/SectionCategory";
 import '../css/product.css'
 import '../css/style.css'
+import ProductCard from "../components/ProductCard";
 
 const Homepage = () => {
     const products = [
@@ -89,12 +89,13 @@ const Homepage = () => {
         <>
             <div className="container">
                 <CarouselComponent />
+                {/* Category section */}
                 <div className="mt-4">
                     <SectionHeader
-                        title="Category"
+                        title="Danh mục"
                         icon="⚡"
                         color="blue"
-                        linkText="Explore more"
+                        linkText="Xem thêm"
                         linkUrl="/" />
                     <Row >
                         {categories.map((category, index) => (
@@ -104,18 +105,36 @@ const Homepage = () => {
                         ))}
                     </Row>
                 </div>
-                <Divider />
+                <Divider className="mt-5" />
+
+                {/* top deal today */}
                 <div className="mt-5">
                     <SectionHeader
-                        title="Top Deals today"
+                        title="Ưu đãi hàng đầu hôm nay!"
                         icon="⚡"
-                        linkText="Explore more"
+                        linkText="Xem thêm"
                         color="orange"
                         linkUrl="/" />
                     <Row gutter={[20, 20]}>
                         {products.slice(0, 10).map((product, index) => (
-                            <Col className="gutter-row" span={4} key={index}>
-                                <ProductList  {...product} />
+                            <Col className="gutter-row" key={index} span={4}>
+                                <ProductCard  {...product} />
+                            </Col>
+                        ))}
+                    </Row>
+                </div>
+
+                {/* hint for today */}
+                <div className="mt-5">
+                    <SectionHeader
+                        title="Gợi ý hôm nay!"
+                        icon="⚡"
+                        color="Blue"
+                    />
+                    <Row gutter={[20, 20]}>
+                        {products.slice(0, 10).map((product, index) => (
+                            <Col className="gutter-row" key={index} span={4}>
+                                <ProductCard  {...product} />
                             </Col>
                         ))}
                     </Row>
