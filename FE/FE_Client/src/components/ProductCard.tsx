@@ -18,23 +18,24 @@ interface IProduct {
 
 const ProductCard = ({ image, title, price, discount, rating, sold }: IProduct) => {
 
-    const [isHovered, setIsHovered] = useState<boolean>(false);
+    const [favorite, setFavorite] = useState<boolean>(false);
 
     return (
-        <div className="position-relative product-card">
+        <div className="position-relative product-card" style={{ width: "200px" }}>
             {discount > 0 && (
                 <Badge.Ribbon text={`-${discount}%`} color="red" style={{ zIndex: 2, insetInlineEnd: -9 }} />
             )}
             <Badge
                 offset={[-175, 25]}
+                className="w-100"
                 count={
                     <Link
                         to={"/fad"}
                         className="p-2 border-primary border rounded-circle favorite"
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
+                        onMouseEnter={() => setFavorite(true)}
+                        onMouseLeave={() => setFavorite(false)}
                     >
-                        {isHovered ? (
+                        {favorite ? (
                             <HeartFilled style={{ fontSize: "15px" }} />
                         ) : (
                             <HeartOutlined className="text-primary" style={{ fontSize: "15px" }} />
@@ -43,20 +44,21 @@ const ProductCard = ({ image, title, price, discount, rating, sold }: IProduct) 
                 }
             >
                 <div className="card border-0 shadow-sm rounded overflow-hidden">
-                    <Link to={"/"}>
+                    <Link to={"/"} >
                         <div className="position-relative">
                             <img
                                 src={logo}
                                 alt={title}
                                 className="img-fluid w-100 product-image"
-                                style={{ height: "220px", objectFit: "cover", borderTopLeftRadius: "10px", borderTopRightRadius: "10px" }}
+                                style={{ height: "150px", objectFit: "cover", borderTopLeftRadius: "10px", borderTopRightRadius: "10px" }}
                             />
                         </div>
                         <div className="p-3">
                             <h6 className="mb-2 product-title line-clamp-2"
                                 style={{ fontSize: "16px", minHeight: "40px" }}>{title}</h6>
                             <div className="d-flex align-items-center mb-2">
-                                <Rate value={rating} disabled allowHalf={false} style={{ fontSize: "14px", color: "#fadb14" }} />
+                                <Rate value={rating} disabled allowHalf={false} className="customize-star-spacing"
+                                    style={{ fontSize: "14px", color: "#fadb14" }} />
                                 <small className="text-muted ms-2">({sold} sold)</small>
                             </div>
                             <div className="d-flex align-items-center">
