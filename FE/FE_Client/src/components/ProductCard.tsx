@@ -1,11 +1,6 @@
 import { Rate, Badge } from "antd";
-import logo from '../assets/logo.jpg'
 import { Link } from "react-router-dom";
 import CurrencyFormat from "../utils/CurrencyFormat";
-import { HeartFilled, HeartOutlined } from "@ant-design/icons";
-import { useState } from "react";
-
-
 
 interface IProduct {
     image: string;
@@ -17,65 +12,51 @@ interface IProduct {
 }
 
 const ProductCard = ({ image, title, price, discount, rating, sold }: IProduct) => {
-
-    const [favorite, setFavorite] = useState<boolean>(false);
+    const discountedPrice = price - (price * discount) / 100;
 
     return (
-        <div className="position-relative product-card" style={{ width: "200px" }}>
-            {discount > 0 && (
-                <Badge.Ribbon text={`-${discount}%`} color="red" style={{ zIndex: 2, insetInlineEnd: -9 }} />
-            )}
-            <Badge
-                offset={[-175, 25]}
-                className="w-100"
-                count={
-                    <Link
-                        to={"/fad"}
-                        className="p-2 border-primary border rounded-circle favorite"
-                        onMouseEnter={() => setFavorite(true)}
-                        onMouseLeave={() => setFavorite(false)}
-                    >
-                        {favorite ? (
-                            <HeartFilled style={{ fontSize: "15px" }} />
-                        ) : (
-                            <HeartOutlined className="text-primary" style={{ fontSize: "15px" }} />
-                        )}
-                    </Link>
-                }
-            >
-                <div className="card border-0 shadow-sm rounded overflow-hidden">
-                    <Link to={"/"} >
-                        <div className="position-relative">
-                            <img
-                                src={logo}
-                                alt={title}
-                                className="img-fluid w-100 product-image"
-                                style={{ height: "150px", objectFit: "cover", borderTopLeftRadius: "10px", borderTopRightRadius: "10px" }}
-                            />
-                        </div>
-                        <div className="p-3">
-                            <h6 className="mb-2 product-title line-clamp-2"
-                                style={{ fontSize: "16px", minHeight: "40px" }}>{title}</h6>
-                            <div className="d-flex align-items-center mb-2">
-                                <Rate value={rating} disabled allowHalf={false} className="customize-star-spacing"
-                                    style={{ fontSize: "14px", color: "#fadb14" }} />
-                                <small className="text-muted ms-2">({sold} sold)</small>
+        <div className="position-relative product-card" style={{ width: "180px" }}>
+            <div className="card border-0 shadow-sm rounded overflow-hidden p-2">
+                <Link to="/" className="text-decoration-none">
+                    <div className="d-flex flex-column justify-content-between">
+                        <div className="position-relative w-100 h-100">
+                            <div style={{ height: "170px" }}>
+                                <img
+                                    src={image}
+                                    alt={title}
+                                    className="h-100 w-100 product-image"
+                                    style={{ borderRadius: "10px 10px 0 0" }}
+                                />
                             </div>
-                            <div className="d-flex align-items-center">
-                                <span className="text-danger fw-bold" style={{ fontSize: "18px" }}>
-                                    <CurrencyFormat price={price} discount={discount} />
-                                </span>
+                        </div>
+                        <div className="py-2">
+                            <p className="mb-2 product-title line-clamp-2"
+                                style={{ fontSize: "14px", height: "40px" }}>
+                                {title}
+                            </p>
+                            <div className="d-flex align-items-center mb-1">
+                                <Rate value={rating} disabled allowHalf className="customize-star-spacing"
+                                    style={{ fontSize: "12px", color: "#fadb14" }} />
+                                <small className="text-muted ms-2">({sold} đã bán)</small>
+                            </div>
+                            <div style={{ height: "30px" }} className="mb-2">
+                                <div className="text-danger fw-bold" style={{ fontSize: "16px" }}>
+                                    <CurrencyFormat price={discountedPrice} />
+                                </div>
                                 {discount > 0 && (
-                                    <del className="ms-2 text-muted" style={{ fontSize: "14px" }}>
-                                        <CurrencyFormat price={price} discount={discount} />
-                                    </del>
+                                    <div>
+                                        <Badge count={`-${discount}%`} color="#ccc" />
+                                        <del className="ms-2 text-muted" style={{ fontSize: "12px" }}>
+                                            <CurrencyFormat price={price} />
+                                        </del>
+                                    </div>
                                 )}
                             </div>
                         </div>
-                    </Link>
-                </div>
-            </Badge>
-        </div >
+                    </div>
+                </Link>
+            </div>
+        </div>
     );
 };
 
