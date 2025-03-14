@@ -13,34 +13,59 @@ const Checkout: React.FC = () => {
     const [deliveryType, setDeliveryType] = useState('standard');
     const [paymentMethod, setPaymentMethod] = useState('credit');
 
+    // Dữ liệu đã cập nhật với thông tin shop
     const orderItems = [
         {
             id: 1,
             name: 'Đồng hồ thông minh Fitbit Sense',
-            price: 398,
+            price: 1998000,
             quantity: 1,
-            image: '/fitbit.png'
+            image: '/fitbit.png',
+            shopId: 1,
+            shopName: 'Fitbit Official Store'
         },
         {
             id: 2,
-            name: 'iPhone 13 pro max-Pacific Blue-128GB',
-            price: 398,
+            name: 'iPhone 13 pro max - Pacific Blue - 128GB',
+            price: 28990000,
             quantity: 1,
-            image: '/iphone.png'
+            image: '/iphone.png',
+            shopId: 2,
+            shopName: 'Apple Authorized Reseller'
         },
         {
             id: 3,
-            name: 'Apple MacBook Pro 13 inch-M1-8/256GB',
-            price: 65,
+            name: 'Apple MacBook Pro 13 inch - M1 - 8/256GB',
+            price: 31990000,
             quantity: 1,
-            image: '/macbook.png'
+            image: '/macbook.png',
+            shopId: 2,
+            shopName: 'Apple Authorized Reseller'
+        },
+        {
+            id: 4,
+            name: 'Tai nghe AirPods Pro',
+            price: 4590000,
+            quantity: 2,
+            image: '/airpods.png',
+            shopId: 2,
+            shopName: 'Apple Authorized Reseller'
+        },
+        {
+            id: 5,
+            name: 'Bàn phím Logitech MX Keys',
+            price: 2790000,
+            quantity: 1,
+            image: '/keyboard.png',
+            shopId: 3,
+            shopName: 'Logitech Official Store'
         }
     ];
 
     const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const discount = 59;
-    const tax = 126.20;
-    const shippingCost = 30;
+    const discount = 1500000;
+    const tax = subtotal * 0.1; // Giả sử thuế là 10%
+    const shippingCost = 30000;
     const total = subtotal - discount + tax + shippingCost;
 
     return (
@@ -55,11 +80,11 @@ const Checkout: React.FC = () => {
             <Content style={{ maxWidth: '1200px', margin: '0 auto' }}>
                 <div style={{ marginBottom: '20px' }}>
                     <Space size="small">
-                        <Button type="link" style={{ padding: 0 }}>Trang 1</Button>
+                        <Button type="link" style={{ padding: 0 }}>Trang chủ</Button>
                         <RightOutlined style={{ fontSize: '12px' }} />
-                        <Button type="link" style={{ padding: 0 }}>Trang 2</Button>
+                        <Button type="link" style={{ padding: 0 }}>Giỏ hàng</Button>
                         <RightOutlined style={{ fontSize: '12px' }} />
-                        <Text type="secondary">Mặc định</Text>
+                        <Text type="secondary">Thanh toán</Text>
                     </Space>
                 </div>
 
@@ -73,17 +98,21 @@ const Checkout: React.FC = () => {
                     </Col>
 
                     <Col span={8}>
-                        <OrderSummary orderItems={orderItems} subtotal={subtotal} discount={discount} tax={tax} shippingCost={shippingCost} total={total} />
+                        <OrderSummary 
+                            orderItems={orderItems} 
+                            subtotal={subtotal} 
+                            discount={discount} 
+                            tax={tax} 
+                            shippingCost={shippingCost} 
+                            total={total} 
+                        />
                     </Col>
                 </Row>
 
                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
                     <Button type="primary" size="large" style={{ width: '300px', height: '45px' }}>
-                        Thanh toán {total.toFixed(2)}đ
+                        Mua hàng
                     </Button>
-                    <div style={{ marginTop: '10px' }}>
-                        <Button type="link">Lưu đơn hàng và thoát</Button>
-                    </div>
                 </div>
             </Content>
 

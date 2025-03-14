@@ -9,6 +9,7 @@ import Homepage from './pages/homepage.tsx';
 import Checkout from './pages/checkout.tsx';
 import AddAddress from './pages/add_address.tsx';
 import EditAddress from './pages/edit_address.tsx';
+import ShopDetail from './pages/shop_detail.tsx';
 
 
 const router = createBrowserRouter([
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       },      {
         path: "/edit_address",
         element: <EditAddress />
+      },
+      {
+        path: "/shop/1",
+        element: <ShopDetail />
       }
 
     ]
