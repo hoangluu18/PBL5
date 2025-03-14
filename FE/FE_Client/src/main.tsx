@@ -13,6 +13,7 @@ import Checkout from './pages/checkout.tsx';
 import AddAddress from './pages/add_address.tsx';
 import EditAddress from './pages/edit_address.tsx';
 import ShopDetail from './pages/shop_detail.tsx';
+import FollowedShops from './pages/followed_shops.tsx';
 
 
 
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: "/shop/1",
         element: <ShopDetail />
+      },
+      {
+        path: "/followed_shops",
+        element: <FollowedShops />
       }
 
     ]
