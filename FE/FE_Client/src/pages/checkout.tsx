@@ -77,7 +77,7 @@ const Checkout: React.FC = () => {
             margin: '0 auto',
             padding: '20px'
         }}>
-            <Content style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <Content className='container'>
                 <div style={{ marginBottom: '20px' }}>
                     <Space size="small">
                         <Button type="link" style={{ padding: 0 }}>Trang chủ</Button>
@@ -98,13 +98,13 @@ const Checkout: React.FC = () => {
                     </Col>
 
                     <Col span={8}>
-                        <OrderSummary 
-                            orderItems={orderItems} 
-                            subtotal={subtotal} 
-                            discount={discount} 
-                            tax={tax} 
-                            shippingCost={shippingCost} 
-                            total={total} 
+                        <OrderSummary
+                            orderItems={orderItems}
+                            subtotal={subtotal}
+                            discount={discount}
+                            tax={tax}
+                            shippingCost={shippingCost}
+                            total={total}
                         />
                     </Col>
                 </Row>
@@ -147,7 +147,7 @@ const Checkout: React.FC = () => {
                     margin-right: 0;
                 }
             `}</style>
-        </Layout>
+        </Layout >
     );
 };
 

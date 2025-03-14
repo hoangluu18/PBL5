@@ -15,7 +15,7 @@ const ProductCard = ({ image, title, price, discount, rating, sold }: IProduct) 
     const discountedPrice = price - (price * discount) / 100;
 
     return (
-        <div className="position-relative product-card" style={{ width: "180px" }}>
+        <div className="position-relative product-card" style={{ maxWidth: "220px", minWidth: "180px" }}>
             <div className="card border-0 shadow-sm rounded overflow-hidden p-2">
                 <Link to="/" className="text-decoration-none">
                     <div className="d-flex flex-column justify-content-between">

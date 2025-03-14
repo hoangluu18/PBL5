@@ -117,7 +117,7 @@ const Homepage = () => {
                         linkText="Xem thêm"
                         color="orange"
                         linkUrl="/" />
-                    <Row gutter={[20, 20]}>
+                    <Row gutter={[10, 10]}>
                         {products.slice(0, 10).map((product, index) => (
                             <Col className="gutter-row" key={index} span={4}>
                                 <ProductCard  {...product} />
@@ -133,7 +133,7 @@ const Homepage = () => {
                         icon="⚡"
                         color="Blue"
                     />
-                    <Row gutter={[20, 20]}>
+                    <Row gutter={[10, 10]}>
                         {products.slice(0, 10).map((product, index) => (
                             <Col className="gutter-row" key={index} span={4}>
                                 <ProductCard  {...product} />
