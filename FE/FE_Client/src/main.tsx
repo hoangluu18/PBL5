@@ -7,8 +7,8 @@ import RegisterPage from './pages/register.tsx';
 import ForgotPasswordPage from './pages/forgot_password.tsx';
 import Homepage from './pages/homepage.tsx';
 import CartPage from './pages/cart.tsx';
-import UserProfile from './pages/user_profile.tsx';
-
+import OrderDetail from './pages/order_details.tsx';
+import OrderTracking from './pages/order_tracking.tsx';
 
 
 const router = createBrowserRouter([
@@ -32,7 +32,15 @@ const router = createBrowserRouter([
       {
         path: "/cart",
         element: <CartPage />
-      }
+      },
+      {
+        path: '/order/:id', // Route mới cho Chi tiết đơn hàng
+        element: <OrderDetail />
+      },
+      {
+        path: '/order-tracking/:id', // Route mới cho OrderTracking
+        element: <OrderTracking />,
+      },
 
     ]
   },
