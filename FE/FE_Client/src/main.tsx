@@ -15,6 +15,8 @@ import EditAddress from './pages/edit_address.tsx';
 import ShopDetail from './pages/shop_detail.tsx';
 import FollowedShops from './pages/followed_shops.tsx';
 import ProductDetailPage from './pages/product_detail.tsx';
+import Account from './pages/profile.tsx';
+import ProfilePage from './pages/profile.tsx';
 
 
 
@@ -27,15 +29,6 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Homepage />
-      },
-      {
-        path: "/account",
-        element: <div>abcdfafds</div>
-      },
-      {
-
-        path: "/account",
-        element: <div>abcdfafds</div>
       },
       {
         path: "/products/filter",
@@ -63,7 +56,12 @@ const router = createBrowserRouter([
       {
         path: "/product_detail/1",
         element: <ProductDetailPage />
+      },
+      {
+        path: "/account",
+        element: <ProfilePage />
       }
+
 
     ]
   },
