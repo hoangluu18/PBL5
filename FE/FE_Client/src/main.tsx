@@ -6,6 +6,9 @@ import LoginPage from './pages/login.tsx';
 import RegisterPage from './pages/register.tsx';
 import ForgotPasswordPage from './pages/forgot_password.tsx';
 import Homepage from './pages/homepage.tsx';
+import CartPage from './pages/cart.tsx';
+import UserProfile from './pages/user_profile.tsx';
+
 
 
 const router = createBrowserRouter([
@@ -25,6 +28,14 @@ const router = createBrowserRouter([
       {
         path: "/account",
         element: <div>abcdfafds</div>
+      },
+      {
+        path: "/cart",
+        element: <CartPage />
+      },
+      {
+        path: "/profile",
+        element: <UserProfile />
       }
 
     ]
