@@ -10,6 +10,18 @@ import CartPage from './pages/cart.tsx';
 import OrderDetail from './pages/order_details.tsx';
 import OrderTracking from './pages/order_tracking.tsx';
 
+import ProductFilterPage from './pages/products_filter.tsx';
+
+import Checkout from './pages/checkout.tsx';
+import AddAddress from './pages/add_address.tsx';
+import EditAddress from './pages/edit_address.tsx';
+import ShopDetail from './pages/shop_detail.tsx';
+import FollowedShops from './pages/followed_shops.tsx';
+import ProductDetailPage from './pages/product_detail.tsx';
+import Account from './pages/profile.tsx';
+import ProfilePage from './pages/profile.tsx';
+
+
 
 const router = createBrowserRouter([
   {
@@ -22,12 +34,35 @@ const router = createBrowserRouter([
         element: <Homepage />
       },
       {
+        path: "/products/filter",
+        element: <ProductFilterPage />
+      },
+      {
         path: "/checkout",
-        element: <div>abcdfafds</div>
+        element: <Checkout />
+      },
+      {
+        path: "/add_address",
+        element: <AddAddress />
+      }, {
+        path: "/edit_address",
+        element: <EditAddress />
+      },
+      {
+        path: "/shop/1",
+        element: <ShopDetail />
+      },
+      {
+        path: "/followed_shops",
+        element: <FollowedShops />
+      },
+      {
+        path: "/product_detail/1",
+        element: <ProductDetailPage />
       },
       {
         path: "/account",
-        element: <div>abcdfafds</div>
+       element: <ProfilePage />
       },
       {
         path: "/cart",
@@ -40,8 +75,8 @@ const router = createBrowserRouter([
       {
         path: '/order-tracking/:id', // Route mới cho OrderTracking
         element: <OrderTracking />,
-      },
-
+      }
+      
     ]
   },
   {

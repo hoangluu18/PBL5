@@ -1,12 +1,18 @@
-import CarouselComponent from "../utils/Carousel";
-import { Col, Divider, Row } from "antd";
-import SectionHeader from "../utils/SectionHeader";
-import CategorySection from "../components/SectionCategory";
-import '../css/product.css'
-import '../css/style.css'
+import { Button, Checkbox, Col, Divider, Layout, Rate, Row, Slider } from "antd";
 import ProductCard from "../components/ProductCard";
+import React, { useState } from "react";
+import SectionPagination from "../utils/SectionPagination";
 
-const Homepage = () => {
+const { Sider, Content } = Layout;
+
+interface Filters {
+    "Tình trạng": string[];
+    "Màu sắc": string[];
+    "Nhãn hàng": string[];
+}
+
+const ProductFilterPage: React.FC = () => {
+
 
     const products = [
         {
@@ -67,83 +73,95 @@ const Homepage = () => {
         },
     ];
 
+    const filters: Filters = {
+        "Tình trạng": ["In stock", "Pre-book", "Out of stock"],
+        "Màu sắc": ["Black", "Blue", "Red"],
+        "Nhãn hàng": ["Blackberry", "Apple", "Nokia", "Sony", "LG"],
+    };
 
-    const categories = [
-        { title: "Thời Trang Nam", image: "https://down-vn.img.susercontent.com/file/687f3967b7c2fe6a134a2c11894eea4b@resize_w640_nl.webp" },
-        { title: "Điện Thoại & Phụ Kiện", image: "https://down-vn.img.susercontent.com/file/31234a27876fb89cd522d7e3db1ba5ca@resize_w640_nl.webp" },
-        { title: "Thiết Bị Điện Tử", image: "https://down-vn.img.susercontent.com/file/978b9e4cb61c611aaaf58664fae133c5@resize_w640_nl.webp" },
-        { title: "Máy Tính & Laptop", image: "https://down-vn.img.susercontent.com/file/c3f3edfaa9f6dafc4825b77d8449999d@resize_w640_nl.webp" },
-        { title: "Máy Ảnh & Máy Quay Phim", image: "https://down-vn.img.susercontent.com/file/ec14dd4fc238e676e43be2a911414d4d@resize_w640_nl.webp" },
-        { title: "Đồng Hồ", image: "https://down-vn.img.susercontent.com/file/86c294aae72ca1db5f541790f7796260@resize_w640_nl.webp" },
-        { title: "Giày Dép Nam", image: "https://down-vn.img.susercontent.com/file/74ca517e1fa74dc4d974e5d03c3139de@resize_w640_nl.webp" },
-        { title: "Thiết Bị Điện Gia Dụng", image: "https://down-vn.img.susercontent.com/file/7abfbfee3c4844652b4a8245e473d857@resize_w640_nl.webp" },
-        { title: "Thời Trang Nam", image: "https://down-vn.img.susercontent.com/file/687f3967b7c2fe6a134a2c11894eea4b@resize_w640_nl.webp" },
-        { title: "Điện Thoại & Phụ Kiện", image: "https://down-vn.img.susercontent.com/file/31234a27876fb89cd522d7e3db1ba5ca@resize_w640_nl.webp" },
-        { title: "Thiết Bị Điện Tử", image: "https://down-vn.img.susercontent.com/file/978b9e4cb61c611aaaf58664fae133c5@resize_w640_nl.webp" },
-        { title: "Máy Tính & Laptop", image: "https://down-vn.img.susercontent.com/file/c3f3edfaa9f6dafc4825b77d8449999d@resize_w640_nl.webp" },
-        { title: "Máy Ảnh & Máy Quay Phim", image: "https://down-vn.img.susercontent.com/file/ec14dd4fc238e676e43be2a911414d4d@resize_w640_nl.webp" },
-        { title: "Đồng Hồ", image: "https://down-vn.img.susercontent.com/file/86c294aae72ca1db5f541790f7796260@resize_w640_nl.webp" },
-        { title: "Giày Dép Nam", image: "https://down-vn.img.susercontent.com/file/74ca517e1fa74dc4d974e5d03c3139de@resize_w640_nl.webp" },
-        { title: "Thiết Bị Điện Gia Dụng", image: "https://down-vn.img.susercontent.com/file/7abfbfee3c4844652b4a8245e473d857@resize_w640_nl.webp" },
-    ]
+    const [priceRange, setPriceRange] = useState<[number, number]>([10000, 500000]);
+
+    const handleSliderChange = (value: number[]) => {
+        if (value && value.length === 2) {
+            setPriceRange([value[0], value[1]]);
+        }
+    };
 
     return (
         <>
-            <div className="container">
-                <CarouselComponent />
-                {/* Category section */}
-                <div className="mt-4">
-                    <SectionHeader
-                        title="Danh mục"
-                        icon="⚡"
-                        color="blue"
-                        linkText="Xem thêm"
-                        linkUrl="/" />
-                    <Row >
-                        {categories.map((category, index) => (
-                            <Col key={index}>
-                                <CategorySection  {...category} />
-                            </Col>
-                        ))}
-                    </Row>
-                </div>
-                <Divider className="mt-5" />
+            <Layout className="container mt-3 bg-transparent">
+                <Sider width={175} className="bg-transparent mt-3">
+                    <h3>Filters</h3>
+                    {Object.keys(filters).map((filterKey) => {
+                        const key = filterKey as keyof Filters;
+                        return (
+                            <React.Fragment key={key}>
+                                <div>
+                                    <h5>{key.replace(/([A-Z])/g, " $1").trim()}</h5>
+                                    {filters[key].map((item) => (
+                                        <div>
+                                            <Checkbox key={item}>{item}</Checkbox>
+                                        </div>
+                                    ))}
+                                </div>
+                                <Divider />
+                            </React.Fragment>
+                        );
+                    })}
 
-                {/* top deal today */}
-                <div className="mt-5">
-                    <SectionHeader
-                        title="Ưu đãi hàng đầu hôm nay!"
-                        icon="⚡"
-                        linkText="Xem thêm"
-                        color="orange"
-                        linkUrl="/" />
-                    <Row gutter={[10, 10]}>
-                        {products.slice(0, 10).map((product, index) => (
-                            <Col className="gutter-row" key={index} span={4}>
-                                <ProductCard  {...product} />
-                            </Col>
-                        ))}
-                    </Row>
-                </div>
+                    {/* Price Range Filter */}
+                    <div>
+                        <h5 className="mb-5">Khoảng giá</h5>
+                        <Slider
+                            range
+                            min={10000}
+                            max={500000}
+                            value={priceRange}  // Ensure it's always defined
+                            onChange={handleSliderChange}
+                            step={100}
+                        //tooltip={{ formatter: (value) => `${value.toLocaleString()} ₫`, open: true }}
+                        />
 
-                {/* hint for today */}
-                <div className="mt-5">
-                    <SectionHeader
-                        title="Gợi ý hôm nay!"
-                        icon="⚡"
-                        color="Blue"
-                    />
-                    <Row gutter={[10, 10]}>
-                        {products.slice(0, 10).map((product, index) => (
-                            <Col className="gutter-row" key={index} span={4}>
-                                <ProductCard  {...product} />
+                    </div>
+                    <Divider />
+
+                    {/* Rating Filter */}
+                    <div>
+                        <h5>Đánh giá</h5>
+                        <div>
+                            {[5, 4, 3, 2, 1].map((rating) => (
+                                <div key={rating} style={{ display: "flex", alignItems: "center", marginBottom: "5px", cursor: "pointer" }}
+                                    onClick={() => alert(rating)}>
+                                    <Rate value={rating} disabled className="customize-star-spacing"
+                                        style={{ fontSize: "18px", color: "#fadb14", pointerEvents: "none" }} />
+                                    &nbsp;&nbsp;
+                                    {
+                                        rating === 5 ? '' : 'trở lên'
+                                    }
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <Divider />
+                    <div className="text-center">
+                        <Button className="text-white bg-primary fs-4 p-3">Xóa tất cả</Button>
+                    </div>
+                </Sider>
+                <Content className="ps-4">
+                    <Row gutter={[30, 10]}>
+                        {products.map((product, index) => (
+                            <Col key={index} xl={4} md={6} sm={8}>
+                                <ProductCard {...product} />
                             </Col>
                         ))}
                     </Row>
-                </div>
+                </Content>
+            </Layout>
+            <div className="mt-5 text-center">
+                <SectionPagination />
             </div>
         </>
     );
-}
+};
 
-export default Homepage;
+export default ProductFilterPage;
