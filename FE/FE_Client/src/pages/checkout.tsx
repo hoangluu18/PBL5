@@ -129,14 +129,6 @@ const Checkout: React.FC = () => {
                 gap: '5px',
                 cursor: 'pointer'
             }}>
-                <span>Chat demo</span>
-                <span style={{
-                    width: '10px',
-                    height: '10px',
-                    borderRadius: '50%',
-                    background: 'green',
-                    display: 'inline-block'
-                }}></span>
             </div>
 
             <style>{`
