@@ -6,6 +6,9 @@ import LoginPage from './pages/login.tsx';
 import RegisterPage from './pages/register.tsx';
 import ForgotPasswordPage from './pages/forgot_password.tsx';
 import Homepage from './pages/homepage.tsx';
+import CartPage from './pages/cart.tsx';
+import OrderDetail from './pages/order_details.tsx';
+import OrderTracking from './pages/order_tracking.tsx';
 
 import ProductFilterPage from './pages/products_filter.tsx';
 
@@ -14,6 +17,9 @@ import AddAddress from './pages/add_address.tsx';
 import EditAddress from './pages/edit_address.tsx';
 import ShopDetail from './pages/shop_detail.tsx';
 import FollowedShops from './pages/followed_shops.tsx';
+import ProductDetailPage from './pages/product_detail.tsx';
+import Account from './pages/profile.tsx';
+import ProfilePage from './pages/profile.tsx';
 
 
 
@@ -28,15 +34,6 @@ const router = createBrowserRouter([
         element: <Homepage />
       },
       {
-        path: "/account",
-        element: <div>abcdfafds</div>
-      },
-      {
-
-        path: "/account",
-        element: <div>abcdfafds</div>
-      },
-      {
         path: "/products/filter",
         element: <ProductFilterPage />
       },
@@ -47,7 +44,7 @@ const router = createBrowserRouter([
       {
         path: "/add_address",
         element: <AddAddress />
-      },      {
+      }, {
         path: "/edit_address",
         element: <EditAddress />
       },
@@ -58,8 +55,28 @@ const router = createBrowserRouter([
       {
         path: "/followed_shops",
         element: <FollowedShops />
+      },
+      {
+        path: "/product_detail/1",
+        element: <ProductDetailPage />
+      },
+      {
+        path: "/account",
+       element: <ProfilePage />
+      },
+      {
+        path: "/cart",
+        element: <CartPage />
+      },
+      {
+        path: '/order/:id', // Route mới cho Chi tiết đơn hàng
+        element: <OrderDetail />
+      },
+      {
+        path: '/order-tracking/:id', // Route mới cho OrderTracking
+        element: <OrderTracking />,
       }
-
+      
     ]
   },
   {
