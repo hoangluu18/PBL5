@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Table, Tag } from "antd";
+import { Pagination, Table, Tag } from "antd";
 
 // Sample order data
 const ordersData = [
@@ -22,7 +22,12 @@ const columns = [
 
 // OrderList component
 const OrderList: React.FC = () => {
-    return <Table dataSource={ordersData} columns={columns} rowKey="id" pagination={false} />;
+    return (
+        <div className="bg-white p-3">
+            <Table dataSource={ordersData} columns={columns} rowKey="id" pagination={false} />
+            <Pagination className="text-center mt-3" defaultCurrent={1} total={50} />
+        </div>
+    )
 };
 
 export default OrderList;

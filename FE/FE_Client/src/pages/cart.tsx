@@ -26,65 +26,65 @@ const CartPage: React.FC = () => {
   const total = subtotal - discount + tax + shippingCost;
 
   return (
-    <div className="cart-container">
+    <div className="cart-container container">
       <div className="cart-items">
         <h2>Giỏ hàng</h2>
         <table className="cart-table">
-  <thead>
-    <tr>
-      <th>SẢN PHẨM</th>
-      <th>MÀU SẮC</th>
-      <th>SIZE</th>
-      <th>GIÁ TIỀN</th>
-      <th>SỐ LƯỢNG</th>
-      <th>THÀNH TIỀN</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {cartItems.map(item => (
-      <tr key={item.id}>
-        <td className="product-info">
-          <img src={item.image} alt={item.name} className="product-image" />
-          {item.name}
-        </td>
-        <td>{item.color}</td>
-        <td>{item.size}</td>
-        <td>{item.price}đ</td>
-        <td className="quantity-control">
-          <button onClick={() => updateQuantity(item.id, -1)}>-</button>
-          <span>{item.quantity}</span>
-          <button onClick={() => updateQuantity(item.id, 1)}>+</button>
-        </td>
-        <td>{item.price * item.quantity}đ</td>
-        <td className="action"><FaTrash /></td>
-      </tr>
-    ))}
-  </tbody>
-  <tfoot>
-    <tr className="subtotal-row">
-      <td colSpan={5} style={{ textAlign: "left", fontWeight: "bold" }}>Tổng cộng:</td>
-      <td style={{ fontWeight: "bold" }}>{subtotal}đ</td>
-      <td></td>
-    </tr>
-  </tfoot>
-</table>
+          <thead>
+            <tr>
+              <th>SẢN PHẨM</th>
+              <th>MÀU SẮC</th>
+              <th>SIZE</th>
+              <th>GIÁ TIỀN</th>
+              <th>SỐ LƯỢNG</th>
+              <th>THÀNH TIỀN</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {cartItems.map(item => (
+              <tr key={item.id}>
+                <td className="product-info">
+                  <img src={item.image} alt={item.name} className="product-image" />
+                  {item.name}
+                </td>
+                <td>{item.color}</td>
+                <td>{item.size}</td>
+                <td>{item.price}đ</td>
+                <td className="quantity-control">
+                  <button onClick={() => updateQuantity(item.id, -1)}>-</button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => updateQuantity(item.id, 1)}>+</button>
+                </td>
+                <td>{item.price * item.quantity}đ</td>
+                <td className="action"><FaTrash /></td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr className="subtotal-row">
+              <td colSpan={5} style={{ textAlign: "left", fontWeight: "bold" }}>Tổng cộng:</td>
+              <td style={{ fontWeight: "bold" }}>{subtotal}đ</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
 
       </div>
 
       <div className="summary">
-      <OrderSummary 
-  orderItems={cartItems.map((item, index) => ({
-    ...item, 
-    shopId: index % 2 === 0 ? 1 : 2,  // Chia sản phẩm vào 2 shop luân phiên
-    shopName: index % 2 === 0 ? "Shop A" : "Shop B" // Gán tên shop tương ứng
-  }))} 
-  subtotal={subtotal} 
-  discount={discount} 
-  tax={tax} 
-  shippingCost={shippingCost} 
-  total={total} 
-/>
+        <OrderSummary
+          orderItems={cartItems.map((item, index) => ({
+            ...item,
+            shopId: index % 2 === 0 ? 1 : 2,  // Chia sản phẩm vào 2 shop luân phiên
+            shopName: index % 2 === 0 ? "Shop A" : "Shop B" // Gán tên shop tương ứng
+          }))}
+          subtotal={subtotal}
+          discount={discount}
+          tax={tax}
+          shippingCost={shippingCost}
+          total={total}
+        />
         <Link to="/checkout" className="checkout-button">Tiến hành thanh toán {'>'}</Link>
       </div>
     </div>
@@ -100,11 +100,8 @@ const styles = `
 .cart-container {
   display: flex;
   gap: 30px;
-  padding: 20px;
   background-color: #f9f9f9;
   margin: 20px auto 50px auto;
-  max-width: 1500px;
-  width: 90%;
   align-items: flex-start; /* Đảm bảo các phần tử thẳng hàng theo chiều trên */
 }
 
