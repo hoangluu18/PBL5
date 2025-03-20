@@ -16,7 +16,7 @@ const Footer = () => {
                                 <img src={logo} style={{ width: "100%", height: "100%", }} />
                             </div>
                             <div >
-                                Phoenix is an admin dashboard template with fascinating features and amazing layout.
+                                pbl5 công nghệ phần mềm
                             </div>
                         </Col>
                         <Col span={4}>

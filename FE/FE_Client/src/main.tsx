@@ -67,8 +67,8 @@ const router = createBrowserRouter([
         element: <ProductDetailPage />
       },
       {
-        path: "/account",
-       element: <ProfilePage />
+        path: "/profile",
+        element: <ProfilePage />
       },
       {
         path: "/cart",
@@ -82,7 +82,7 @@ const router = createBrowserRouter([
         path: '/order-tracking/:id', // Route mới cho OrderTracking
         element: <OrderTracking />,
       }
-      
+
     ]
   },
   {

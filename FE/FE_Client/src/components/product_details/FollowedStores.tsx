@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Tag } from "antd";
+import { Pagination, Table, Tag } from "antd";
 
 // Sample store data
 const storesData = [
@@ -74,7 +74,12 @@ const columns = [
 
 // FollowedStores component
 const FollowedStores: React.FC = () => {
-    return <Table dataSource={storesData} columns={columns} rowKey="id" pagination={false} />;
+    return (
+        <div className="bg-white p-3">
+            <Table dataSource={storesData} columns={columns} rowKey="id" pagination={false} />
+            <Pagination className="text-center mt-3" defaultCurrent={1} total={50} />
+        </div>
+    )
 };
 
 export default FollowedStores;
