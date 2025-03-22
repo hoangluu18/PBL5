@@ -298,7 +298,7 @@ const OrderDetail: React.FC = () => {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: styles }} />
-      <div className="order-detail-container">
+      <div className="mt-3 container">
         <div className="header">
           <h1>Chi tiết đơn hàng #{order.id} - {order.status}</h1>
           <span className="date">Ngày đặt hàng: {order.date}</span>

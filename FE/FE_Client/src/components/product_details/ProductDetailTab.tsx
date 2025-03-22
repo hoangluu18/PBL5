@@ -21,13 +21,15 @@ const data = [
 
 const ProductDetailTab = () => {
     return (
-        <Table
-            columns={columns}
-            dataSource={data}
-            pagination={false}
-            showHeader={false}
-            style={{ width: "1000px" }}
-        />
+        <div className="w-100">
+            <Table
+                columns={columns}
+                dataSource={data}
+                pagination={false}
+                showHeader={false}
+                size="large"
+            />
+        </div>
     );
 };
 
