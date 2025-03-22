@@ -3,8 +3,6 @@ import { SearchOutlined, ShoppingCartOutlined, BellOutlined, UserOutlined } from
 import "antd/dist/reset.css";
 import logo from '../../assets/logo.jpg'
 import '../../css/style.css'
-import HeaderMenu from "./menu";
-import Category from "./category";
 
 
 const { Header } = Layout;
@@ -12,21 +10,29 @@ const { Header } = Layout;
 const App = () => {
     return (
         <>
-            <div className="primary-color">
+            <div className="container-fluid bg-white">
                 <div className="container">
                     <Header
                         style={{
                             display: "flex",
                             justifyContent: "space-between",
                             alignItems: "center",
-                            background: "#F5F7FA",
+                            background: "#fff",
                             padding: "10px 0px",
                         }}
                     >
 
                         {/* Logo */}
-                        <div style={{ width: '100px', height: '100%' }}>
-                            <img src={logo} alt="" style={{ width: '100%', height: '100%' }} />
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <img
+                                src={logo}
+                                alt="Logo"
+                                style={{
+                                    width: "120px",
+                                    height: "60px",
+                                    objectFit: "contain"
+                                }}
+                            />
                         </div>
 
                         {/* Search Bar */}
@@ -53,7 +59,7 @@ const App = () => {
                     </Header>
                 </div>
             </div >
-            <div>
+            {/* <div>
                 <div className="container-fluid bg-white">
                     <div className="container">
                         <div style={{ display: "flex", alignItems: "center" }}>
@@ -62,7 +68,7 @@ const App = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </>
     );
 };

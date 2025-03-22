@@ -1,5 +1,6 @@
 import React from "react";
-import { Table, Tag } from "antd";
+import { Divider, Pagination, Table, Tag } from "antd";
+import SectionPagination from "../../utils/SectionPagination";
 
 // Sample review data
 const reviewsData = [
@@ -24,7 +25,12 @@ const columns = [
 
 // ReviewList component
 const ReviewList: React.FC = () => {
-    return <Table dataSource={reviewsData} columns={columns} rowKey="id" pagination={false} />;
+    return (
+        <div className="bg-white p-3">
+            <Table dataSource={reviewsData} columns={columns} rowKey="id" pagination={false} />
+            <Pagination className="text-center mt-3" defaultCurrent={1} total={50} />
+        </div>
+    );
 };
 
 export default ReviewList;

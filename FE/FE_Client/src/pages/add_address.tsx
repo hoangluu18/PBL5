@@ -33,17 +33,17 @@ const AddAddress: React.FC = () => {
     };
 
     return (
-        <div style={{ 
-            background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF', 
+        <div style={{
+            background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',
             padding: '40px',
             minHeight: '100vh',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center'
         }}>
-            <div style={{ width: '100%', maxWidth: '800px' }}>
+            <div className='container'>
                 <Title level={2}>Thêm địa chỉ nhận hàng</Title>
-                
+
                 <Card title="Thông tin địa chỉ" bordered={false} style={{ marginBottom: '20px' }}>
                     <Form
                         form={form}
@@ -53,7 +53,7 @@ const AddAddress: React.FC = () => {
                         <Form.Item label="Họ và tên" name="fullName">
                             <Input placeholder="Họ và tên" value={fullName} onChange={(e) => setFullName(e.target.value)} />
                         </Form.Item>
-                        
+
                         <Row gutter={16}>
                             <Col span={12}>
                                 <Form.Item label="Email" name="email">
@@ -66,7 +66,7 @@ const AddAddress: React.FC = () => {
                                 </Form.Item>
                             </Col>
                         </Row>
-                        
+
                         <Form.Item label="Địa chỉ" name="address">
                             <Input placeholder="1234 Elm Street, Van Nuys, CA" value={address} onChange={(e) => setAddress(e.target.value)} />
                         </Form.Item>
@@ -103,19 +103,19 @@ const AddAddress: React.FC = () => {
                         <Form.Item label="Tên đường, Tòa nhà, Số nhà" name="street">
                             <Input placeholder="Tên đường, Tòa nhà, Số nhà" value={street} onChange={(e) => setStreet(e.target.value)} />
                         </Form.Item>
-                        
+
                         <Form.Item>
-                            <Button type="primary" 
-                                style={{ 
-                                    width: '150px', 
+                            <Button type="primary"
+                                style={{
+                                    width: '150px',
                                     height: '40px',
                                     background: '#4F80E1',
                                     borderColor: '#4F80E1'
                                 }}>
                                 Lưu địa chỉ
                             </Button>
-                            <Button 
-                                type="link" 
+                            <Button
+                                type="link"
                                 style={{ marginLeft: '10px' }}>
                                 Thoát, không lưu
                             </Button>

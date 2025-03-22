@@ -70,7 +70,7 @@ const OrderTracking: React.FC = () => {
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-
+      
     .header {
       display: flex;
       justify-content: space-between;
@@ -235,7 +235,7 @@ const OrderTracking: React.FC = () => {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: styles }} />
-      <div className="tracking-container">
+      <div className="container mt-3">
         <div className="header">
           <h1>Theo dõi đơn hàng #{order.id}</h1>
           <button className="view-details">Xem chi tiết đơn hàng</button>

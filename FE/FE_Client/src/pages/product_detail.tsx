@@ -5,6 +5,7 @@ import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import ProductDescriptionTab from "../components/product_details/ProductDescriptionTab";
 import ProductDetailTab from "../components/product_details/ProductDetailTab";
 import ReviewList from "../components/product_details/ReviewList";
+import ShopInfo from "../components/product_details/ShopInfo";
 
 const { Text } = Typography;
 
@@ -57,17 +58,11 @@ const ProductDetailPage: React.FC = () => {
                         title: 'Home',
                     },
                     {
-                        title: <a href="">Application Center</a>,
-                    },
-                    {
-                        title: <a href="">Application List</a>,
-                    },
-                    {
-                        title: 'An Application',
+                        title: 'Detail',
                     },
                 ]}
             />
-            <Row className="mt-3" gutter={10}>
+            <Row className="mt-3 p-3" style={{ backgroundColor: "white" }}>
                 <Col span={2}>
                     <div className="d-flex flex-column g-2">
                         <div className="m-2 ms-0">
@@ -86,7 +81,7 @@ const ProductDetailPage: React.FC = () => {
                             className="border border-secondary p-2 rounded w-100" />
                     </div>
                 </Col>
-                <Col span={14} className="mt-2">
+                <Col span={13} className="mt-2 ms-3">
                     <div>
                         <Rate value={4} disabled allowHalf className="customize-star-spacing"
                             style={{ fontSize: "17px", color: "#fadb14" }} />
@@ -164,12 +159,21 @@ const ProductDetailPage: React.FC = () => {
                             </div>
                         </div>
                     </div>
+                    <div className="mt-3">
+                        <Button type="primary" className="p-3" size="large">Thêm vào giỏ hàng</Button>
+                        &nbsp;&nbsp;&nbsp;
+                        <Button type="primary" danger className="p-3" size="large">Mua ngay</Button>
+                    </div>
                 </Col>
             </Row>
 
-            <div className="mt-3">
-                <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
-            </div>
+            <Row className="mt-3 ">
+                <ShopInfo />
+            </Row>
+
+            <Row className="mt-3">
+                <Tabs defaultActiveKey="1" items={items} onChange={onChange} className="w-100" />
+            </Row>
         </div>
     );
 };
