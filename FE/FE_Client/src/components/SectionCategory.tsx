@@ -1,32 +1,68 @@
-import { Card } from "antd";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Avatar, Card, Col, Row, Typography, Spin } from "antd";
+import ICategory from "../models/Category";
+import CategoryService from "../services/category.service";
 
-interface ICategory {
-    title: string;
-    image: string;
-}
+const { Text } = Typography;
 
+const CategorySection = () => {
+    const [categories, setCategories] = useState<ICategory[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const categoryService = new CategoryService();
+                const data = await categoryService.getRootCategories();
+                setCategories(data);
+            } catch (error) {
+                console.error("Failed to fetch categories:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCategories();
+    }, []);
 
-const CategorySection = (category: ICategory) => {
+    if (loading) {
+        return (
+            <div style={{ textAlign: 'center', padding: '24px' }}>
+                <Spin size="large" />
+            </div>
+        );
+    }
+
     return (
-        <Link to={"/"}>
-            <Card
-                hoverable
-                className="category-card text-center p-3 pt-2"
-                style={{ width: "129px", height: "150px" }}
-                cover={
-                    <img src={category.image} className="img-fluid" />
-                }
-                styles={{
-                    body: {
-                        padding: "0",
-                    }
-                }}
-            >
-                <p className="line-clamp-2 mb-1" style={{ lineHeight: "17px" }}>{category.title}</p>
-            </Card>
-        </Link >
+        <div style={{ padding: '24px 0' }}>
+            <Row gutter={[5, 5]}>
+                {categories.map((category) => (
+                    <Col xs={12} sm={8} md={6} lg={4} xl={3} key={category.id}>
+                        <Link to={`/c/${category.alias}`}>
+                            <Card
+                                hoverable
+                                cover={
+                                    <Avatar
+                                        size={80}
+                                        src={`src/assets/category-images/${category.image}`}
+                                        style={{
+                                            margin: '16px auto',
+                                            display: 'block',
+                                            backgroundColor: '#f5f5f5'
+                                        }}
+                                    />
+                                }
+                                bodyStyle={{ padding: '0 10px 16px', textAlign: 'center' }}
+                            >
+                                <Text strong style={{ fontSize: '16px' }}>
+                                    {category.name}
+                                </Text>
+                            </Card>
+                        </Link>
+                    </Col>
+                ))}
+            </Row>
+        </div >
     );
 };
 
