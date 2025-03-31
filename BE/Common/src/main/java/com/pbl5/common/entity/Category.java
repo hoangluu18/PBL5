@@ -24,7 +24,7 @@ public class Category extends IdBaseEntity{
 
     private boolean enabled;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "parent_id")
     private Category parent;
 
