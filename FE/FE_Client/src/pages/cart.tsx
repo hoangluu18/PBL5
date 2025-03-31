@@ -1,132 +1,186 @@
-import React, { useState } from 'react';
-import { FaTrash } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
+import { FaTrash, FaHeart } from 'react-icons/fa';
+import { Link, useParams } from 'react-router-dom';
 import OrderSummary from '../components/OrderSummary';
-import PaymentMethod from '../components/PaymentMethod';
+import CartService from '../services/cart.service';
+import ICartItem from '../models/CartItem';
 
 const CartPage: React.FC = () => {
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: "Fitbit Sense Advanced Smartwatch", color: "Đen", size: "XL", price: 199, quantity: 2, image: "https://th.bing.com/th/id/R.fac200b7524ac1d0da7c433b2556ff45?rik=Ubhob0BFIz%2fXCg&pid=ImgRaw&r=0" },
-    { id: 2, name: "iPhone 13 Pro Max-Pacific Blue-128GB", color: "Đen", size: "XL", price: 150, quantity: 2, image: "https://prium.github.io/phoenix/v1.14.0/assets/img/products/2.png" },
-    { id: 3, name: "Apple MacBook Pro 13 inch-M1-8/256GB", color: "Vàng", size: "34mm", price: 65, quantity: 2, image: "https://adminapi.applegadgetsbd.com/storage/media/large/2324-41148.jpg" }
-  ]);
+  const { customerId } = useParams<{ customerId: string }>();
+  const [cartItems, setCartItems] = useState<ICartItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const cartService = new CartService();
 
-  const updateQuantity = (id: number, change: number) => {
+  useEffect(() => {
+    const fetchCart = async () => {
+      if (customerId) {
+        try {
+          const items = await cartService.getCart(parseInt(customerId, 10));
+          setCartItems(items);
+          if (items.length > 0) {
+            setSelectedItems([items[items.length - 1].productId]);
+          }
+        } catch (error) {
+          console.error("Error fetching cart:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchCart();
+  }, [customerId]);
+
+  const updateQuantity = (productId: number, change: number) => {
     setCartItems(currentItems =>
       currentItems.map(item =>
-        item.id === id ? { ...item, quantity: Math.max(1, item.quantity + change) } : item
+        item.productId === productId
+          ? { ...item, quantity: Math.max(1, item.quantity + change) }
+          : item
       )
     );
   };
 
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
-  
-  const handleDeleteItem = (id: number) => {
-    setCartItems(currentItems => currentItems.filter(item => item.id !== id));
-    setSelectedItems(current => current.filter(itemId => itemId !== id));
+  const handleDeleteItem = async (productId: number) => {
+    // Thêm xác nhận trước khi xóa
+    const confirmDelete = window.confirm("Bạn có muốn xóa sản phẩm này?");
+    if (confirmDelete) {
+      if (!customerId) return;
+
+      try {
+        await cartService.deleteCartItem(parseInt(customerId, 10), productId);
+        setCartItems(cartItems.filter(item => item.productId !== productId));
+      } catch (error) {
+        console.error("Lỗi khi xóa sản phẩm:", error);
+      }
+    }
   };
 
-  const handleSelectItem = (id: number) => {
-    setSelectedItems(current => 
-      current.includes(id) 
-        ? current.filter(itemId => itemId !== id) 
-        : [...current, id]
+  const handleSelectItem = (productId: number) => {
+    setSelectedItems(current =>
+      current.includes(productId)
+        ? current.filter(itemId => itemId !== productId)
+        : [...current, productId]
     );
   };
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      setSelectedItems(cartItems.map(item => item.id));
+      setSelectedItems(cartItems.map(item => item.productId));
     } else {
       setSelectedItems([]);
     }
   };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const discount = 59;
-  const tax = subtotal * 0.18;
-  const shippingCost = 30;
-  const total = subtotal - discount + tax + shippingCost;
-  // Tính toán lại tổng tiền dựa trên các item được chọn
-  const selectedSubtotal = cartItems
-    .filter(item => selectedItems.includes(item.id))
-    .reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const selectedTax = selectedSubtotal * 0.18;
-  const selectedTotal = selectedSubtotal - discount + selectedTax + shippingCost;
+  const subtotal = useMemo(() =>
+    cartItems.reduce((sum, item) => sum + item.lastPrice * item.quantity, 0),
+    [cartItems]
+  );
+  const shippingCost = 30000;
+  const total = subtotal + shippingCost;
 
+  const selectedSubtotal = useMemo(() =>
+    cartItems
+      .filter(item => selectedItems.includes(item.productId))
+      .reduce((sum, item) => sum + item.lastPrice * item.quantity, 0),
+    [cartItems, selectedItems]
+  );
+  const selectedTotal = selectedSubtotal + shippingCost;
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (cartItems.length === 0) {
+    return <div>Giỏ hàng của bạn đang trống. <Link to="/">Tiếp tục mua sắm</Link></div>;
+  }
+
+  const formatPrice = (price: number) => {
+    return `${price.toLocaleString()}đ`;
+  };
 
   return (
     <div className="cart-container">
       <div className="cart-items">
         <h2>Giỏ hàng</h2>
-        <table className="cart-table">
-  <thead>
-    <tr>
-      <th>
-        <input 
-          type="checkbox"
-          onChange={handleSelectAll}
-          checked={selectedItems.length === cartItems.length}
-        />
-      </th>
-      <th>SẢN PHẨM</th>
-      <th>MÀU SẮC</th>
-      <th>SIZE</th>
-      <th>GIÁ TIỀN</th>
-      <th>SỐ LƯỢNG</th>
-      <th>THÀNH TIỀN</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {cartItems.map(item => (
-      <tr key={item.id}>
-        <td>
-          <input 
+        <div className="cart-header">
+          <input
             type="checkbox"
-            checked={selectedItems.includes(item.id)}
-            onChange={() => handleSelectItem(item.id)}
+            onChange={handleSelectAll}
+            checked={selectedItems.length === cartItems.length && cartItems.length > 0}
           />
-        </td>
-        <td className="product-info">
-          <img src={item.image} alt={item.name} className="product-image" />
-          {item.name}
-        </td>
-        <td>{item.color}</td>
-        <td>{item.size}</td>
-        <td>{item.price}đ</td>
-        <td className="quantity-control">
-          <button onClick={() => updateQuantity(item.id, -1)}>-</button>
-          <span>{item.quantity}</span>
-          <button onClick={() => updateQuantity(item.id, 1)}>+</button>
-        </td>
-        <td>{item.price * item.quantity}đ</td>
-        <td className="action">
-          <FaTrash onClick={() => handleDeleteItem(item.id)} />
-        </td>
-      </tr>
-    ))}
-  </tbody>
-</table>
-
+          <span>Chọn tất cả ({cartItems.length} sản phẩm)</span>
+        </div>
+        {cartItems.map(item => (
+          <div key={item.productId} className="cart-item-row">
+            <div className="cart-item-checkbox">
+              <input
+                type="checkbox"
+                checked={selectedItems.includes(item.productId)}
+                onChange={() => handleSelectItem(item.productId)}
+              />
+            </div>
+            <div className="cart-item-image">
+              {item.photo && (
+                <img
+                  src={`http://localhost:5173/src/assets/product-images/${item.photo}`}
+                  alt={item.productName}
+                  className="product-image"
+                />
+              )}
+            </div>
+            <div className="cart-item-details">
+              <div className="cart-item-info">
+                <span className="shop-name">{item.shopName}</span>
+                <span className="product-name">{item.productName}</span>
+                <div className="cart-item-attributes">
+                  <span>{item.attributes || 'N/A'}</span>
+                </div>
+              </div>
+              <div className="cart-item-price">
+                <span className="original-price"><del>{formatPrice(item.originalPrice)}</del></span>
+                <span className="discounted-price">{formatPrice(item.lastPrice)}</span>
+              </div>
+              <div className="cart-item-quantity">
+                <button onClick={() => updateQuantity(item.productId, -1)}>-</button>
+                <span>{item.quantity}</span>
+                <button onClick={() => updateQuantity(item.productId, 1)}>+</button>
+              </div>
+              <div className="cart-item-total">
+                {formatPrice(item.lastPrice * item.quantity)}
+              </div>
+              <div className="cart-item-actions">
+                <FaTrash className="delete-icon" onClick={() => handleDeleteItem(item.productId)} />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="summary">
-      <OrderSummary 
-  orderItems={cartItems
-    .filter(item => selectedItems.includes(item.id))
-    .map((item, index) => ({
-      ...item, 
-      shopId: index % 2 === 0 ? 1 : 2,
-      shopName: index % 2 === 0 ? "Shop A" : "Shop B"
-    }))} 
-  subtotal={selectedSubtotal} 
-  discount={discount} 
-  tax={selectedTax} 
-  shippingCost={shippingCost} 
-  total={selectedTotal}  
-/>
-        <Link to="/checkout" className="checkout-button">Tiến hành thanh toán {'>'}</Link>
+        <OrderSummary
+          orderItems={cartItems
+            .filter(item => selectedItems.includes(item.productId))
+            .map((item, index) => ({
+              id: item.productId,
+              image: item.photo
+                ? `http://localhost:5173/src/assets/product-images/${item.photo}`
+                : 'http://localhost:5173/src/assets/product-images/default-image.jpg',
+              shopId: index % 2 === 0 ? 1 : 2,
+              shopName: item.shopName,
+              name: item.productName,
+              quantity: item.quantity,
+              originalPrice: item.originalPrice,
+              price: item.lastPrice, // Dùng lastPrice để tính tổng tiền
+            }))}
+          subtotal={selectedSubtotal}
+          shippingCost={shippingCost}
+          total={selectedTotal}
+        />
+        <Link to="/checkout" className="checkout-button">
+          Tiến hành thanh toán {'>'}
+        </Link>
       </div>
     </div>
   );
@@ -134,219 +188,285 @@ const CartPage: React.FC = () => {
 
 export default CartPage;
 
-
-
-// CSS Styles
+// CSS Styles (giữ nguyên)
 const styles = `
+.cart-container {
+  display: flex;
+  gap: 30px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  margin: 20px auto 50px auto;
+  max-width: 1500px;
+  width: 90%;
+  align-items: flex-start;
+}
+
+.cart-items {
+  flex: 1;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  align-self: flex-start;
+}
+
+.cart-items h2,
+.summary h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.cart-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.cart-header input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.cart-header span {
+  font-size: 16px;
+  color: #333;
+}
+
+.cart-item-row {
+  display: flex;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.cart-item-checkbox {
+  width: 30px;
+}
+
+.cart-item-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.cart-item-image {
+  width: 80px;
+  height: 80px;
+  margin-right: 15px;
+}
+
+.cart-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.cart-item-details {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cart-item-info {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cart-item-info .shop-name {
+  color: #ff424e;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.cart-item-info .product-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+.cart-item-attributes {
+  font-size: 14px;
+  color: #666;
+}
+
+.cart-item-price {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.cart-item-price .original-price {
+  font-size: 14px;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.cart-item-price .discounted-price {
+  font-size: 16px;
+  color: #000; /* Đổi thành màu đen */
+  font-weight: 500;
+}
+
+.cart-item-quantity {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.cart-item-quantity button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ddd;
+  background: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #666;
+  border-radius: 4px;
+}
+
+.cart-item-quantity button:hover {
+  background-color: #f0f0f0;
+}
+
+.cart-item-quantity span {
+  min-width: 30px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.cart-item-quantity .stock-status {
+  font-size: 12px;
+  color: #666;
+  margin-left: 10px;
+}
+
+.cart-item-total {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000; /* Đổi thành màu đen */
+  text-align: center;
+}
+
+.cart-item-actions {
+  flex: 0.5;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.cart-item-actions .wishlist-icon,
+.cart-item-actions .delete-icon {
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+}
+
+.cart-item-actions .wishlist-icon:hover {
+  color: #ff424e;
+}
+
+.cart-item-actions .delete-icon:hover {
+  color: #dc3545;
+}
+
+/* Phần summary giữ nguyên */
+.summary {
+  width: 380px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background-color: rgb(0, 138, 252);
+  color: white;
+  text-align: center;
+  border-radius: 5px;
+  margin-top: 20px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.checkout-button:hover {
+  background-color: #0b7dda;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
   .cart-container {
-    display: flex;
-    gap: 30px;
-    padding: 20px;
-    background-color: #f9f9f9;
-    margin: 20px auto 50px auto;
-    max-width: 1500px;
-    width: 90%;
-    align-items: flex-start;
+    flex-direction: column;
   }
 
   .cart-items {
-    flex: 1;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    align-self: flex-start;
-  }
-
-  .cart-items h2, .summary h2 {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-
-  .cart-table {
     width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
   }
 
-  .cart-table th {
-    background-color: #f5f5f5;
-    font-weight: bold;
-    white-space: nowrap;
-    padding: 12px 8px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
+  .cart-item-row {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .cart-table td {
-    padding: 12px 8px;
-    text-align: center;
-    vertical-align: middle;
-  }
-
-  /* Column widths */
-  .cart-table th:first-child,
-  .cart-table td:first-child {
-    width: 40px;
-  }
-
-  .cart-table th:nth-child(2),
-  .cart-table td:nth-child(2) {
-    width: 300px;
-  }
-
-  .cart-table th:nth-child(3),
-  .cart-table td:nth-child(3) {
+  .cart-item-image {
     width: 100px;
+    height: 100px;
   }
 
-  .cart-table th:nth-child(4),
-  .cart-table td:nth-child(4) {
-    width: 80px;
+  .cart-item-details {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
   }
 
-  .cart-table th:nth-child(5),
-  .cart-table td:nth-child(5) {
-    width: 100px;
+  .cart-item-price,
+  .cart-item-quantity,
+  .cart-item-total,
+  .cart-item-actions {
+    flex: none;
+    width: 100%;
+    text-align: left;
+    margin-top: 10px;
   }
 
-  .cart-table th:nth-child(6),
-  .cart-table td:nth-child(6) {
-    width: 120px;
+  .cart-item-price {
+    flex-direction: row;
+    gap: 10px;
   }
 
-  .cart-table th:nth-child(7),
-  .cart-table td:nth-child(7) {
-    width: 120px;
+  .cart-item-quantity {
+    justify-content: flex-start;
   }
 
-  .cart-table th:last-child,
-  .cart-table td:last-child {
-    width: 50px;
-  }
-
-  .cart-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-
-  .cart-table td.product-info {
+  .cart-item-total {
     text-align: left;
   }
 
-  .product-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    max-width: 300px;
-    word-wrap: break-word;
-    white-space: normal;
-  }
-
-  .product-image {
-    width: 40px;
-    height: 40px;
-    border-radius: 5px;
-    object-fit: cover;
-  }
-
-  .quantity-control {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-
-  .quantity-control button {
-    width: 32px;
-    height: 32px;
-    border: none;
-    background: none;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #666;
-  }
-
-  .quantity-control button:hover {
-    color: #333;
-  }
-
-  .quantity-control span {
-    min-width: 30px;
-    text-align: center;
-  }
-
-  .action {
-    width: 50px;
-    cursor: pointer;
-    color: rgb(164, 164, 164);
-    text-align: center;
-  }
-
-  .action:hover {
-    color: rgb(133, 132, 132);
-  }
-
-  .action svg {
-    cursor: pointer;
-    transition: color 0.2s;
-  }
-  
-  .action svg:hover {
-    color: #dc3545;
+  .cart-item-actions {
+    justify-content: flex-start;
   }
 
   .summary {
-    width: 380px;
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .summary-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-
-  .summary-item.discount {
-    color: red;
-  }
-
-  .summary-total {
-    font-weight: bold;
-    border-top: 2px solid #e0e0e0;
-    padding-top: 10px;
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .checkout-button {
-    display: block;
     width: 100%;
-    padding: 12px;
-    background-color: rgb(0, 138, 252);
-    color: white;
-    text-align: center;
-    border-radius: 5px;
-    margin-top: 20px;
-    text-decoration: none;
-    transition: background-color 0.2s;
   }
-
-  .checkout-button:hover {
-    background-color: #0b7dda;
-  }
-
-  input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-  }
+}
+}
 `;
 
 const styleSheet = document.createElement("style");
