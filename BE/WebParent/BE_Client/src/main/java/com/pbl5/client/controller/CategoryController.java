@@ -1,5 +1,6 @@
 package com.pbl5.client.controller;
 
+import com.pbl5.client.common.Constants;
 import com.pbl5.client.dto.category.RootCategoryDto;
 import com.pbl5.client.service.CategoryService;
 import com.pbl5.common.entity.Category;
@@ -14,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categories")
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping(Constants.CATEGORY_API_URI)
+@CrossOrigin(origins = Constants.FE_URL)
 public class CategoryController {
 
     @Autowired private CategoryService categoryService;

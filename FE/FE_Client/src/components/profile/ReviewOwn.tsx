@@ -24,7 +24,7 @@ const columns = [
 ];
 
 // ReviewList component
-const ReviewList: React.FC = () => {
+const ReviewOwn: React.FC = () => {
     return (
         <div className="bg-white p-3">
             <Table dataSource={reviewsData} columns={columns} rowKey="id" pagination={false} />
@@ -33,4 +33,4 @@ const ReviewList: React.FC = () => {
     );
 };
 
-export default ReviewList;
+export default ReviewOwn;

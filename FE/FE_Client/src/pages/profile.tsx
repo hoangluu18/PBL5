@@ -2,7 +2,7 @@ import { Card, Avatar, Tabs, Input, Button, Divider } from "antd";
 import { EditOutlined, UploadOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import OrderList from "../components/profile/OrderList";
-import ReviewList from "../components/product_details/ReviewList";
+import ReviewList from "../components/product_details/ProductReviews";
 import FollowedStores from "../components/product_details/FollowedStores";
 import { Link } from "react-router-dom";
 

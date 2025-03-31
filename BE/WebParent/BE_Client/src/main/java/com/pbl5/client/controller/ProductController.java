@@ -1,5 +1,6 @@
 package com.pbl5.client.controller;
 
+import com.pbl5.client.common.Constants;
 import com.pbl5.client.dto.ShopDto;
 import com.pbl5.client.dto.category.CategoryDto;
 import com.pbl5.client.dto.product.ProductDetailDto;
@@ -11,7 +12,6 @@ import com.pbl5.client.service.ProductService;
 import com.pbl5.common.entity.Category;
 import com.pbl5.common.entity.Shop;
 import com.pbl5.common.entity.product.Product;
-import com.pbl5.common.entity.product.ProductImage;
 import com.pbl5.common.entity.product.ProductVariant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +24,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/products")
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping(Constants.PRODUCT_API_URI)
+@CrossOrigin(origins = Constants.FE_URL)
 public class ProductController {
 
     @Autowired private ProductService productService;
@@ -58,7 +58,7 @@ public class ProductController {
         return ResponseEntity.ok(productDtos);
     }
 
-    @GetMapping("/p/{alias}")
+    @GetMapping("/{alias}")
     public ResponseEntity<?> viewProduct(@PathVariable("alias") String alias) {
         try {
             Product product = productService.getByAlias(alias);
@@ -82,7 +82,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/p/{id}/breadcrumbs")
+    @GetMapping("/{id}/breadcrumbs")
     public ResponseEntity<?> getBreadCrumbs(@PathVariable("id") Integer id) {
         try {
             Product product = productService.get(id);
@@ -103,7 +103,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/p/{id}/details")
+    @GetMapping("/{id}/details")
     public ResponseEntity<?> getDetails(@PathVariable("id") Integer id) {
         try {
             Product product = productService.get(id);

@@ -1,0 +1,78 @@
+/* Add this to your style.css file */
+
+.homepage-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.hero-section {
+    margin-bottom: 32px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.section-container {
+    margin: 40px 0;
+}
+
+.section-divider {
+    margin: 32px 0;
+    border-top: 1px solid #f0f0f0;
+}
+
+.section-icon {
+    font-size: 20px;
+    margin-right: 8px;
+}
+
+.blue-icon {
+    color: #1890ff;
+}
+
+.orange-icon {
+    color: #fa8c16;
+}
+
+.green-icon {
+    color: #52c41a;
+}
+
+.products-grid {
+    margin-top: 16px;
+}
+
+.product-col {
+    transition: transform 0.3s ease;
+}
+
+.product-col:hover {
+    transform: translateY(-5px);
+}
+
+.load-more-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+    padding: 16px 0;
+}
+
+.load-more-button {
+    min-width: 160px;
+    height: 40px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* Adjust ProductCard styles */
+:global(.ant-card) {
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s;
+    height: 100%;
+}
+
+:global(.ant-card:hover) {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
