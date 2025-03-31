@@ -9,4 +9,7 @@ public class Constants {
     public static final String PRODUCT_API_URI = "/api/p";
     public static final String CATEGORY_API_URI = "/api/c";
     public static final String REVIEW_API_URI = "/api/r";
+
+    public static final Integer FOLLOWING_SHOPS_PER_PAGE = 12;
+
 }

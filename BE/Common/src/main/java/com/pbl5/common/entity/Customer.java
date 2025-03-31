@@ -8,8 +8,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "customers")
-@Getter
-@Setter
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Customer extends IdBaseEntity{
