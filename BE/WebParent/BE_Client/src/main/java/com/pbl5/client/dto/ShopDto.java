@@ -14,7 +14,7 @@ public class ShopDto {
     private String name;
     private Date createdAt;
     private String photo;
-    private Integer rating;
+    private Float rating;
     private Integer productAmount;
     private Integer peopleTracking;
 
