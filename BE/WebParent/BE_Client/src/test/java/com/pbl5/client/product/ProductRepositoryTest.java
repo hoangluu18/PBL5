@@ -24,4 +24,13 @@ public class ProductRepositoryTest {
         Product product = repo.findById(1).get();
         System.out.println(product.getShop().getName());
     }
+
+    @Test
+    public void testGetByAlias() {
+        String alias = "nike-t-shirt";
+        Product product = repo.findByAlias(alias);
+        System.out.println(product.getName() + " -> detail size " + product.getProductDetails().size()
+                + " -> shop " + product.getShop().getName() + " -> images " + product.getImages().size()
+        + " -> variants " + product.getVariants().size() + " -> category " + product.getCategory().getName());
+    }
 }

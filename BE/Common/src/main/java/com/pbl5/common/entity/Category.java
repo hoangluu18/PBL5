@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -24,7 +25,7 @@ public class Category extends IdBaseEntity{
 
     private boolean enabled;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "parent_id")
     private Category parent;
 
@@ -32,6 +33,42 @@ public class Category extends IdBaseEntity{
     @OrderBy("name asc")
     private Set<Category> children = new HashSet<>();
 
-    @Column(name = "all_parent_ids", length = 256, nullable = true)
+    @Column(name = "all_parent_ids", length = 256)
     private String allParentIds;
+
+    public Category() {
+    }
+
+    public Category(int id) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj){
+            return true;
+        }
+
+        if (!(obj instanceof Category that)) {
+            return false;
+        }
+
+        return Objects.equals(that.getId(), this.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.getId());
+    }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                "name='" + name + '\'' +
+                ", alias='" + alias + '\'' +
+                ", image='" + image + '\'' +
+                ", enabled=" + enabled +
+                '}';
+    }
 }

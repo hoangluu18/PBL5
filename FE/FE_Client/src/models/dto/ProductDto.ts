@@ -1,4 +1,4 @@
-interface IProduct {
+export default interface IProductDto {
     id: number;
     name: string;
     alias: string;
@@ -8,5 +8,3 @@ interface IProduct {
     reviewCount: number;
     averageRating: number;
 }
-
-export default IProduct;

@@ -1,4 +1,4 @@
-package com.pbl5.client.dto;
+package com.pbl5.client.dto.product;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,6 +1,6 @@
 package com.pbl5.client.controller;
 
-import com.pbl5.client.dto.RootCategoryDto;
+import com.pbl5.client.dto.category.RootCategoryDto;
 import com.pbl5.client.service.CategoryService;
 import com.pbl5.common.entity.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,4 +32,6 @@ public class CategoryController {
 
         return ResponseEntity.ok(rootCategoryDtos);
     }
+
+
 }

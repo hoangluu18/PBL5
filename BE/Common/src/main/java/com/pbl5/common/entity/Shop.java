@@ -28,6 +28,9 @@ public class Shop extends IdBaseEntity{
     private String address;
 
     private String photo;
+    private Integer rating;
+    private Integer productAmount;
+    private Integer peopleTracking;
 
     @OneToOne
     @JoinColumn(name = "user_id")

@@ -1,14 +1,27 @@
 package com.pbl5.client.controller;
 
-import com.pbl5.client.dto.ProductDto;
+import com.pbl5.client.dto.ShopDto;
+import com.pbl5.client.dto.category.CategoryDto;
+import com.pbl5.client.dto.product.ProductDetailDto;
+import com.pbl5.client.dto.product.ProductDto;
+import com.pbl5.client.dto.product.ProductFullInfoDto;
+import com.pbl5.client.dto.product.ProductVariantDto;
+import com.pbl5.client.service.CategoryService;
 import com.pbl5.client.service.ProductService;
+import com.pbl5.common.entity.Category;
+import com.pbl5.common.entity.Shop;
 import com.pbl5.common.entity.product.Product;
+import com.pbl5.common.entity.product.ProductImage;
+import com.pbl5.common.entity.product.ProductVariant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
@@ -17,13 +30,19 @@ public class ProductController {
 
     @Autowired private ProductService productService;
 
+    @Autowired private CategoryService categoryService;
+
     @GetMapping
     public ResponseEntity<List<ProductDto>> listProduct(
             @RequestParam(name = "pageNum", defaultValue = "1") int pageNum) {
 
         List<ProductDto> productDtos = new ArrayList<>();
+        if(pageNum < 1) {
+            pageNum = 1;
+        }
 
-        productService.listAll(0).getContent().forEach(p -> {
+
+        productService.listAll(pageNum - 1).getContent().forEach(p -> {
             ProductDto dto = new ProductDto();
             dto.setId(p.getId());
             dto.setName(p.getName());
@@ -38,4 +57,117 @@ public class ProductController {
 
         return ResponseEntity.ok(productDtos);
     }
+
+    @GetMapping("/p/{alias}")
+    public ResponseEntity<?> viewProduct(@PathVariable("alias") String alias) {
+        try {
+            Product product = productService.getByAlias(alias);
+
+            ProductFullInfoDto productFullInfoDto = new ProductFullInfoDto();
+
+            productFullInfoDto.cloneProduct(product);
+
+            setBreadCrumbs(product, productFullInfoDto);
+
+            setImages(product, productFullInfoDto);
+
+            setVariants(product, productFullInfoDto);
+
+            setShop(product, productFullInfoDto);
+
+
+            return ResponseEntity.ok(productFullInfoDto);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/p/{id}/breadcrumbs")
+    public ResponseEntity<?> getBreadCrumbs(@PathVariable("id") Integer id) {
+        try {
+            Product product = productService.get(id);
+            List<CategoryDto> categoryDtos = new ArrayList<>();
+
+            Category category = product.getCategory();
+            List<Category> parents = categoryService.getParents(category);
+
+            if(parents.size() > 0){
+                parents.forEach(p -> {
+                    categoryDtos.add(new CategoryDto(p.getName(), p.getAlias()));
+                });
+            }
+
+            return ResponseEntity.ok(categoryDtos);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/p/{id}/details")
+    public ResponseEntity<?> getDetails(@PathVariable("id") Integer id) {
+        try {
+            Product product = productService.get(id);
+
+            List<ProductDetailDto> detailDtosDtos = new ArrayList<>();
+            product.getProductDetails().forEach(d -> {
+                ProductDetailDto dto = new ProductDetailDto();
+                dto.setName(d.getName());
+                dto.setValue(d.getValue());
+                detailDtosDtos.add(dto);
+            });
+
+            return ResponseEntity.ok(detailDtosDtos);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    private static void setImages(Product product, ProductFullInfoDto productFullInfoDto) {
+        product.getImages().forEach(img -> {
+            productFullInfoDto.addImage(img.getPhoto());
+        });
+    }
+
+    private static void setVariants(Product product, ProductFullInfoDto productFullInfoDto) {
+        Set<ProductVariant> variants = product.getVariants();
+        Map<String, List<ProductVariantDto>> map = variants.stream()
+                .map(p -> {
+                    ProductVariantDto dto = new ProductVariantDto();
+                    dto.setKey(p.getKey());
+                    dto.setValue(p.getValue());
+                    dto.setQuantity(p.getQuantity());
+                    dto.setPhoto(p.getPhoto());
+                    dto.setParentId(p.getParentId());
+                    return dto;
+                })
+                .collect(Collectors.groupingBy(ProductVariantDto::getKey));
+
+        productFullInfoDto.setVariantMap(map);
+    }
+
+    private static void setShop(Product product, ProductFullInfoDto productFullInfoDto) {
+        Shop shop = product.getShop();
+        ShopDto shopDto = new ShopDto();
+        shopDto.cloneShop(shop);
+        productFullInfoDto.setShopDto(shopDto);
+    }
+
+    private void setBreadCrumbs(Product product, ProductFullInfoDto productFullInfoDto) {
+        Category category = product.getCategory();
+        List<Category> parents = new ArrayList<>();
+
+        parents = categoryService.getParents(category);
+
+        List<CategoryDto> childCategoryDtos = new ArrayList<>();
+
+            if(parents.size() > 0){
+            parents.forEach(p -> {
+                childCategoryDtos.add(new CategoryDto(p.getName(), p.getAlias()));
+            });
+        }
+
+        productFullInfoDto.setBreadCrumbs(childCategoryDtos);
+    }
+
+
 }
