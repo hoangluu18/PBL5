@@ -12,4 +12,8 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     @Query("SELECT c FROM Category c WHERE c.enabled = true AND c.parent is NULL ORDER BY c.name")
     public List<Category> findRootCategories();
+
+    public Category findByAlias(String alias);
+
+
 }

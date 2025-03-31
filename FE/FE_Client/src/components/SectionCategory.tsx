@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Avatar, Card, Col, Row, Typography, Spin } from "antd";
-import ICategory from "../models/Category";
+import ICategory from "../models/dto/Category";
 import CategoryService from "../services/category.service";
 
 const { Text } = Typography;
