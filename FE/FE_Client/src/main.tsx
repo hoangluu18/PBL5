@@ -63,7 +63,7 @@ const router = createBrowserRouter([
         element: <FollowedShops />
       },
       {
-        path: "/product_detail/1",
+        path: "/p/:alias",
         element: <ProductDetailPage />
       },
       {
