@@ -37,4 +37,9 @@ public class ProductServiceImpl implements ProductService {
         }
         return product;
     }
+
+    @Override
+    public Page<Product> listAllByShopId(int page, int shopId) {
+        return productRepository.findAllByShopId(shopId, PageRequest.of(page, Constants.PRODUCTS_PER_PAGE));
+    }
 }

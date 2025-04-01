@@ -14,4 +14,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     public Page<Product> findAll(Pageable pageable);
 
     public Product findByAlias(String alias);
+
+    public Page<Product> findAllByShopId(int shopId, Pageable pageable);
 }
