@@ -66,3 +66,11 @@ a:hover {
     right: 0;
     z-index: 100;
 }
+
+.border-hover:hover {
+    border: 1px solid var(--blue-color) !important;
+}
+
+.border-focus:focus {
+    border: 1px solid red !important;
+}

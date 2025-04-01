@@ -1,23 +1,28 @@
-import { Breadcrumb, Button, Col, Rate, Row, Space, Tabs, TabsProps, Typography } from "antd";
+import { Breadcrumb, Button, Col, Rate, Row, Tabs, TabsProps, Typography, Divider, Tag, Badge, Tooltip, Image, Spin } from "antd";
 import CurrencyFormat from "../utils/CurrencyFormat";
 import { useEffect, useState } from "react";
-import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { MinusOutlined, PlusOutlined, ShoppingCartOutlined, ThunderboltOutlined, HeartOutlined, ShareAltOutlined } from "@ant-design/icons";
 import ProductDescriptionTab from "../components/product_details/ProductDescriptionTab";
 import ProductDetailTab from "../components/product_details/ProductDetailTab";
-import ReviewList from "../components/product_details/ReviewList";
+import ReviewList from "../components/product_details/ProductReviews";
 import ShopInfo from "../components/product_details/ShopInfo";
 import { useParams } from "react-router";
 import ProductService from "../services/product.service";
 import { IProductFullInfoDto } from "../models/dto/ProductFullInfoDto";
 import { Link } from "react-router-dom";
 import "../css/style.css";
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 const ProductDetailPage: React.FC = () => {
     const [product, setProduct] = useState<IProductFullInfoDto>({} as IProductFullInfoDto);
     const [quantity, setQuantity] = useState<number>(1);
     const [selectedImage, setSelectedImage] = useState<string>("");
-    const [amount, setAmount] = useState<number>(0);
+    const [amountAvailable, setAmountAvailable] = useState<number>(0);
+    const [selectedExtraImage, setSelectedExtraImage] = useState<string>("");
+    const [selectedVariantImg, setSelectedVariantImg] = useState<string>("");
+    const [selectedVariant, setSelectedVariant] = useState<string>("");
+    const [size, setSize] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(true);
 
     const { alias } = useParams();
 
@@ -26,202 +31,309 @@ const ProductDetailPage: React.FC = () => {
     }, []);
 
     const fetchProduct = async () => {
+        setLoading(true);
+
         try {
             const productService = new ProductService();
             if (alias) {
                 const data = await productService.getProductByAlias(alias);
                 setProduct(data);
-                setSelectedImage(`http://localhost:5173/src/assets/product-images/${data.mainImage}`); // Gán ảnh chính ban đầu
+                setSelectedImage(`http://localhost:5173/src/assets/product-images/${data.mainImage}`);
             } else {
                 console.error("Alias is undefined");
             }
         } catch (error) {
             console.error("Failed to fetch products:", error);
+        } finally {
+            setLoading(false);
         }
     };
+
+    if (loading) {
+        return <div className="text-center mt-4">
+            <Spin size="large" />
+        </div>;
+    }
 
     const discountedPrice = product.price - (product.price * product.discountPercent) / 100;
 
     const items: TabsProps["items"] = [
         {
             key: "description",
-            label: "Description",
+            label: "Mô tả sản phẩm",
             children: product.fullDescription ? (
                 <ProductDescriptionTab description={product.fullDescription} />
             ) : (
-                <Text type="secondary">No description available</Text>
+                <Text type="secondary">Chưa có mô tả chi tiết</Text>
             ),
         },
         {
             key: "detail",
-            label: "Detail",
+            label: "Thông số kỹ thuật",
             children: product.id ? (
                 <ProductDetailTab id={product.id} />
             ) : (
-                <Text type="secondary">No detail available</Text>
+                <Text type="secondary">Chưa có thông số kỹ thuật</Text>
             ),
         },
         {
             key: "ratingAndReview",
-            label: "Ratings & Reviews",
-            children: <ReviewList />,
+            label: "Đánh giá & Nhận xét",
+            children: product.id ? (
+                <ReviewList id={product.id} />
+            ) : (
+                <Text type="secondary">Chưa có đánh giá</Text>
+            ),
         },
     ];
 
-    const onChange = (key: string) => {
-        // console.log(key);
-    };
-
     return (
-        <div className="container mt-3">
+        <div className="container my-4">
             <Breadcrumb
+                className="mb-4"
                 items={[
-                    { key: "home", title: <Link to="/">Home</Link> },
+                    { key: "home", title: <Link to="/">Trang chủ</Link> },
                     ...(product.breadCrumbs?.map((breadCrumb) => ({
                         key: breadCrumb.alias,
                         title: <Link to={`/c/${breadCrumb.alias}`}>{breadCrumb.name}</Link>,
                     })) || []),
                 ]}
             />
-            <Row className="mt-3 p-3" style={{ backgroundColor: "white" }}>
-                {/* Hình ảnh nhỏ */}
-                <Col span={2}>
-                    <div className="d-flex flex-column g-2">
-                        {product.images &&
-                            product.images.map((image, index) => (
-                                <div key={index} className="m-2 ms-0">
+
+            <Row gutter={[24, 24]} className="bg-white p-4 rounded shadow-sm">
+                {/* Cột trái: Hình ảnh sản phẩm */}
+                <Col xs={24} md={8}>
+                    <div>
+                        {/* Ảnh chính */}
+                        <div className="mb-3">
+                            <Image
+                                src={selectedImage}
+                                alt={product.name}
+                                className="rounded"
+                                width={'100%'}
+                                style={{ width: '100%', objectFit: 'contain', maxHeight: '600px' }}
+                            />
+                        </div>
+
+                        {/* Hình ảnh phụ */}
+                        <div className="thumbnail-gallery d-flex flex-wrap justify-content-start gap-2">
+                            {product.images && product.images.map((image, index) => (
+                                <div
+                                    key={index}
+                                    className={`thumbnail-container ${selectedExtraImage.includes(image) ? 'border border-2 border-primary' : 'border'}`}
+                                    style={{ width: '60px', height: '60px', cursor: 'pointer', borderRadius: '4px', overflow: 'hidden' }}
+                                    onMouseEnter={() => {
+                                        setSelectedImage(`http://localhost:5173/src/assets/product-extra-images/${image}`);
+                                        setSelectedExtraImage(`http://localhost:5173/src/assets/product-extra-images/${image}`);
+                                    }}
+                                >
                                     <img
                                         src={`http://localhost:5173/src/assets/product-extra-images/${image}`}
-                                        className={`border p-1 rounded ${selectedImage.includes(image) ? "border-danger" : "border-secondary"}`}
-                                        style={{ height: "80px", cursor: "pointer" }}
-                                        onMouseEnter={() => setSelectedImage(`http://localhost:5173/src/assets/product-extra-images/${image}`)} // Cập nhật ảnh chính khi hover
+                                        alt={`Product thumbnail ${index + 1}`}
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                     />
                                 </div>
                             ))}
+                        </div>
                     </div>
                 </Col>
 
-                {/* Ảnh chính */}
-                <Col span={8}>
-                    <div className="m-2">
-                        <img
-                            src={`${selectedImage}`}
-                            className="border border-secondary p-2 rounded w-100"
-                        />
-                    </div>
-                </Col>
+                {/* Cột phải: Thông tin sản phẩm */}
+                <Col xs={24} md={16}>
+                    {/* Tên sản phẩm và đánh giá */}
+                    <div className="product-header">
+                        <Title level={2} style={{ marginBottom: '8px' }}>{product.name}</Title>
 
-                {/* Thông tin sản phẩm */}
-                <Col span={13} className="mt-2 ms-3 d-flex flex-column justify-content-between">
-                    <div>
-                        <Rate
-                            value={product.averageRating}
-                            disabled
-                            allowHalf
-                            className="customize-star-spacing"
-                            style={{ fontSize: "17px", color: "#fadb14" }}
-                        />
-                        &nbsp;&nbsp;&nbsp;
-                        <span className="text-primary fs-6">{product.reviewCount} People rated and reviewed</span>
+                        <div className="product-ratings d-flex align-items-center mb-3">
+                            <Rate
+                                value={product.averageRating}
+                                disabled
+                                allowHalf
+                                style={{ fontSize: '16px' }}
+                            />
+                            <Text className="ms-2 text-primary">
+                                {product.reviewCount} đánh giá
+                            </Text>
+
+                            <Divider type="vertical" style={{ margin: '0 16px' }} />
+
+                            <div className="product-actions">
+                                <Tooltip title="Chia sẻ">
+                                    <Button type="text" icon={<ShareAltOutlined />} className="p-1" />
+                                </Tooltip>
+                                <Tooltip title="Yêu thích">
+                                    <Button type="text" icon={<HeartOutlined />} className="p-1" />
+                                </Tooltip>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h2>{product.name}</h2>
-                    </div>
-                    <div>
-                        <div className="text-danger fw-bold" style={{ fontSize: "36px" }}>
-                            <CurrencyFormat price={discountedPrice} />
-                            &nbsp;&nbsp;
+
+                    {/* Giá và ưu đãi */}
+                    <div className="price-container p-3 my-3 bg-light rounded">
+                        <div className="d-flex align-items-baseline">
+                            <Text className="text-danger fw-bold" style={{ fontSize: '28px' }}>
+                                <CurrencyFormat price={discountedPrice} />
+                            </Text>
+
                             {product.discountPercent > 0 && (
                                 <>
-                                    <del className="ms-2 text-muted fw-light" style={{ fontSize: "30px" }}>
+                                    <Text className="ms-3 text-muted" delete style={{ fontSize: '18px' }}>
                                         <CurrencyFormat price={product.price} />
-                                    </del>
-                                    &nbsp;&nbsp;
-                                    <span className="text-warning fs-4">{product.discountPercent}% off</span>
+                                    </Text>
+                                    <Tag color="orange" className="ms-2">-{product.discountPercent}%</Tag>
                                 </>
                             )}
                         </div>
                     </div>
-                    {product.inStock ? (
-                        <div className="text-success fs-5">In Stock</div>
-                    ) : (
-                        <div className="text-danger fs-5">Out of Stock</div>
-                    )}
-                    <div>&nbsp;</div>
-                    <div>
-                        {product.variantMap &&
-                            Object.entries(product.variantMap).map(([key, value]) => (
-                                <div key={key}>
-                                    <p className="fs-5 pb-0 mb-0">{key}:</p>
-                                    <div className="d-flex">
-                                        {value.map((val, index) => (
-                                            <div key={index}
-                                                style={{ cursor: "pointer" }}
-                                                className={`m-1 d-flex align-items-center border
-                                                ${selectedImage.includes(val.photo) ? "border-danger" : "border-secondary"} px-2 py-1`}>
-                                                {val.photo && (
-                                                    <div>
-                                                        <img
-                                                            src={`http://localhost:5173/src/assets/product-variants-images/${val.photo}`}
-                                                            height={30}
-                                                            onMouseEnter={() => {
-                                                                // Cập nhật ảnh chính khi hover
-                                                                setSelectedImage(`http://localhost:5173/src/assets/product-variants-images/${val.photo}`)
 
-                                                                // Cập nhật số lượng khi hover
-                                                                setAmount(val.quantity)
-                                                            }}
+                    {/* Trạng thái sản phẩm */}
+                    <div className="mb-3">
+                        {product.inStock ? (
+                            <Badge status="success" text={<Text className="text-success fs-6">Còn hàng</Text>} />
+                        ) : (
+                            <Badge status="error" text={<Text className="text-danger fs-6">Hết hàng</Text>} />
+                        )}
+                    </div>
 
-                                                        />
-                                                        &nbsp;&nbsp;
-                                                    </div>
-                                                )}
-                                                <div>{val.value}</div>
-                                            </div>
-                                        ))}
+                    <Divider style={{ margin: '16px 0' }} />
+
+                    {/* Phần variant */}
+                    {product.variantMap && Object.entries(product.variantMap).map(([key, value]) => (
+                        <div key={key} className="variant-section mb-3">
+                            <Text strong className="d-block mb-2">{key}:</Text>
+                            <div className="d-flex flex-wrap gap-2">
+                                {value.map((val, index) => (
+                                    <div
+                                        key={index}
+                                        className={`variant-item d-flex align-items-center border-hover ${(key !== "Size" && selectedVariantImg === `http://localhost:5173/src/assets/product-variants-images/${val.photo}`) ||
+                                            (key === "Size" && size === val.value)
+                                            ? 'border-primary selected-variant'
+                                            : 'border-secondary'
+                                            }`}
+                                        style={{
+                                            cursor: 'pointer',
+                                            padding: '8px 12px',
+                                            borderRadius: '4px',
+                                            border: '1px solid',
+                                            transition: 'all 0.2s'
+                                        }}
+                                        onMouseEnter={() => {
+                                            if (key !== "Size")
+                                                setSelectedImage(`http://localhost:5173/src/assets/product-variants-images/${val.photo}`);
+                                        }}
+                                        onMouseLeave={() => {
+                                            if (key !== "Size")
+                                                setSelectedImage(
+                                                    selectedVariantImg || selectedExtraImage || `http://localhost:5173/src/assets/product-images/${product.mainImage}`
+                                                );
+                                        }}
+                                        onClick={() => {
+                                            if (key !== "Size") {
+                                                const variantImage = `http://localhost:5173/src/assets/product-variants-images/${val.photo}`;
+                                                setSelectedVariantImg(variantImage);
+                                                setSelectedImage(variantImage);
+                                                setAmountAvailable(val.quantity);
+                                                setSelectedVariant(val.value);
+                                            } else if (key === "Size") {
+                                                setSize(val.value);
+                                            }
+                                        }}
+                                    >
+                                        {val.photo && (
+                                            <img
+                                                src={`http://localhost:5173/src/assets/product-variants-images/${val.photo}`}
+                                                alt={`${key} - ${val.value}`}
+                                                style={{ height: '24px', marginRight: '8px' }}
+                                            />
+                                        )}
+                                        <Text>{val.value}</Text>
                                     </div>
-                                </div>
-                            ))}
-                    </div>
-                    <div className="mt-2">
-                        <div style={{ display: "flex", alignItems: "center", gap: "40px" }}>
-                            {/* Chọn Số Lượng */}
-                            <div>
-                                <Text strong>Quantity :</Text>
-                                &nbsp;&nbsp;
-                                <Space>
-                                    <Button icon={<MinusOutlined />} onClick={() => setQuantity((q) => Math.max(1, q - 1))} />
-                                    <Text>{quantity}</Text>
-                                    <Button icon={<PlusOutlined />} onClick={() => setQuantity((q) => q + 1)} />
-                                </Space>
+                                ))}
                             </div>
-                            {
-                                amount > 0 && <div>
-                                    <Text strong>Available :</Text>
-                                    &nbsp;&nbsp;
-                                    <Text>{amount} sản phẩm</Text>
-                                </div>
-                            }
                         </div>
+                    ))}
+
+                    <Divider style={{ margin: '16px 0' }} />
+
+                    {/* Số lượng */}
+                    <div className="quantity-section d-flex align-items-center mb-4">
+                        <div className="me-4">
+                            <Text strong>Số lượng:</Text>
+                            <div className="d-flex align-items-center mt-1">
+                                <Button
+                                    icon={<MinusOutlined />}
+                                    disabled={!selectedVariant || !size || quantity <= 1}
+                                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                                    className="rounded"
+                                />
+                                <div className="mx-2 px-3 py-1 border text-center" style={{ minWidth: '50px' }}>
+                                    {quantity}
+                                </div>
+                                <Button
+                                    icon={<PlusOutlined />}
+                                    disabled={!selectedVariant || !size || (amountAvailable > 0 && quantity >= amountAvailable)}
+                                    onClick={() => setQuantity((q) => q + 1)}
+                                    className="rounded"
+                                />
+                                &nbsp;&nbsp;&nbsp;
+                                {amountAvailable > 0 && (
+                                    <div>
+                                        <Text type="secondary">Còn {amountAvailable} sản phẩm</Text>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+
                     </div>
-                    <div className="mt-3">
-                        <Button type="primary" className="p-3" size="large">
+
+                    {/* Nút mua hàng */}
+                    <div className="buy-buttons d-flex flex-wrap gap-3 mt-4">
+                        <Button
+                            type="primary"
+                            size="large"
+                            icon={<ShoppingCartOutlined />}
+                            className="px-4 d-flex align-items-center"
+                            disabled={!selectedVariant || !size}
+                        >
                             Thêm vào giỏ hàng
                         </Button>
-                        &nbsp;&nbsp;&nbsp;
-                        <Button type="primary" danger className="p-3" size="large">
+
+                        <Button
+                            type="primary"
+                            danger
+                            size="large"
+                            icon={<ThunderboltOutlined />}
+                            className="px-4 d-flex align-items-center"
+                            disabled={!selectedVariant || !size}
+                        >
                             Mua ngay
                         </Button>
                     </div>
                 </Col>
             </Row>
 
-            <Row className="mt-3 ">
-                <ShopInfo {...product.shopDto} />
+            {/* Thông tin cửa hàng */}
+            <Row className="mt-4">
+                <Col span={24}>
+                    <div className="bg-white p-4 rounded shadow-sm">
+                        <ShopInfo {...product.shopDto} />
+                    </div>
+                </Col>
             </Row>
 
-            <Row className="mt-3">
-                <Tabs defaultActiveKey="1" items={items} onChange={onChange} className="w-100" />
+            {/* Tabs thông tin chi tiết */}
+            <Row className="mt-4">
+                <Col span={24}>
+                    <div className="bg-white p-4 rounded shadow-sm">
+                        <Tabs
+                            defaultActiveKey="description"
+                            items={items}
+                            className="w-100"
+                            size="large"
+                        />
+                    </div>
+                </Col>
             </Row>
         </div>
     );

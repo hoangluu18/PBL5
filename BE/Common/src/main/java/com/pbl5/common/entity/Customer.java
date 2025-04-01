@@ -8,6 +8,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "customers")
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -47,6 +48,10 @@ public class Customer extends IdBaseEntity{
 
     @Column(name = "reset_password_token", length = 30)
     private String resetPasswordToken;
+
+    public String getFullName() {
+        return lastName + " " + firstName;
+    }
 
     public enum AuthenticationType {
         DATABASE, FACEBOOK, GOOGLE

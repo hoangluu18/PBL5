@@ -5,7 +5,7 @@ import IProductDetailDto from "../models/dto/ProductDetailDto";
 import { ICategoryDto } from "../models/dto/CategoryDto";
 
 
-const API_URL = 'http://localhost:8081/api/products';
+const API_URL = 'http://localhost:8081/api/p';
 
 class ProductService {
     async getProducts(pageNum: number): Promise<IProduct[]> {
@@ -28,7 +28,7 @@ class ProductService {
         let productInfo: IProductFullInfoDto | PromiseLike<IProductFullInfoDto> = {} as IProductFullInfoDto;
 
         try {
-            const response = await axios.get<IProductFullInfoDto>(`${API_URL}/p/${alias}`);
+            const response = await axios.get<IProductFullInfoDto>(`${API_URL}/${alias}`);
             productInfo = response.data;
         } catch (error) {
             console.error(error);
@@ -40,7 +40,7 @@ class ProductService {
     async getProductDetail(id: number): Promise<IProductDetailDto> {
         let productDetail: IProductDetailDto | PromiseLike<IProductDetailDto> = {} as IProductDetailDto;
         try {
-            const response = await axios.get<IProductDetailDto>(`${API_URL}/p/${id}/details`);
+            const response = await axios.get<IProductDetailDto>(`${API_URL}/${id}/details`);
             productDetail = response.data;
         } catch (error) {
             console.error(error);
@@ -51,7 +51,7 @@ class ProductService {
     async getBreadcrumb(id: number): Promise<ICategoryDto[]> {
         let breadcrumb: ICategoryDto[] | PromiseLike<ICategoryDto[]> = [];
         try {
-            const response = await axios.get<ICategoryDto[]>(`${API_URL}/p/${id}/breadcrumbs`);
+            const response = await axios.get<ICategoryDto[]>(`${API_URL}/${id}/breadcrumbs`);
             breadcrumb = response.data;
         } catch (error) {
             console.error(error);

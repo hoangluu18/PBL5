@@ -41,7 +41,7 @@ const ProductDetailTab: React.FC<ProductDetailTabProps> = ({ id }) => {
     ];
 
     return (
-        <div className="w-100">
+        <div className="w-100 shadow-sm">
             <Table
                 columns={columns}
                 dataSource={details.map((item, index) => ({
