@@ -2,11 +2,8 @@ package com.pbl5.client.service.impl;
 
 import com.pbl5.client.dto.CartProductDto;
 import com.pbl5.client.repository.CartItemRepository;
-import com.pbl5.client.repository.ProductVariantRepository;
 import com.pbl5.client.service.CartService;
 import com.pbl5.common.entity.CartItems;
-import com.pbl5.common.entity.ProductVariant;
-import com.pbl5.common.entity.product.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
