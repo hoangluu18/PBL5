@@ -1,4 +1,4 @@
-export interface IShopDto {
+interface IShopDto {
     id: number;
     createdAt: string;
     name: string;
@@ -7,3 +7,5 @@ export interface IShopDto {
     productAmount: number;
     rating: number;
 }
+
+export default IShopDto;
