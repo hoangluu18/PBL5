@@ -2,7 +2,6 @@ package com.pbl5.common.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Customer extends IdBaseEntity{
-
     @Column(name = "first_name", nullable = false, length = 45)
     private String firstName;
 
@@ -61,3 +59,4 @@ public class Customer extends IdBaseEntity{
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShopTracking> shopTrackingList;
 }
+

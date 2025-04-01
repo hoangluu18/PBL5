@@ -71,7 +71,7 @@ const router = createBrowserRouter([
         element: <ProfilePage />
       },
       {
-        path: "/cart",
+        path: "/cart/:customerId",
         element: <CartPage />
       },
       {
