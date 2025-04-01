@@ -40,7 +40,7 @@ const router = createBrowserRouter([
         element: <Homepage />
       },
       {
-        path: "/products/filter",
+        path: "/c/alias",
         element: <ProductFilterPage />
       },
       {
@@ -63,7 +63,7 @@ const router = createBrowserRouter([
         element: <FollowedShops />
       },
       {
-        path: "/product_detail/1",
+        path: "/p/:alias",
         element: <ProductDetailPage />
       },
       {

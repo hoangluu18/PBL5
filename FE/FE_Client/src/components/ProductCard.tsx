@@ -1,7 +1,7 @@
 import { Rate, Badge } from "antd";
 import { Link } from "react-router-dom";
 import CurrencyFormat from "../utils/CurrencyFormat";
-import IProduct from "../models/Product";
+import IProduct from "../models/dto/ProductDto";
 
 
 const ProductCard = (product: IProduct) => {

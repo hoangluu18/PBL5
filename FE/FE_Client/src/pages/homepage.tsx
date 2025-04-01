@@ -1,30 +1,45 @@
 import CarouselComponent from "../utils/Carousel";
-import { Col, Divider, Row } from "antd";
+import { Button, Col, Divider, Row, Spin } from "antd";
 import SectionHeader from "../utils/SectionHeader";
 import CategorySection from "../components/SectionCategory";
 import '../css/product.css'
 import '../css/style.css'
 import ProductCard from "../components/ProductCard";
-import IProduct from "../models/Product";
+import IProduct from "../models/dto/ProductDto";
 import { useEffect, useState } from "react";
 import ProductService from "../services/product.service";
+import '../css/homepage.css'
+import { DoubleRightOutlined } from "@ant-design/icons";
 
 const Homepage = () => {
-
+    const [page, setPage] = useState<number>(1);
     const [products, setProducts] = useState<IProduct[]>([]);
+    const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const categoryService = new ProductService();
-                const data = await categoryService.getProducts();
-                setProducts(data);
-            } catch (error) {
-                console.error("Failed to fetch categories:", error);
-            }
-        };
-        fetchCategories();
+        fetchProducts(page);
     }, []);
+
+    const fetchProducts = async (pageNum: number) => {
+        setLoading(true);
+        try {
+            const categoryService = new ProductService();
+            const data = await categoryService.getProducts(pageNum);
+            if (data.length > 0) {
+                setProducts([...products, ...data]);
+                setPage(pageNum + 1);
+            } else {
+                setHasMore(false);
+            }
+
+        } catch (error) {
+            console.error("Failed to fetch categories:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     return (
         <>
@@ -73,6 +88,26 @@ const Homepage = () => {
                             </Col>
                         ))}
                     </Row>
+                    <div>&nbsp;</div>
+                    <div className="text-center mt-4">
+                        <div className="col-4 mx-auto">
+                            {(hasMore || loading) && (
+                                <div className="load-more-container">
+                                    <Button
+                                        type="primary"
+                                        ghost
+                                        size="large"
+                                        icon={loading ? <Spin size="small" /> : <DoubleRightOutlined />}
+                                        onClick={() => fetchProducts(page)}
+                                        disabled={loading}
+                                        className="load-more-button"
+                                    >
+                                        {loading ? "Đang tải..." : "Xem thêm"}
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

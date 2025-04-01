@@ -12,4 +12,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query("SELECT p FROM Product p WHERE p.enabled = true")
     public Page<Product> findAll(Pageable pageable);
+
+    public Product findByAlias(String alias);
+
+    public Page<Product> findAllByShopId(int shopId, Pageable pageable);
 }

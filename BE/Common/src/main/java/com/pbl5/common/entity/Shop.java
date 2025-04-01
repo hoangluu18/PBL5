@@ -1,5 +1,6 @@
 package com.pbl5.common.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,8 +29,13 @@ public class Shop extends IdBaseEntity{
     private String address;
 
     private String photo;
+    private Float rating;
+    private Integer productAmount;
+    private Integer peopleTracking;
 
+    private String phone;
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
+
 }

@@ -1,12 +1,14 @@
 package com.pbl5.common.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
+@Data
 public class User extends IdBaseEntity {
 
     @Column(name = "email", nullable = false, length = 128, unique = true)

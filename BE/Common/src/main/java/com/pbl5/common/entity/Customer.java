@@ -1,21 +1,17 @@
 package com.pbl5.common.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "customers")
-@Getter
-@Setter
-public class Customer {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Customer extends IdBaseEntity{
     @Column(name = "first_name", nullable = false, length = 45)
     private String firstName;
 
@@ -31,17 +27,8 @@ public class Customer {
     @Column(name = "phone_number", nullable = false, length = 15)
     private String phoneNumber;
 
-    @Column(name = "address_line_1", nullable = false, length = 64)
-    private String addressLine1;
-
-    @Column(name = "address_line_2", length = 64)
-    private String addressLine2;
-
     @Column(length = 128)
     private String avatar;
-
-    @Column(nullable = false, length = 45)
-    private String city;
 
     @Column(nullable = false)
     private boolean enabled;
@@ -60,7 +47,16 @@ public class Customer {
     @Column(name = "reset_password_token", length = 30)
     private String resetPasswordToken;
 
+    public String getFullName() {
+        return lastName + " " + firstName;
+    }
+
     public enum AuthenticationType {
         DATABASE, FACEBOOK, GOOGLE
     }
+
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShopTracking> shopTrackingList;
 }
+

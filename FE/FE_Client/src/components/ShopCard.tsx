@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, Avatar, Rate, Typography } from 'antd';
+import { Link } from 'react-router-dom';
 import { StarFilled } from '@ant-design/icons';
 
 const { Text } = Typography;
@@ -16,6 +17,8 @@ interface ShopCardProps {
 
 const ShopCard: React.FC<ShopCardProps> = ({ shop }) => {
     return (
+        
+            <Link to={`/shop/${shop.id}`} style={{ textDecoration: 'none' }}>
         <Card
             hoverable
             style={{ width: '100%', textAlign: 'center' }}
@@ -25,7 +28,7 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop }) => {
                 title={shop.name}
                 description={
                     <>
-                        <Rate disabled defaultValue={shop.rating} character={<StarFilled />} style={{ fontSize: '14px' }} />
+                        <Rate allowHalf disabled defaultValue={shop.rating} character={<StarFilled />} style={{ fontSize: '14px' }} />
                         <div>
                             <Text type="secondary">{shop.followers.toLocaleString()} followers</Text>
                         </div>
@@ -33,6 +36,8 @@ const ShopCard: React.FC<ShopCardProps> = ({ shop }) => {
                 }
             />
         </Card>
+        </Link>
+        
     );
 };
 

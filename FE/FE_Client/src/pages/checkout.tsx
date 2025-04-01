@@ -80,9 +80,9 @@ const Checkout: React.FC = () => {
             <Content className='container'>
                 <div style={{ marginBottom: '20px' }}>
                     <Space size="small">
-                        <Button type="link" style={{ padding: 0 }}>Trang chủ</Button>
+                        <Button href='/' type="link" style={{ padding: 0 }}>Trang chủ</Button>
                         <RightOutlined style={{ fontSize: '12px' }} />
-                        <Button type="link" style={{ padding: 0 }}>Giỏ hàng</Button>
+                        <Button href= '/cart' type="link" style={{ padding: 0 }}>Giỏ hàng</Button>
                         <RightOutlined style={{ fontSize: '12px' }} />
                         <Text type="secondary">Thanh toán</Text>
                     </Space>

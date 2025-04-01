@@ -12,7 +12,7 @@ import lombok.Setter;
 public class ProductImage extends IdBaseEntity {
 
     @Column(nullable = false)
-    private String name;
+    private String photo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
