@@ -14,6 +14,7 @@ public class SearchParam {
     private float maxPrice;
     private int rating;
     private String sortOption;
+    private String keyword;
 
     public SearchParam(){
         maxPrice = Integer.MAX_VALUE;

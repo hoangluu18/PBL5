@@ -20,9 +20,11 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     public Page<Product> findAllByShopId(int shopId, Pageable pageable);
 
     @Query("SELECT p FROM Product p WHERE p.enabled = true " +
-            "AND p.category.id = :#{#param.categoryId} " +
+            "AND (:#{#param.categoryId == null} = true OR p.category.id = :#{#param.categoryId}) " +
             "AND (:#{#param.brandIds == null || #param.brandIds.isEmpty()} = true OR p.brand.id IN :#{#param.brandIds}) " +
             "AND p.price BETWEEN :#{#param.minPrice} AND :#{#param.maxPrice} " +
-            "AND p.averageRating >= :#{#param.rating}")
+            "AND p.averageRating >= :#{#param.rating} " +
+            "AND (:#{#param.keyword == null} = true OR LOWER(p.name) " +
+            "LIKE LOWER(CONCAT('%', :#{#param.keyword}, '%'))) ")
     public Page<Product> searchProducts(@Param("param") SearchParam param, Pageable pageable);
 }

@@ -27,7 +27,9 @@ class CategoryService {
         maxPrice?: number,
         brandIds?: number[],
         rating?: number,
-        sortOption?: string
+        sortOption?: string,
+        keyword?: string,
+        page?: number
     ): Promise<SearchResponse> {
         let resResponse: SearchResponse | PromiseLike<SearchResponse> = {} as SearchResponse;
 
@@ -39,6 +41,8 @@ class CategoryService {
             if (brandIds && brandIds.length > 0) params.brandIds = brandIds.join(',');
             if (rating !== undefined && rating > 0) params.rating = rating;
             if (sortOption) params.sortOption = sortOption;
+            if (keyword) params.keyword = keyword;
+            if (page) params.page = page;
             const response = await axios.get<SearchResponse>(`${API_URL}/${alias}`, { params });
             resResponse = response.data;
         } catch (error) {

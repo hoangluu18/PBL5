@@ -50,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductDto> searchProducts(int page, SearchParam searchParam) {
         Sort sort = Sort.by("createdAt").descending();
-        System.out.println(searchParam.getSortOption());
+
         if("newest".equals(searchParam.getSortOption())){
             sort = Sort.by("createdAt").descending();
         } else if ("price_asc".equals(searchParam.getSortOption())) {

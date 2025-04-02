@@ -1,5 +1,6 @@
 package com.pbl5.client.controller;
 
+import com.pbl5.client.bean.SearchParam;
 import com.pbl5.client.common.Constants;
 import com.pbl5.client.dto.ShopDto;
 import com.pbl5.client.dto.category.CategoryDto;
@@ -14,13 +15,11 @@ import com.pbl5.common.entity.Shop;
 import com.pbl5.common.entity.product.Product;
 import com.pbl5.common.entity.product.ProductVariant;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -82,7 +81,26 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> searchProduct(@ModelAttribute SearchParam searchParam,
+                                           @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
+        Page<ProductDto> productDtos = productService.searchProducts(0, searchParam);
 
+        if(page < 1) {
+            page = 1;
+        }
+
+        Map<String, Object> map = new HashMap<>();
+
+
+        map.put("totalPages", productDtos.getTotalPages());
+        map.put("totalElements", productDtos.getTotalElements());
+        map.put("currentPage", page);
+
+        map.put("products", productDtos.getContent());
+
+        return ResponseEntity.ok(map);
+    }
 
     @GetMapping("/{id}/details")
     public ResponseEntity<?> getDetails(@PathVariable("id") Integer id) {

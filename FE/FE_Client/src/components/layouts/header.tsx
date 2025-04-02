@@ -3,11 +3,22 @@ import { SearchOutlined, ShoppingCartOutlined, BellOutlined, UserOutlined } from
 import "antd/dist/reset.css";
 import logo from '../../assets/logo.jpg'
 import '../../css/style.css'
+import { useNavigate } from "react-router";
 
 
 const { Header } = Layout;
 
 const App = () => {
+
+    const navigate = useNavigate();
+
+    const searchProducts = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+        if (e.key === "Enter") {
+            const value = (e.target as HTMLInputElement).value;
+            navigate(`/search?keyword=${encodeURIComponent(value)}`);
+        }
+    };
+
     return (
         <>
             <div className="container-fluid bg-white">
@@ -39,6 +50,7 @@ const App = () => {
                         <Input
                             placeholder="Search"
                             prefix={<SearchOutlined />}
+                            onKeyDown={(e) => searchProducts(e)}
                             style={{
                                 width: "50%",
                                 borderRadius: "20px",
