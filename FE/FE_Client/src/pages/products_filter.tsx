@@ -5,7 +5,8 @@ import CategoryService from "../services/category.service";
 import {
     Avatar, Button, Checkbox, Col, Divider, Layout, Rate,
     Row, Spin, Space, Select, notification, Breadcrumb,
-    InputNumberProps, InputNumber, Card, Typography, Badge, Empty, Tag
+    InputNumberProps, InputNumber, Card, Typography, Badge, Empty, Tag,
+    Pagination
 } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
@@ -17,6 +18,7 @@ import {
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { ICategoryDto } from "../models/dto/CategoryDto";
+import ProductService from "../services/product.service";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
@@ -31,33 +33,47 @@ const ProductFilterPage: React.FC = () => {
     const [selectedBrands, setSelectedBrands] = useState<number[]>([]);
     const [selectedRating, setSelectedRating] = useState<number>(0);
     const [sortOption, setSortOption] = useState<string>("newest");
+    const [page, setPage] = useState<number>(1);
 
     const [clickFilterPrice, setClickFilterPrice] = useState<boolean>(false);
 
     const { alias } = useParams<{ alias: string }>();
-
     const navigate = useNavigate();
     const location = useLocation();
 
+    const query = new URLSearchParams(location.search);
+    const keyword = query.get("keyword") || "";
+
+
     useEffect(() => {
+        updateUrlAndSearch();
         if (alias) {
-            updateUrlAndSearch();
             fetchBreadcrumb();
         }
-    }, [alias, selectedRating, selectedBrands, clickFilterPrice, sortOption]);
+    }, [alias, selectedRating, selectedBrands,
+        clickFilterPrice, sortOption, location.search]);
 
     const searchProducts = async () => {
         setLoading(true);
 
         try {
-            const categoryService = new CategoryService();
 
             if (alias) {
+                const categoryService = new CategoryService();
                 const data = await categoryService.searchProductByCategory(
-                    alias, minPrice, maxPrice, selectedBrands, selectedRating, sortOption
+                    alias, minPrice, maxPrice, selectedBrands,
+                    selectedRating, sortOption, keyword, page
                 );
                 setFilters(data);
-            } else {
+            } else if (keyword) {
+                const productService = new ProductService();
+                const data = await productService.searchProducts(
+                    minPrice, maxPrice, selectedBrands, selectedRating,
+                    sortOption, keyword, page
+                );
+                setFilters(data);
+            }
+            else {
                 notification.error({
                     message: "Lỗi",
                     description: "Không tìm thấy danh mục sản phẩm"
@@ -92,6 +108,7 @@ const ProductFilterPage: React.FC = () => {
 
     const updateUrlAndSearch = () => {
         const queryParams = new URLSearchParams();
+
         if (minPrice > 0) queryParams.set("minPrice", minPrice.toString());
         if (maxPrice > 0) queryParams.set("maxPrice", maxPrice.toString());
         if (selectedRating > 0) queryParams.set("rating", selectedRating.toString());
@@ -99,6 +116,8 @@ const ProductFilterPage: React.FC = () => {
             queryParams.set("brands", selectedBrands.join(","));
         }
         if (sortOption) queryParams.set("sortOption", sortOption);
+        if (keyword) queryParams.set("keyword", keyword);
+
         navigate({ pathname: location.pathname, search: queryParams.toString() });
         searchProducts();
     };
@@ -140,11 +159,17 @@ const ProductFilterPage: React.FC = () => {
         setClickFilterPrice(prev => !prev);
     };
 
+
+    const handlePageChange = (page: number) => {
+        setPage(page);
+    };
+
     const products = filters?.products || [];
     const activeFiltersCount = (minPrice > 0 ? 1 : 0) +
         (maxPrice > 0 ? 1 : 0) +
         selectedBrands.length +
-        (selectedRating > 0 ? 1 : 0);
+        (selectedRating > 0 ? 1 : 0) +
+        (keyword ? 1 : 0);
 
     return (
         <div className="container py-4">
@@ -264,7 +289,7 @@ const ProductFilterPage: React.FC = () => {
                                     </Checkbox>
                                     {brand.logo && (
                                         <Avatar
-                                            src={brand.logo}
+                                            src={`http://localhost:5173/src/assets/brand-images/${brand.logo}`}
                                             size="small"
                                             className="ms-2"
                                             style={{ border: "1px solid #f0f0f0" }}
@@ -330,6 +355,12 @@ const ProductFilterPage: React.FC = () => {
                                 </Title>
                                 {activeFiltersCount > 0 && (
                                     <Space size={[0, 8]} wrap className="mt-2">
+                                        {keyword && (
+                                            <Tag color="blue" closable onClose={() => navigate({ pathname: '/' })}>
+                                                Từ khóa: {keyword}
+                                            </Tag>
+                                        )
+                                        }
                                         {minPrice > 0 && (
                                             <Tag color="blue" closable onClose={() => setMinPrice(0)}>
                                                 Giá từ: {minPrice.toLocaleString()}₫
@@ -391,13 +422,28 @@ const ProductFilterPage: React.FC = () => {
                             <p className="mt-3">Đang tải sản phẩm...</p>
                         </div>
                     ) : products.length > 0 ? (
-                        <Row gutter={[24, 24]} className="ms-2">
-                            {products.map((product) => (
-                                <Col key={product.id || product.name}>
-                                    <ProductCard {...product} />
-                                </Col>
-                            ))}
-                        </Row>
+                        <>
+                            <Row gutter={[24, 24]} className="ms-2">
+                                {products.map((product) => (
+                                    <Col key={product.id || product.name}>
+                                        <ProductCard {...product} />
+                                    </Col>
+                                ))}
+                            </Row>
+                            {
+                                filters?.totalPages && filters.totalPages > 1 && (
+                                    <div className="text-center mt-4">
+                                        <Pagination
+                                            current={filters.currentPage}
+                                            total={filters.totalElements}
+                                            pageSize={12}
+                                            showSizeChanger={false}
+                                            onChange={handlePageChange}
+                                        />
+                                    </div>
+                                )
+                            }
+                        </>
                     ) : (
                         <Card className="text-center py-5">
                             <Empty
