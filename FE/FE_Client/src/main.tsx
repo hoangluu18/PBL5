@@ -18,7 +18,6 @@ import EditAddress from './pages/edit_address.tsx';
 import ShopDetail from './pages/shop_detail.tsx';
 import FollowedShops from './pages/followed_shops.tsx';
 import ProductDetailPage from './pages/product_detail.tsx';
-import Account from './pages/profile.tsx';
 import ProfilePage from './pages/profile.tsx';
 import { Button, Result } from 'antd';
 
@@ -40,7 +39,7 @@ const router = createBrowserRouter([
         element: <Homepage />
       },
       {
-        path: "/c/alias",
+        path: "/c/:alias",
         element: <ProductFilterPage />
       },
       {
@@ -55,7 +54,7 @@ const router = createBrowserRouter([
         element: <EditAddress />
       },
       {
-        path: "/shop/1",
+        path: "/shop/:id",
         element: <ShopDetail />
       },
       {

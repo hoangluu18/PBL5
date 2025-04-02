@@ -82,26 +82,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/{id}/breadcrumbs")
-    public ResponseEntity<?> getBreadCrumbs(@PathVariable("id") Integer id) {
-        try {
-            Product product = productService.get(id);
-            List<CategoryDto> categoryDtos = new ArrayList<>();
 
-            Category category = product.getCategory();
-            List<Category> parents = categoryService.getParents(category);
-
-            if(parents.size() > 0){
-                parents.forEach(p -> {
-                    categoryDtos.add(new CategoryDto(p.getName(), p.getAlias()));
-                });
-            }
-
-            return ResponseEntity.ok(categoryDtos);
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
     @GetMapping("/{id}/details")
     public ResponseEntity<?> getDetails(@PathVariable("id") Integer id) {
@@ -162,7 +143,7 @@ public class ProductController {
 
             if(parents.size() > 0){
             parents.forEach(p -> {
-                childCategoryDtos.add(new CategoryDto(p.getName(), p.getAlias()));
+                childCategoryDtos.add(new CategoryDto(p.getId(), p.getName(), p.getAlias()));
             });
         }
 

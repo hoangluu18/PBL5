@@ -97,4 +97,13 @@ public class Product extends IdBaseEntity {
     public int hashCode() {
         return Objects.hashCode(this.getId());
     }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "name='" + name + '\'' +
+                ", category name=" + category.getName() +
+                ", brand name=" + brand.getName() +
+                '}';
+    }
 }
