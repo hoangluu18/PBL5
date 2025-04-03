@@ -9,4 +9,5 @@ public class Constants {
     public static final String REVIEW_API_URI = "/api/r";
     public static final Integer FOLLOWING_SHOPS_PER_PAGE = 12;
 
+    public static final int REVIEWS_PER_PAGE = 5;
 }

@@ -1,6 +1,6 @@
 import { Breadcrumb, Button, Col, Rate, Row, Tabs, TabsProps, Typography, Divider, Tag, Badge, Tooltip, Image, Spin } from "antd";
 import CurrencyFormat from "../utils/CurrencyFormat";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MinusOutlined, PlusOutlined, ShoppingCartOutlined, ThunderboltOutlined, HeartOutlined, ShareAltOutlined } from "@ant-design/icons";
 import ProductDescriptionTab from "../components/product_details/ProductDescriptionTab";
 import ProductDetailTab from "../components/product_details/ProductDetailTab";
@@ -25,6 +25,8 @@ const ProductDetailPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
 
     const { alias } = useParams();
+    const tabsRef = useRef<HTMLDivElement>(null);
+    const [activeTab, setActiveTab] = useState<string>("description");
 
     useEffect(() => {
         fetchProduct();
@@ -56,6 +58,13 @@ const ProductDetailPage: React.FC = () => {
     }
 
     const discountedPrice = product.price - (product.price * product.discountPercent) / 100;
+
+    const handleScrollToReviews = () => {
+        if (tabsRef.current) {
+            tabsRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+        setActiveTab("ratingAndReview");
+    };
 
     const items: TabsProps["items"] = [
         {
@@ -151,7 +160,9 @@ const ProductDetailPage: React.FC = () => {
                                 allowHalf
                                 style={{ fontSize: '16px' }}
                             />
-                            <Text className="ms-2 text-primary">
+                            <Text className="ms-2 text-primary"
+                                style={{ cursor: 'pointer' }}
+                                onClick={handleScrollToReviews}>
                                 {product.reviewCount} đánh giá
                             </Text>
 
@@ -327,6 +338,9 @@ const ProductDetailPage: React.FC = () => {
                 <Col span={24}>
                     <div className="bg-white p-4 rounded shadow-sm">
                         <Tabs
+                            ref={tabsRef}
+                            activeKey={activeTab}
+                            onChange={(key) => setActiveTab(key)}
                             defaultActiveKey="description"
                             items={items}
                             className="w-100"
