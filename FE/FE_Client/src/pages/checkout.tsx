@@ -1,73 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Row, Col, Space, Button, Typography } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import ShippingInfo from '../components/ShippingInfo';
-import DeliveryOptions from '../components/DeliveryOptions';
 import PaymentMethod from '../components/PaymentMethod';
 import OrderSummary from '../components/OrderSummary';
+import { getCheckoutInfo, saveCheckout } from '../services/checkout.service';
+import { CheckoutInfoDto } from '../models/dto/checkout/CheckoutInfoDto';
+import { useNavigate } from 'react-router-dom';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Checkout: React.FC = () => {
-    const [deliveryType, setDeliveryType] = useState('standard');
+    const [checkoutInfo, setCheckoutInfo] = useState<CheckoutInfoDto | null>(null);
     const [paymentMethod, setPaymentMethod] = useState('credit');
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const customerId = 1; // Có thể lấy từ context, params, hoặc localStorage tùy vào thiết kế ứng dụng
+    useEffect(() => {
+        const fetchCheckoutInfo = async () => {
+            try {
+                const data = await getCheckoutInfo();
+                setCheckoutInfo(data);
+            } catch (error) {
+                console.error('Error fetching checkout info:', error);
+            }
+        };
 
-    // Dữ liệu đã cập nhật với thông tin shop
-    const orderItems = [
-        {
-            id: 1,
-            name: 'Đồng hồ thông minh Fitbit Sense',
-            price: 1998000,
-            quantity: 1,
-            image: '/fitbit.png',
-            shopId: 1,
-            shopName: 'Fitbit Official Store'
-        },
-        {
-            id: 2,
-            name: 'iPhone 13 pro max - Pacific Blue - 128GB',
-            price: 28990000,
-            quantity: 1,
-            image: '/iphone.png',
-            shopId: 2,
-            shopName: 'Apple Authorized Reseller'
-        },
-        {
-            id: 3,
-            name: 'Apple MacBook Pro 13 inch - M1 - 8/256GB',
-            price: 31990000,
-            quantity: 1,
-            image: '/macbook.png',
-            shopId: 2,
-            shopName: 'Apple Authorized Reseller'
-        },
-        {
-            id: 4,
-            name: 'Tai nghe AirPods Pro',
-            price: 4590000,
-            quantity: 2,
-            image: '/airpods.png',
-            shopId: 2,
-            shopName: 'Apple Authorized Reseller'
-        },
-        {
-            id: 5,
-            name: 'Bàn phím Logitech MX Keys',
-            price: 2790000,
-            quantity: 1,
-            image: '/keyboard.png',
-            shopId: 3,
-            shopName: 'Logitech Official Store'
+        fetchCheckoutInfo();
+    }, []);
+
+    if (!checkoutInfo) {
+        return <div>Loading...</div>;
+    }
+
+    const subtotal = checkoutInfo.cartProductDtoList.reduce((sum, item) => sum + (item.lastPrice * item.quantity), 0);
+    const shippingCost = checkoutInfo.shippingRespondDtoList.reduce((sum, shipping) => sum + shipping.shippingCost, 0);
+    const total = subtotal + shippingCost;
+
+    const handlePurchase = () => {
+        if (window.confirm('Bạn có chắc chắn muốn mua hàng không?')) {
+            setLoading(true);
+            saveCheckout(customerId)
+                .then(() => {
+                    alert('Đặt hàng thành công!');
+                    navigate('/'); // Chuyển về trang chủ hoặc trang xác nhận đơn hàng
+                })
+                .catch((error: any) => {
+                    console.error('Lỗi khi đặt hàng:', error);
+                    alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại sau.');
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
         }
-    ];
-
-    const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const discount = 1500000;
-    const tax = subtotal * 0.1; // Giả sử thuế là 10%
-    const shippingCost = 30000;
-    const total = subtotal - discount + tax + shippingCost;
-
+    };
+    
     return (
         <Layout style={{
             background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',
@@ -82,7 +70,7 @@ const Checkout: React.FC = () => {
                     <Space size="small">
                         <Button href='/' type="link" style={{ padding: 0 }}>Trang chủ</Button>
                         <RightOutlined style={{ fontSize: '12px' }} />
-                        <Button href= '/cart' type="link" style={{ padding: 0 }}>Giỏ hàng</Button>
+                        <Button href='/cart' type="link" style={{ padding: 0 }}>Giỏ hàng</Button>
                         <RightOutlined style={{ fontSize: '12px' }} />
                         <Text type="secondary">Thanh toán</Text>
                     </Space>
@@ -92,17 +80,29 @@ const Checkout: React.FC = () => {
 
                 <Row gutter={24}>
                     <Col span={16}>
-                        <ShippingInfo />
-                        <DeliveryOptions deliveryType={deliveryType} setDeliveryType={setDeliveryType} />
-                        <PaymentMethod paymentMethod={paymentMethod} setPaymentMethod={setPaymentMethod} />
+                        <ShippingInfo addressInfo={checkoutInfo.addressInfoDto} />
+                        <PaymentMethod 
+                            paymentMethod={paymentMethod} 
+                            setPaymentMethod={setPaymentMethod} 
+                            shippingCosts={checkoutInfo.shippingRespondDtoList.map(shipping => ({
+                                shopId: shipping.shopId,
+                                shippingCost: shipping.shippingCost
+                            }))}
+                        />
                     </Col>
 
                     <Col span={8}>
                         <OrderSummary
-                            orderItems={orderItems}
+                            orderItems={checkoutInfo.cartProductDtoList.map(item => ({
+                                id: item.productId,
+                                name: item.productName,
+                                price: item.lastPrice,
+                                quantity: item.quantity,
+                                image: `/src/assets/product-images/${item.photo}`,
+                                shopId: item.shopId,
+                                shopName: item.shopName
+                            }))}
                             subtotal={subtotal}
-                            discount={discount}
-                            tax={tax}
                             shippingCost={shippingCost}
                             total={total}
                         />
@@ -110,7 +110,13 @@ const Checkout: React.FC = () => {
                 </Row>
 
                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                    <Button type="primary" size="large" style={{ width: '300px', height: '45px' }}>
+                    <Button 
+                        type="primary" 
+                        size="large" 
+                        style={{ width: '300px', height: '45px' }}
+                        onClick={handlePurchase}
+                        loading={loading}
+                    >
                         Mua hàng
                     </Button>
                 </div>
@@ -139,7 +145,7 @@ const Checkout: React.FC = () => {
                     margin-right: 0;
                 }
             `}</style>
-        </Layout >
+        </Layout>
     );
 };
 
