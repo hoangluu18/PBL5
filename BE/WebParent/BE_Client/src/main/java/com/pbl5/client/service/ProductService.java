@@ -13,4 +13,5 @@ public interface ProductService {
     Product get(Integer id) throws ProductNotFoundException;
 
     Page<Product> listAllByShopId(int page, int shopId);
+    Product getByProductId(int productId) throws ProductNotFoundException;
 }

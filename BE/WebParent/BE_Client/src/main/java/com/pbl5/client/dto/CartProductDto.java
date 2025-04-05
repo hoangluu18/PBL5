@@ -20,5 +20,6 @@ public class CartProductDto {
     private double lastPrice;  // Giá cuối cùng sau giảm giá
     private String photo;
     private String shopName;
+    private Integer shopId;
     private String attributes; // Lưu các thuộc tính key-value (VD: {"Size": "L", "Color": "Gray"})
 }

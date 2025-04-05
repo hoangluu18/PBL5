@@ -42,4 +42,9 @@ public class ProductServiceImpl implements ProductService {
     public Page<Product> listAllByShopId(int page, int shopId) {
         return productRepository.findAllByShopId(shopId, PageRequest.of(page, Constants.PRODUCTS_PER_PAGE));
     }
+
+    @Override
+    public Product getByProductId(int productId) throws ProductNotFoundException {
+        return productRepository.findById(productId);
+    }
 }
