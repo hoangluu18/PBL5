@@ -14,4 +14,7 @@ public class ShopTrackingDto {
     private String photo;
     private String rating;
     private String peopleTracking;
+    private Integer totalOrders;
+    private Double totalSpent;
+    private String lastOrder;
  }
