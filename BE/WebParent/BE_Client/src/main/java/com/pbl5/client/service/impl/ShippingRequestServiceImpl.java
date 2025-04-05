@@ -108,7 +108,7 @@ public class ShippingRequestServiceImpl implements ShippingRequestService {
 
     @Override
     public ShippingRespondDto getShippingRespond(ShippingRequestDto shippingRequestDto) {
-        String URL = "http://0.0.0.0:8000/calculate_shipping";
+        String URL = "https://pmshoanghot-calculate-shipping.hf.space/calculate_shipping";
         RestTemplate restTemplate = new RestTemplate();
 
         // Tạo đối tượng body request
