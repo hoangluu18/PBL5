@@ -17,7 +17,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    @Autowired private ProductRepository productRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     public Page<Product> listAll(int page) {
@@ -27,7 +28,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getByAlias(String alias) throws ProductNotFoundException {
         Product product = productRepository.findByAlias(alias);
-        if(product == null){
+        if (product == null) {
             throw new ProductNotFoundException("Could not find any product with alias " + alias);
         }
         return product;
@@ -36,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product get(Integer id) throws ProductNotFoundException {
         Product product = productRepository.findById(id).get();
-        if(product == null){
+        if (product == null) {
             throw new ProductNotFoundException("Could not find any product with id " + id);
         }
         return product;
@@ -50,19 +51,21 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getByProductId(int productId) throws ProductNotFoundException {
         return productRepository.findById(productId);
+    }
 
+    @Override
     public Page<ProductDto> searchProducts(int page, SearchParam searchParam) {
         Sort sort = Sort.by("createdAt").descending();
 
-        if("newest".equals(searchParam.getSortOption())){
+        if ("newest".equals(searchParam.getSortOption())) {
             sort = Sort.by("createdAt").descending();
         } else if ("price_asc".equals(searchParam.getSortOption())) {
             sort = Sort.by("price").ascending();
-        }else if ("price_desc".equals(searchParam.getSortOption())) {
+        } else if ("price_desc".equals(searchParam.getSortOption())) {
             sort = Sort.by("price").descending();
-        }else if ("rating_asc".equals(searchParam.getSortOption())) {
+        } else if ("rating_asc".equals(searchParam.getSortOption())) {
             sort = Sort.by("averageRating").ascending();
-        }else if ("rating_desc".equals(searchParam.getSortOption())) {
+        } else if ("rating_desc".equals(searchParam.getSortOption())) {
             sort = Sort.by("averageRating").descending();
         }
 
