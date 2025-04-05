@@ -3,6 +3,7 @@ import IProduct from '../models/dto/ProductDto';
 import { IProductFullInfoDto } from "../models/dto/ProductFullInfoDto";
 import IProductDetailDto from "../models/dto/ProductDetailDto";
 import { ICategoryDto } from "../models/dto/CategoryDto";
+import SearchResponse from "../models/bean/SearchResponse";
 
 
 const API_URL = 'http://localhost:8081/api/p';
@@ -46,6 +47,35 @@ class ProductService {
             console.error(error);
         }
         return productDetail;
+    }
+
+    async searchProducts(
+        minPrice?: number,
+        maxPrice?: number,
+        brandIds?: number[],
+        rating?: number,
+        sortOption?: string,
+        keyword?: string,
+        page?: number
+    ): Promise<SearchResponse> {
+        let resResponse: SearchResponse | PromiseLike<SearchResponse> = {} as SearchResponse;
+
+        try {
+            const params: Record<string, any> = {};
+            if (minPrice !== undefined && minPrice > 0) params.minPrice = minPrice;
+            if (maxPrice !== undefined && maxPrice > 0) params.maxPrice = maxPrice;
+            if (brandIds && brandIds.length > 0) params.brandIds = brandIds.join(',');
+            if (rating !== undefined && rating > 0) params.rating = rating;
+            if (sortOption) params.sortOption = sortOption;
+            if (keyword) params.keyword = keyword;
+            if (page) params.page = page;
+            const response = await axios.get<SearchResponse>(`${API_URL}/search`, { params });
+            resResponse = response.data;
+        } catch (error) {
+            console.error(error);
+        }
+
+        return resResponse;
     }
 
     async getBreadcrumb(id: number): Promise<ICategoryDto[]> {

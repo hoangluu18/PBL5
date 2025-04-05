@@ -10,4 +10,6 @@ public class Constants {
     public static final Integer FOLLOWING_SHOPS_PER_PAGE = 12;
     public static final String CHECKOUT_API_URI = "/api/checkout";
     public static final String SHIPPING_API_URL = " http://0.0.0.0:8000/calculate_shipping";
+    public static final int REVIEWS_PER_PAGE = 5;
+
 }

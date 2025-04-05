@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "categories")
@@ -25,16 +23,19 @@ public class Category extends IdBaseEntity{
 
     private boolean enabled;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
     @OneToMany(mappedBy = "parent")
     @OrderBy("name asc")
-    private Set<Category> children = new HashSet<>();
+    private List<Category> children = new ArrayList<>();
 
     @Column(name = "all_parent_ids", length = 256)
     private String allParentIds;
+
+    @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
+    private List<Brand> brands = new ArrayList<>();
 
     public Category() {
     }
@@ -69,6 +70,6 @@ public class Category extends IdBaseEntity{
                 ", alias='" + alias + '\'' +
                 ", image='" + image + '\'' +
                 ", enabled=" + enabled +
-                '}';
+                '}' + "\n" ;
     }
 }

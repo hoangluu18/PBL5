@@ -1,7 +1,8 @@
 package com.pbl5.client.review;
 
 import com.pbl5.client.repository.ReviewRepository;
-import com.pbl5.common.entity.Review;
+import com.pbl5.client.repository.ReviewVoteRepository;
+import com.pbl5.common.entity.review.Review;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -18,9 +19,32 @@ public class ReviewRepositoryTest {
     @Autowired
     private ReviewRepository reviewRepository;
 
+    @Autowired private ReviewVoteRepository reviewVoteRepository;
+
     @Test
     public void testGetByProductId(){
         List<Review> reviews = reviewRepository.findAllByProductId(9);
         System.out.println(reviews.size());
+    }
+
+    @Test
+    public void updateReviewVoteCount() {
+        reviewRepository.updateVoteCount(11);
+    }
+
+    @Test
+    public void testFindByReviewIdAndCustomerId() {
+        int reviewId = 11;
+        int customerId = 5;
+        var reviewVote = reviewVoteRepository.findByReviewAndCustomer(reviewId, customerId);
+        System.out.println(reviewVote.getReview().getContent());
+    }
+
+    @Test
+    public void testFindByProductIdAndCustomerId() {
+        int productId = 9;
+        int customerId = 5;
+        var reviewVoteList = reviewVoteRepository.findByProductAndCustomer(productId, customerId);
+        System.out.println(reviewVoteList.size());
     }
 }

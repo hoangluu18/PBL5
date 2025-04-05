@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LikeOutlined, StarFilled, MessageOutlined } from "@ant-design/icons";
+import { LikeOutlined, StarFilled, MessageOutlined, LikeFilled } from "@ant-design/icons";
 import { Avatar, Button, Rate, Badge, Progress, Tooltip } from "antd";
 import { IReviewDto } from "../../models/dto/ReviewDto";
 import ReviewService from "../../services/review.service";
@@ -10,9 +10,8 @@ interface ProductReviewsTabProps {
 }
 
 const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
+
     const [activeFilter, setActiveFilter] = useState("all");
-
-
     const [reviews, setReviews] = useState<IReviewDto[]>([]);
 
     useEffect(() => {
@@ -60,6 +59,44 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
         { key: "2star", label: `2 Sao (${count2Star})` },
         { key: "1star", label: `1 Sao (${count1Star})` },
     ];
+
+    const clickLikeBtn = async (reviewId: number) => {
+        try {
+            // Optimistically update the state
+            setReviews((prevReviews) =>
+                prevReviews.map((review) =>
+                    review.id === reviewId
+                        ? {
+                            ...review,
+                            votedByCurrentCustomer: !review.votedByCurrentCustomer, // Toggle the vote
+                            likes: review.votedByCurrentCustomer ? review.likes - 1 : review.likes + 1, // Adjust likes count
+                        }
+                        : review
+                )
+            );
+
+            // Call the API to update the vote
+            const reviewService = new ReviewService();
+            await reviewService.voteReview(reviewId, 5);
+
+            // Optionally, you can refetch the review data here if needed
+        } catch (error) {
+            console.error("Failed to update vote:", error);
+
+            // Revert the state if the API call fails
+            setReviews((prevReviews) =>
+                prevReviews.map((review) =>
+                    review.id === reviewId
+                        ? {
+                            ...review,
+                            votedByCurrentCustomer: !review.votedByCurrentCustomer, // Revert the vote
+                            likes: review.votedByCurrentCustomer ? review.likes + 1 : review.likes - 1, // Revert likes count
+                        }
+                        : review
+                )
+            );
+        }
+    };
 
     return (
         <div>
@@ -191,10 +228,18 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
                                         <Tooltip title="Đánh giá hữu ích">
                                             <Button
                                                 type="text"
-                                                className="d-flex align-items-center text-muted me-3 p-1"
-                                                icon={<LikeOutlined className="me-1" />}
+                                                className={`d-flex align-items-center me-3 p-1 ${review.votedByCurrentCustomer ? "text-primary" : "text-muted"
+                                                    }`}
+                                                icon={
+                                                    review.votedByCurrentCustomer ? (
+                                                        <LikeFilled className="me-1" color="blue" />
+
+                                                    ) : (
+                                                        <LikeOutlined className="me-1" />
+                                                    )
+                                                }
                                             >
-                                                <span>Hữu ích ({review.likes})</span>
+                                                <span onClick={() => clickLikeBtn(review.id)}>Hữu ích ({review.likes})</span>
                                             </Button>
                                         </Tooltip>
 
@@ -213,9 +258,11 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
                         </div>
 
                         {/* Thêm đường ngăn cách hr giữa các đánh giá, trừ đánh giá cuối cùng */}
-                        {index < reviews.length - 1 && (
-                            <hr className="my-0" style={{ backgroundColor: "#f0f0f0", height: "1px", border: "none" }} />
-                        )}
+                        {
+                            index < reviews.length - 1 && (
+                                <hr className="my-0" style={{ backgroundColor: "#f0f0f0", height: "1px", border: "none" }} />
+                            )
+                        }
                     </div>
                 )) : (
                     <div className="text-center my-4">
