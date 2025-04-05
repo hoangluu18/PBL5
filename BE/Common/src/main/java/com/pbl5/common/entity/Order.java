@@ -20,7 +20,7 @@ public class Order extends IdBaseEntity {
     @Column(name = "phone_number", nullable = false, length = 15)
     private String phoneNumber;
 
-    @Column(name = "address_line", nullable = false, length = 64)
+    @Column(name = "address_line", nullable = false, length = 255)
     private String addressLine;
 
     @Column(name = "order_time", nullable = false)

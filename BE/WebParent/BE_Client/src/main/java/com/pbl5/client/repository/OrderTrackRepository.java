@@ -1,10 +1,9 @@
 package com.pbl5.client.repository;
 
-import com.pbl5.common.entity.Customer;
+import com.pbl5.common.entity.OrderTrack;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer,Integer> {
-    Customer findById(int id);
+public interface OrderTrackRepository extends JpaRepository<OrderTrack, Integer> {
 }

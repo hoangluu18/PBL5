@@ -2,6 +2,7 @@ package com.pbl5.common.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "addresses")
@@ -24,6 +25,10 @@ public class Address extends IdBaseEntity {
 
     @Column(name = "city", nullable = false, length = 45)
     private String city;
+
+    @Column(name = "is_default", nullable = false)
+    @ColumnDefault("0")
+    private boolean isDefault;
 
     // Quan hệ Many-to-One với Customer (nếu cần)
     @ManyToOne

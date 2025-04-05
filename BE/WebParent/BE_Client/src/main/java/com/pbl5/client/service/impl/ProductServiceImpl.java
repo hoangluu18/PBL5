@@ -48,6 +48,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Product getByProductId(int productId) throws ProductNotFoundException {
+        return productRepository.findById(productId);
+
     public Page<ProductDto> searchProducts(int page, SearchParam searchParam) {
         Sort sort = Sort.by("createdAt").descending();
 
