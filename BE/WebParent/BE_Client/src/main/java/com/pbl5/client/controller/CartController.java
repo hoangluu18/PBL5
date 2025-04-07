@@ -1,5 +1,6 @@
 package com.pbl5.client.controller;
 
+import com.pbl5.client.dto.AddToCartDto;
 import com.pbl5.client.dto.CartProductDto;
 import com.pbl5.client.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +28,11 @@ public class CartController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sản phẩm không tồn tại trong giỏ hàng");
         }
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<String> addIntoCart(@RequestBody AddToCartDto dto) {
+        String res = cartService.addToCart(dto);
+        return ResponseEntity.ok(res);
     }
 }

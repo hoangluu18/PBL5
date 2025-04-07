@@ -53,6 +53,8 @@ const ProductFilterPage: React.FC = () => {
     }, [alias, selectedRating, selectedBrands,
         clickFilterPrice, sortOption, location.search]);
 
+    document.title = `Tìm kiếm sản phẩm${keyword ? `: ${keyword}` : ""}`;
+
     const searchProducts = async () => {
         setLoading(true);
 

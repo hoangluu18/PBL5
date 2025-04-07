@@ -7,6 +7,7 @@ import com.pbl5.common.entity.IdBaseEntity;
 import com.pbl5.common.entity.Shop;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.*;
@@ -15,6 +16,7 @@ import java.util.*;
 @Table(name = "products")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Product extends IdBaseEntity {
 
     @Column(nullable = false, unique = true, length = 256)
@@ -78,6 +80,10 @@ public class Product extends IdBaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id")
     private Shop shop;
+
+    public Product(int id) {
+        this.id = id;
+    }
 
 
     @Override

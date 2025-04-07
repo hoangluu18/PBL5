@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useEffect, useState } from 'react';
+
 import { Layout, Row, Col, Space, Button, Typography } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import ShippingInfo from '../components/ShippingInfo';
@@ -12,7 +14,13 @@ const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Checkout: React.FC = () => {
+
+
+
+    const [deliveryType, setDeliveryType] = useState('standard');
+
     const [checkoutInfo, setCheckoutInfo] = useState<CheckoutInfoDto | null>(null);
+
     const [paymentMethod, setPaymentMethod] = useState('credit');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -38,6 +46,10 @@ const Checkout: React.FC = () => {
     const shippingCost = checkoutInfo.shippingRespondDtoList.reduce((sum, shipping) => sum + shipping.shippingCost, 0);
     const total = subtotal + shippingCost;
 
+    useEffect(() => {
+        document.title = "Thanh toán";
+    }, []);
+
     const handlePurchase = () => {
         if (window.confirm('Bạn có chắc chắn muốn mua hàng không?')) {
             setLoading(true);
@@ -56,6 +68,7 @@ const Checkout: React.FC = () => {
         }
     };
     
+
     return (
         <Layout style={{
             background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',
