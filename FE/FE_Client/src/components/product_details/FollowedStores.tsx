@@ -167,7 +167,6 @@ const renderStars = (rating: any) => {
                 marginBottom: 5, 
                 display: "flex", 
                 alignItems: "center",
-                borderBottom: "1px solid #f0f0f0",
                 paddingBottom: "5px"
             }}>
             </Title>

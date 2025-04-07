@@ -6,6 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import OrderList from "../components/profile/OrderList";
 import ReviewList from "../components/product_details/ProductReviews";
 import FollowedStores from "../components/product_details/FollowedStores";
+import ProfileReview from "../components/ProfileReview"; // Adjust the path as needed
 import ProfileService from "../services/profile.service";
 import IProfile from "../models/dto/Profile";
 
@@ -223,12 +224,12 @@ const ProfilePage: React.FC = () => {
       type="card"
       size="large"
     >
-                <TabPane tab="Orders" key="1">
+                <TabPane tab="Lịch sử mua" key="1">
                     <OrderList />
                 </TabPane>
-                <TabPane tab={`Reviews (${profile.totalOrder})`} key="2">
-                    <ReviewList id={parseInt(customerId || "0", 10)} />
-                </TabPane>
+                <TabPane tab={`Bài đánh giá`} key="2">
+    <ProfileReview id={parseInt(customerId || "0", 10)} />
+</TabPane>
                 <TabPane tab="Theo dõi" key="3">
                 <FollowedStores customerId={parseInt(customerId || "0", 10)} />
                 </TabPane>

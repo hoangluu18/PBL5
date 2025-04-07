@@ -1,6 +1,8 @@
 package com.pbl5.client.repository;
 
 import com.pbl5.common.entity.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -8,7 +10,11 @@ import java.util.Date;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
+    // Phương thức hiện có
     List<Order> findByCustomerId(Integer customerId);
+
+    // Thêm phương thức phân trang
+    Page<Order> findByCustomerId(Integer customerId, Pageable pageable);
 
     @Query("SELECT SUM(o.total) FROM Order o WHERE o.customerId = :customerId AND o.shopId = :shopId")
     Double getTotalSpentByCustomerIdAndShopId(Integer customerId, Integer shopId);
@@ -26,5 +32,4 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Date getLastOrderByCustomerIdAndShopId(Integer customerId, Integer shopId);
 
     List<Order> findByCustomerIdAndShopId(Integer customerId, Integer shopId);
-
 }

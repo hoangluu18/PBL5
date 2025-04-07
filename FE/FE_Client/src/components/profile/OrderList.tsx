@@ -1,33 +1,151 @@
+import React, { useEffect, useState } from "react";
+import { Pagination, Table, Tag, Typography, Spin, Empty } from "antd";
+import { 
+    ShoppingOutlined, 
+    DollarOutlined, 
+    ClockCircleOutlined, 
+    FileTextOutlined,
+    WalletOutlined,    
+    CreditCardOutlined,
+    PayCircleOutlined  
+} from '@ant-design/icons';
+import axios from "axios";
+const { Text, Title } = Typography;
 
-import React from "react";
-import { Pagination, Table, Tag } from "antd";
+const statusColorMap: Record<string, string> = {
+    DELIVERED: "green",
+    SHIPPING: "blue",
+    NEW: "orange",
+    PACKAGED: "geekblue",
+    PAID: "cyan",
+    PICKED: "purple",
+    PROCCESSING: "processing",
+    REFUNDED: "red",
+    RETURNED: "volcano",
+    RETURN_REQUESTED: "warning"
+};
 
-// Sample order data
-const ordersData = [
-    { id: 2453, status: "SHIPPED", delivery: "Cash on delivery", date: "Dec 12, 12:56 PM", total: "$87", color: "green" },
-    { id: 2452, status: "READY TO PICKUP", delivery: "Free shipping", date: "Dec 9, 2:28 PM", total: "$7264", color: "blue" },
-    { id: 2451, status: "PARTIALLY FULFILLED", delivery: "Local pickup", date: "Dec 4, 12:56 PM", total: "$375", color: "orange" },
-    { id: 2450, status: "CANCELED", delivery: "Standard shipping", date: "Dec 1, 4:07 AM", total: "$657", color: "red" },
-    { id: 2449, status: "FULFILLED", delivery: "Express", date: "Nov 28, 7:28 PM", total: "$9562", color: "green" },
-];
+const paymentMethodMap: Record<string, string> = {
+    COD: "Thanh toán tiền mặt",
+    CREDIT_CARD: "Thẻ tín dụng",
+    PAYPAL: "Paypal"
+  };
 
-// Table columns
-const columns = [
-    { title: "ORDER", dataIndex: "id", key: "id", render: (text: string) => `#${text}` },
-    { title: "STATUS", dataIndex: "status", key: "status", render: (status: string, record: any) => <Tag color={record.color}>{status}</Tag> },
-    { title: "DELIVERY METHOD", dataIndex: "delivery", key: "delivery" },
-    { title: "DATE", dataIndex: "date", key: "date" },
-    { title: "TOTAL", dataIndex: "total", key: "total" },
-];
+  const statusMap: Record<string, string> = {
+    DELIVERED: "Đã giao",
+    NEW: "Mới",
+    PACKAGED: "Đã đóng gói",
+    PAID: "Đã thanh toán",
+    PICKED: "Đã lấy hàng",
+    PROCCESSING: "Đang xử lý",
+    REFUNDED: "Đã hoàn tiền",
+    RETURNED: "Đã trả hàng",
+    SHIPPING: "Đang giao",
+    RETURN_REQUESTED: "Yêu cầu trả hàng"
+  };
 
-// OrderList component
+  const paymentIconMap: Record<string, React.ReactNode> = {
+    COD: <WalletOutlined style={{ color: "#722ed1", marginRight: 8, fontSize: 16 }} />,
+    CREDIT_CARD: <CreditCardOutlined style={{ color: "#722ed1", marginRight: 8, fontSize: 16 }} />,
+    PAYPAL: <PayCircleOutlined style={{ color: "#722ed1", marginRight: 8, fontSize: 16 }} />
+};
+
+    // Hàm format ngày giờ
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return date.toLocaleString("en-GB", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        }).replace(",", "");
+    };
+
 const OrderList: React.FC = () => {
-    return (
-        <div className="bg-white p-3">
-            <Table dataSource={ordersData} columns={columns} rowKey="id" pagination={false} />
-            <Pagination className="text-center mt-3" defaultCurrent={1} total={50} />
+  const [orders, setOrders] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const pageSize = 5;
+
+  useEffect(() => {
+    axios.get(`http://localhost:8081/api/profile/1/orders?page=${currentPage - 1}&size=${pageSize}`)
+      .then(res => {
+        setOrders(res.data.data);
+        setTotalItems(res.data.totalItems);
+      })
+      .catch(err => console.error("Fetch orders failed", err));
+  }, [currentPage]);
+
+  const columns = [
+    { title: "Mã đơn hàng", dataIndex: "id", key: "id", render: (text: string) => (
+        <div style={{ display: "flex" }}>
+          <FileTextOutlined style={{ color: "#1890ff", marginRight: 8, fontSize: 16 }} />
+          <Text strong>#{text}</Text>
         </div>
-    )
+      ) },
+    {
+        title: "Trạng thái",
+        dataIndex: "orderStatus",
+        key: "status",
+        render: (status: string, record: any) => (
+            <div style={{ display: "flex"}}>
+              <Tag color={statusColorMap[status] || "default"} style={{ fontSize: "14px", padding: "2px 10px" }}>
+                {statusMap[status] || status}
+              </Tag>
+            </div>
+          )
+    },
+    {
+        title: "Phương thức thanh toán",
+        dataIndex: "paymentMethod",
+        key: "delivery",
+        render: (method: string) => (
+            <div style={{ display: "flex"}}>
+                {paymentIconMap[method] || <WalletOutlined style={{ color: "#722ed1", marginRight: 8, fontSize: 16 }} />}
+                <Text>{paymentMethodMap[method] || method}</Text>
+            </div>
+        )
+    },
+      
+    { 
+      title: "Ngày đặt hàng", 
+      dataIndex: "orderTime", 
+      key: "date",
+      render: (value: string) => (
+        <div style={{ display: "flex", alignItems: "center"}}>
+          <ClockCircleOutlined style={{ color: "#1890ff", marginRight: 8, fontSize: 16 }} />
+          <Text>{formatDate(value)}</Text>
+        </div>
+      )
+    },
+    { title: "Tổng cộng", dataIndex: "total", key: "total", render: (total: number) => (
+        <div style={{ display: "flex"}}>
+          <DollarOutlined style={{ color: "#52c41a", marginRight: 8, fontSize: 16 }} />
+          <Text strong style={{ fontSize: "15px" }}>
+            {total.toLocaleString("vi-VN")}₫
+          </Text>
+        </div>
+      ) },
+  ];
+
+  return (
+    <div className="bg-white p-3">
+      <Table
+        dataSource={orders}
+        columns={columns}
+        rowKey="id"
+        pagination={false}
+      />
+      <Pagination
+        className="text-center mt-3"
+        current={currentPage}
+        total={totalItems}
+        pageSize={pageSize}
+        onChange={(page) => setCurrentPage(page)}
+      />
+    </div>
+  );
 };
 
 export default OrderList;
