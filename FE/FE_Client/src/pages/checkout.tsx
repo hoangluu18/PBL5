@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Row, Col, Space, Button, Typography } from 'antd';
 import { RightOutlined } from '@ant-design/icons';
 import ShippingInfo from '../components/ShippingInfo';
@@ -10,6 +10,8 @@ const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Checkout: React.FC = () => {
+
+
     const [deliveryType, setDeliveryType] = useState('standard');
     const [paymentMethod, setPaymentMethod] = useState('credit');
 
@@ -68,6 +70,10 @@ const Checkout: React.FC = () => {
     const shippingCost = 30000;
     const total = subtotal - discount + tax + shippingCost;
 
+    useEffect(() => {
+        document.title = "Thanh toán";
+    }, []);
+
     return (
         <Layout style={{
             background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',
@@ -82,7 +88,7 @@ const Checkout: React.FC = () => {
                     <Space size="small">
                         <Button href='/' type="link" style={{ padding: 0 }}>Trang chủ</Button>
                         <RightOutlined style={{ fontSize: '12px' }} />
-                        <Button href= '/cart' type="link" style={{ padding: 0 }}>Giỏ hàng</Button>
+                        <Button href='/cart' type="link" style={{ padding: 0 }}>Giỏ hàng</Button>
                         <RightOutlined style={{ fontSize: '12px' }} />
                         <Text type="secondary">Thanh toán</Text>
                     </Space>
