@@ -29,7 +29,7 @@ const CartPage: React.FC = () => {
       }
     };
 
-    fetchCart();
+    fetchCart(); 
   }, [customerId]);
 
   const updateQuantity = (productId: number, change: number) => {
