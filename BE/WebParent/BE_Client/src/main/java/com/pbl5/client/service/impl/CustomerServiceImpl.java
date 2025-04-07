@@ -1,5 +1,6 @@
 package com.pbl5.client.service.impl;
 
+
 import com.pbl5.client.exception.CustomerNotFoundException;
 import com.pbl5.client.repository.CustomerRepository;
 import com.pbl5.client.service.CustomerService;
@@ -59,5 +60,18 @@ public class CustomerServiceImpl implements CustomerService {
             throw new CustomerNotFoundException("Người dùng không tồn tại với email: " + email);
         }
         return customer;
+    }
+  
+    @Override
+    public Customer fineByCustomerId(Integer customerId) {
+        if(customerId == null) {
+            return null;
+        }
+        try {
+            return customerRepository.findById(customerId).orElse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

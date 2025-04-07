@@ -9,5 +9,9 @@ public interface CartService {
     List<CartProductDto> getCartByCustomerId(Integer customerId);
     boolean deleteCartItem(Integer customerId, Integer productId);
 
+
     String addToCart(AddToCartDto addToCartDto);
+
+    boolean deleteAllCartItemsByCustomerId(Integer customerId);
+
 }
