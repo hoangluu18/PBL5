@@ -9,4 +9,5 @@ import java.util.List;
 public interface ShippingRequestService {
     List<ShippingRequestDto> getShippingRequestList(int customerId) throws ProductNotFoundException;
     ShippingRespondDto getShippingRespond(ShippingRequestDto shippingRequestDto);
+    List<ShippingRespondDto> getShippingRespondList(List<ShippingRequestDto> shippingRequestDtoList);
 }

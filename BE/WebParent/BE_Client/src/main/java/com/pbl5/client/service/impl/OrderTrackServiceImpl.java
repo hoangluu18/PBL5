@@ -28,4 +28,18 @@ public class OrderTrackServiceImpl implements OrderTrackService {
     public void deleteById(Integer id) {
         orderTrackRepository.deleteById(id);
     }
+
+    @Override
+    public boolean saveAll(List<OrderTrack> orderTracks) {
+        if(orderTracks == null || orderTracks.isEmpty()) {
+            return false;
+        }
+        try {
+            orderTrackRepository.saveAll(orderTracks);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

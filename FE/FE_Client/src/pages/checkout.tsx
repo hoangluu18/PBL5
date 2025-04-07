@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Space, Button, Typography } from 'antd';
-import { RightOutlined } from '@ant-design/icons';
+import { Layout, Row, Col, Space, Button, Typography, Spin, Card, Skeleton, Result } from 'antd';
+import { RightOutlined, ShoppingCartOutlined, HomeOutlined } from '@ant-design/icons';
 import ShippingInfo from '../components/ShippingInfo';
 import PaymentMethod from '../components/PaymentMethod';
 import OrderSummary from '../components/OrderSummary';
 import { getCheckoutInfo, saveCheckout } from '../services/checkout.service';
 import { CheckoutInfoDto } from '../models/dto/checkout/CheckoutInfoDto';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Checkout: React.FC = () => {
     const [checkoutInfo, setCheckoutInfo] = useState<CheckoutInfoDto | null>(null);
-    const [paymentMethod, setPaymentMethod] = useState('credit');
-    const [loading, setLoading] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState('cash');
+    const [loading, setLoading] = useState(true);
+    const [isNotFound, setIsNotFound] = useState(false);
     const navigate = useNavigate();
     const customerId = 1; // Có thể lấy từ context, params, hoặc localStorage tùy vào thiết kế ứng dụng
+    
     useEffect(() => {
         const fetchCheckoutInfo = async () => {
             try {
@@ -24,21 +27,142 @@ const Checkout: React.FC = () => {
                 setCheckoutInfo(data);
             } catch (error) {
                 console.error('Error fetching checkout info:', error);
+                
+                // Check if this is a 404 error
+                if (axios.isAxiosError(error) && error.response?.status === 404) {
+                    setIsNotFound(true);
+                }
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchCheckoutInfo();
     }, []);
 
-    if (!checkoutInfo) {
-        return <div>Loading...</div>;
+    if (loading) {
+        return (
+            <Layout style={{
+                background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',
+                minHeight: '100vh',
+                width: '100%',
+                maxWidth: '1920px',
+                margin: '0 auto',
+                padding: '20px'
+            }}>
+                <Content className='container'>
+                    <div style={{ marginBottom: '20px' }}>
+                        <Skeleton active paragraph={{ rows: 0 }} />
+                    </div>
+                    
+                    <Skeleton.Input style={{ width: 300, marginBottom: 20 }} active size="large" />
+                    
+                    <Row gutter={24}>
+                        <Col span={16}>
+                            <Card style={{ marginBottom: '20px' }}>
+                                <Skeleton active avatar paragraph={{ rows: 3 }} />
+                            </Card>
+                            <Card>
+                                <Skeleton active paragraph={{ rows: 4 }} />
+                            </Card>
+                        </Col>
+                        <Col span={8}>
+                            <Card>
+                                <Skeleton active paragraph={{ rows: 6 }} />
+                            </Card>
+                        </Col>
+                    </Row>
+                </Content>
+            </Layout>
+        );
     }
 
+    if (isNotFound) {
+        return (
+            <Layout style={{
+                background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',
+                minHeight: '100vh',
+                width: '100%',
+                maxWidth: '1920px',
+                margin: '0 auto',
+                padding: '20px'
+            }}>
+                <Content className='container'>
+                    <Result
+                        status="404"
+                        title="Giỏ hàng trống"
+                        subTitle="Bạn chưa chọn sản phẩm nào để thanh toán. Vui lòng thêm sản phẩm vào giỏ hàng trước."
+                        extra={[
+                            <Button 
+                                type="primary" 
+                                key="cart" 
+                                icon={<ShoppingCartOutlined />}
+                            >
+                                <Link to="/cart">Quay về giỏ hàng</Link>
+                            </Button>,
+                            <Button 
+                                key="home" 
+                                icon={<HomeOutlined />}
+                            >
+                                <Link to="/">Tiếp tục mua sắm</Link>
+                            </Button>
+                        ]}
+                    />
+                </Content>
+            </Layout>
+        );
+    }
+
+    if (!checkoutInfo) {
+        return (
+            <Layout style={{
+                background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',
+                minHeight: '100vh',
+                width: '100%',
+                maxWidth: '1920px',
+                margin: '0 auto',
+                padding: '20px'
+            }}>
+                <Content className='container'>
+                    <Result
+                        status="error"
+                        title="Lỗi tải thông tin"
+                        subTitle="Có lỗi xảy ra khi tải thông tin thanh toán. Vui lòng thử lại sau."
+                        extra={[
+                            <Button 
+                                type="primary" 
+                                key="retry"
+                                onClick={() => window.location.reload()}
+                            >
+                                Thử lại
+                            </Button>,
+                            <Button 
+                                key="home"
+                            >
+                                <Link to="/">Quay về trang chủ</Link>
+                            </Button>
+                        ]}
+                    />
+                </Content>
+            </Layout>
+        );
+    }
+
+    // The rest of your existing code
     const subtotal = checkoutInfo.cartProductDtoList.reduce((sum, item) => sum + (item.lastPrice * item.quantity), 0);
     const shippingCost = checkoutInfo.shippingRespondDtoList.reduce((sum, shipping) => sum + shipping.shippingCost, 0);
     const total = subtotal + shippingCost;
 
+    // Rest of the existing component...
+
     const handlePurchase = () => {
+        // Kiểm tra nếu phương thức thanh toán không phải là COD
+        if (paymentMethod !== 'cash') {
+            alert('Phương thức thanh toán này chưa được hỗ trợ. Mong bạn thông cảm!');
+            return;
+        }
+        
+        // Nếu là COD, tiếp tục như bình thường
         if (window.confirm('Bạn có chắc chắn muốn mua hàng không?')) {
             setLoading(true);
             saveCheckout(customerId)
