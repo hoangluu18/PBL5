@@ -28,14 +28,16 @@ public class CheckoutController {
     @Autowired
     private CheckoutService checkoutService;
 
-    @GetMapping
-    public ResponseEntity<CheckoutInfoDto> getCheckoutInfo() throws ProductNotFoundException {
-        int customerId = 1;
+    @GetMapping("/{customerId}")
+    public ResponseEntity<CheckoutInfoDto> getCheckoutInfo(
+            @PathVariable Integer customerId
+    ) throws ProductNotFoundException {
 
-        return checkoutService.getCheckoutInfo(customerId) != null ?
-                ResponseEntity.ok(checkoutService.getCheckoutInfo(customerId)) :
+        CheckoutInfoDto checkoutInfo = checkoutService.getCheckoutInfo(customerId);
+
+        return checkoutInfo != null ?
+                ResponseEntity.ok(checkoutInfo) :
                 ResponseEntity.notFound().build();
-
     }
 
 
