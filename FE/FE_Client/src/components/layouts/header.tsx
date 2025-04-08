@@ -4,7 +4,7 @@ import {
 import {
     SearchOutlined, ShoppingCartOutlined, BellOutlined,
     UserOutlined, HeartOutlined, LogoutOutlined,
-    SettingOutlined, LoginOutlined
+    LoginOutlined
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
 import logo from '../../assets/logo.jpg';
@@ -45,9 +45,9 @@ const App = () => {
                 },
                 {
                     key: '3',
-                    label: 'Settings',
-                    icon: <SettingOutlined />,
-                    onClick: () => navigate('/settings')
+                    label: 'Đơn hàng của tôi',
+                    icon: <ShoppingCartOutlined />,
+                    onClick: () => navigate('/orders')
                 },
                 {
                     type: 'divider'

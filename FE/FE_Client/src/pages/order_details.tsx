@@ -12,7 +12,6 @@ interface Order {
     phone: string;
   };
   shipping: {
-    method: string;
     estimatedDelivery: string;
     fee: number;
   };
@@ -20,7 +19,6 @@ interface Order {
   items: Array<{
     name: string;
     publisher: string;
-    sku: string;
     price: number;
     quantity: number;
     discount: number;
@@ -45,7 +43,6 @@ const OrderDetail: React.FC = () => {
         phone: '0863190264',
       },
       shipping: {
-        method: 'FAST Giao Tiết Kiệm',
         estimatedDelivery: '18/11',
         fee: 44000,
       },
@@ -54,7 +51,13 @@ const OrderDetail: React.FC = () => {
         {
           name: 'Neji - Giấc Tỉnh Thức Nhất Căn Bản Thể Chư Phật (Tập 1) (Kèm CD)',
           publisher: 'Cung cấp bởi Nhà sách Fahasa',
-          sku: '535415351674',
+          price: 93900,
+          quantity: 1,
+          discount: 0,
+        },
+        {
+          name: 'Neji - Giấc Tỉnh Thức Nhất Căn Bản Thể Chư Phật (Tập 1) (Kèm CD)',
+          publisher: 'Cung cấp bởi Nhà sách Fahasa',
           price: 93900,
           quantity: 1,
           discount: 0,
@@ -313,7 +316,6 @@ const OrderDetail: React.FC = () => {
           </div>
           <div className="info-block">
             <h3>Hình thức giao hàng</h3>
-            <p>{order.shipping.method}</p>
             <p>Được giao bởi Nhánh sách Fahasa</p>
             <p>Phí vận chuyển: {order.shipping.fee.toLocaleString()} đ</p>
           </div>
@@ -343,7 +345,6 @@ const OrderDetail: React.FC = () => {
                       <div className="details">
                         <span className="name">{item.name}</span>
                         <span className="publisher">{item.publisher}</span>
-                        <span className="sku">SKU: {item.sku}</span>
                       </div>
                     </div>
                   </td>

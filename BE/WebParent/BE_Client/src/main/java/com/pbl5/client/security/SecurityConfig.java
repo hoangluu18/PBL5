@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/p/**", "/api/r/**", "/api/c/**").permitAll()
                 .requestMatchers("/api/customers/checkUniqueEmail").permitAll()
+
                 .anyRequest().authenticated()
             )
             .exceptionHandling(exh -> exh.authenticationEntryPoint((request, response, authException) -> {

@@ -20,6 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     public Page<Product> findAllByShopId(int shopId, Pageable pageable);
 
     public Product findById(int productId);
+
     @Query("SELECT p FROM Product p WHERE p.enabled = true " +
             "AND (:#{#param.categoryId == null} = true OR p.category.id = :#{#param.categoryId}) " +
             "AND (:#{#param.brandIds == null || #param.brandIds.isEmpty()} = true OR p.brand.id IN :#{#param.brandIds}) " +

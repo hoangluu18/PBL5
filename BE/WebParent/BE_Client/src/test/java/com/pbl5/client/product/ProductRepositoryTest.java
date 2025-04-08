@@ -22,7 +22,7 @@ public class ProductRepositoryTest {
 
     @Test
     public void testGetProduct() {
-        Product product = repo.findById(1).get();
+        Product product = repo.findById(1);
         System.out.println(product.getShop().getName());
     }
 

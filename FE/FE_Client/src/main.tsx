@@ -78,11 +78,11 @@ const router = createBrowserRouter([
         element: <CartPage />
       },
       {
-        path: '/order/:id', // Route mới cho Chi tiết đơn hàng
+        path: '/order_detail/:id',
         element: <OrderDetail />
       },
       {
-        path: '/order-tracking/:id', // Route mới cho OrderTracking
+        path: '/orders',
         element: <OrderTracking />,
       }
 
