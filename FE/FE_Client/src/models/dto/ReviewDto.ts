@@ -1,4 +1,5 @@
 export interface IReviewDto {
+    id: number;
     rating: number;
     content: string;
     created_at: string;
@@ -6,4 +7,5 @@ export interface IReviewDto {
     feedback: string;
     customerName: string;
     customerPhoto: string;
+    votedByCurrentCustomer: boolean;
 }

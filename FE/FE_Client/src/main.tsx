@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom';
@@ -18,11 +17,11 @@ import EditAddress from './pages/edit_address.tsx';
 import ShopDetail from './pages/shop_detail.tsx';
 import FollowedShops from './pages/followed_shops.tsx';
 import ProductDetailPage from './pages/product_detail.tsx';
-import Account from './pages/profile.tsx';
 import ProfilePage from './pages/profile.tsx';
 import { Button, Result } from 'antd';
+import { AuthWrapper } from './components/context/auth.context.tsx';
 
-
+import 'antd/dist/reset.css';
 
 const router = createBrowserRouter([
   {
@@ -40,7 +39,11 @@ const router = createBrowserRouter([
         element: <Homepage />
       },
       {
-        path: "/c/alias",
+        path: "/c/:alias",
+        element: <ProductFilterPage />
+      },
+      {
+        path: "/search",
         element: <ProductFilterPage />
       },
       {
@@ -55,7 +58,7 @@ const router = createBrowserRouter([
         element: <EditAddress />
       },
       {
-        path: "/shop/1",
+        path: "/shop/:id",
         element: <ShopDetail />
       },
       {
@@ -100,7 +103,11 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // <StrictMode>
+  //   <RouterProvider router={router} />
+  // </StrictMode>,
+
+  <AuthWrapper>
     <RouterProvider router={router} />
-  </StrictMode>,
+  </AuthWrapper>
 )

@@ -1,12 +1,14 @@
 import React from 'react';
 import { Card, Button } from 'antd';
 import { UserOutlined, HomeOutlined, PhoneOutlined } from '@ant-design/icons';
+import { AddressInfoDto } from '../models/dto/checkout/AddressInfoDto';
 
-const ShippingInfo: React.FC = () => {
+interface ShippingInfoProps {
+    addressInfo: AddressInfoDto;
+}
 
-    const fullName = "Lưu Việt Hoàng";
-    const address = "158 Nguyễn Lương Bằng, Hòa Khánh Nam, Liên Chiểu, Đà Nẵng";
-    const phone = "0938583857";
+const ShippingInfo: React.FC<ShippingInfoProps> = ({ addressInfo }) => {
+    const { name, address, phone } = addressInfo;
 
     return (
         <Card
@@ -25,7 +27,7 @@ const ShippingInfo: React.FC = () => {
                         <UserOutlined />
                     </div>
                     <div style={{ width: '100px' }}>Tên</div>
-                    <div style={{ flex: 1 }}>: {fullName}</div>
+                    <div style={{ flex: 1 }}>: {name}</div>
                 </div>
 
                 <div style={{ display: 'flex', marginBottom: '10px' }}>

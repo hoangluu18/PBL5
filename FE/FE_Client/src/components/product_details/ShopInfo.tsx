@@ -1,6 +1,7 @@
 import { Button, Typography, Space, Avatar } from "antd";
 import { MessageOutlined, ShopOutlined } from "@ant-design/icons";
-import { IShopDto } from "../../models/dto/ShopDto";
+import IShopDto from "../../models/dto/ShopDto";
+import { Link } from "react-router-dom";
 
 const { Text } = Typography;
 
@@ -35,13 +36,13 @@ const ShopInfo = (shop: IShopDto) => {
         <div style={{ backgroundColor: "white", width: "100%" }} className="p-3">
             <div className="d-flex justify-content-between">
                 <div className="d-flex">
-                    <Avatar size={64} src={`http://localhost:5173/src/assets/shop-images/${shop.photo}`} />
+                    <Link to={`/shop/${shop.id}`}><Avatar size={64} src={`http://localhost:5173/src/assets/shop-images/${shop.photo}`} /></Link>
                     <div style={{ marginLeft: 16, flex: 1 }}>
                         <Text strong style={{ fontSize: 16 }}>{shop.name}</Text>
                         <Text type="secondary" style={{ display: "block" }}>Online 10 Phút Trước</Text>
                         <Space style={{ marginTop: 8 }}>
                             <Button type="default" icon={<MessageOutlined />} style={{ borderColor: "#f5222d", color: "#f5222d" }}>Chat Ngay</Button>
-                            <Button icon={<ShopOutlined />}>Xem Shop</Button>
+                            <Button icon={<ShopOutlined />}> <Link to={`/shop/${shop.id}`}>Xem Shop</Link></Button>
                         </Space>
                     </div>
                 </div>

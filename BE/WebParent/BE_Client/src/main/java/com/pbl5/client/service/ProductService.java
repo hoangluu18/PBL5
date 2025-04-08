@@ -1,5 +1,6 @@
 package com.pbl5.client.service;
 
+import com.pbl5.client.bean.SearchParam;
 import com.pbl5.client.dto.product.ProductDto;
 import com.pbl5.client.exception.ProductNotFoundException;
 import com.pbl5.common.entity.product.Product;
@@ -13,4 +14,7 @@ public interface ProductService {
     Product get(Integer id) throws ProductNotFoundException;
 
     Page<Product> listAllByShopId(int page, int shopId);
+    Product getByProductId(int productId) throws ProductNotFoundException;
+
+    Page<ProductDto> searchProducts(int page, SearchParam searchParam);
 }
