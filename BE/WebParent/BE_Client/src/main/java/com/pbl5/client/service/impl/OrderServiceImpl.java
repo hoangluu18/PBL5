@@ -19,7 +19,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository repository;
     @Override
     public boolean save(Order order) {
-        if(order == null) {
+        if (order == null) {
             return false;
         }
         try {
@@ -29,20 +29,18 @@ public class OrderServiceImpl implements OrderService {
             e.printStackTrace();
             return false;
         }
-
     }
 
     @Override
     public Page<OrderDto> getOrdersByCustomerId(Integer customerId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size); // page bắt đầu từ 0
-        Page<Order> orderPage = repository.findByCustomerId(customerId, pageable);
-        return orderPage.map(OrderDto::new); // Map từ Order sang OrderDto
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Order> orders = repository.findByCustomerId(customerId, pageable);
+        return orders.map(OrderDto::new);
     }
-}
-   
+
     @Override
     public boolean saveAll(List<Order> order) {
-        if(order == null || order.isEmpty()) {
+        if (order == null || order.isEmpty()) {
             return false;
         }
         try {
@@ -56,12 +54,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findById(Integer id) {
-        if(id == null) {
+        if (id == null) {
             return null;
         }
         try {
-            return repository.findById(Math.toIntExact(id)).orElse(null);
-        } catch (Exception e) {
+            return repository.findById(Long.valueOf(id)).orElse(null);
+
+        } catch (Exception e){
             e.printStackTrace();
             return null;
         }
@@ -69,4 +68,3 @@ public class OrderServiceImpl implements OrderService {
 
 
 }
-

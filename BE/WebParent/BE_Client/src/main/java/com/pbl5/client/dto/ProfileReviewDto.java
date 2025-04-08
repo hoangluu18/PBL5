@@ -1,6 +1,6 @@
 package com.pbl5.client.dto;
 
-import com.pbl5.common.entity.Review;
+import com.pbl5.common.entity.review.Review;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,7 +24,6 @@ public class ProfileReviewDto {
         this.rating = review.getRating();
         this.content = review.getContent();
         this.createdAt = review.getCreated_at();
-        this.likes = review.getLikes();
         this.feedback = review.getFeedback();
         this.productId = review.getProduct() != null ? review.getProduct().getId() : null;
         this.productName = review.getProduct() != null ? review.getProduct().getName() : null;
