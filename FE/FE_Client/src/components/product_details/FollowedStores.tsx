@@ -1,85 +1,239 @@
-import React from "react";
-import { Pagination, Table, Tag } from "antd";
+import React, { useState, useEffect } from "react";
+import { Table, Empty, Typography, Spin, Avatar } from "antd";
+import { ShopOutlined, StarFilled, ShoppingOutlined, DollarOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import FollowingShopService from "../../services/following_shop.service";
+import IFollowingShopDto from "../../models/dto/FollowingShopDto";
 
-// Sample store data
-const storesData = [
-    {
-        id: 1,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/4/48/Dell_Logo.svg",
-        vendor: "Dell Technologies",
-        rating: 5,
-        orders: 3,
-        totalSpent: "$23987",
-        lastOrder: "Dec 12, 12:56 PM"
-    },
-    {
-        id: 2,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/d/d1/Honda_logo.png",
-        vendor: "Honda",
-        rating: 3,
-        orders: 5,
-        totalSpent: "$1250",
-        lastOrder: "Dec 09, 10:48 AM"
-    },
-    {
-        id: 3,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/c/c6/Xiaomi_logo.svg",
-        vendor: "Xiaomi",
-        rating: 3,
-        orders: 6,
-        totalSpent: "$36360",
-        lastOrder: "Dec 03, 05:45 PM"
-    },
-    {
-        id: 4,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/2/29/Huawei-Logo.png",
-        vendor: "Huawei Shop BD",
-        rating: 3,
-        orders: 1,
-        totalSpent: "$1799",
-        lastOrder: "Nov 27, 06:20 PM"
-    },
-    {
-        id: 5,
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Intel_logo_%282020%2C_dark_blue%29.svg/2560px-Intel_logo_%282020%2C_dark_blue%29.svg.png",
-        vendor: "Intel",
-        rating: 3,
-        orders: 2,
-        totalSpent: "$65",
-        lastOrder: "Nov 21, 10:25 AM"
-    },
-];
+const { Title, Text } = Typography;
 
-// Function to render stars based on rating
-const renderStars = (rating: number) => "⭐".repeat(rating);
+interface FollowedStoresProps {
+    customerId?: number; // Nhận customerId từ ProfilePage
+}
 
-// Table columns
-const columns = [
-    {
-        title: "VENDOR",
-        dataIndex: "vendor",
-        key: "vendor",
-        render: (text: string, record: any) => (
-            <div style={{ display: "flex", alignItems: "center" }}>
-                <img src={record.logo} alt={text} style={{ width: 40, height: 40, marginRight: 10 }} />
-                <a href="#">{text}</a>
-            </div>
-        ),
-    },
-    { title: "STORE RATING", dataIndex: "rating", key: "rating", render: (rating: number) => renderStars(rating) },
-    { title: "ORDERS", dataIndex: "orders", key: "orders", render: (orders: number) => <a href="#">{orders}</a> },
-    { title: "TOTAL SPENT", dataIndex: "totalSpent", key: "totalSpent" },
-    { title: "LAST ORDER", dataIndex: "lastOrder", key: "lastOrder" },
-];
+const FollowedStores: React.FC<FollowedStoresProps> = ({ customerId }) => {
+    const [shops, setShops] = useState<IFollowingShopDto[]>([]);
+    const [loading, setLoading] = useState(true);
+    const followingShopService = new FollowingShopService();
 
-// FollowedStores component
-const FollowedStores: React.FC = () => {
+    useEffect(() => {
+        const fetchFollowedShops = async () => {
+            if (customerId) {
+                try {
+                    const data = await followingShopService.getFollowingShops(customerId, 1); // pageNum mặc định là 1
+                    setShops(data);
+                } catch (error) {
+                    console.error("Error fetching shops:", error);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchFollowedShops();
+    }, [customerId]);
+
+// Hàm render sao dựa trên rating
+const renderStars = (rating: any) => {
+    const numRating = parseFloat(rating) || 0;
     return (
-        <div className="bg-white p-3">
-            <Table dataSource={storesData} columns={columns} rowKey="id" pagination={false} />
-            <Pagination className="text-center mt-3" defaultCurrent={1} total={50} />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}> {/* Thêm justifyContent: "center" */}
+            {[...Array(5)].map((_, i) => (
+                <StarFilled 
+                    key={i} 
+                    style={{ 
+                        fontSize: '16px', 
+                        color: i < Math.floor(numRating) ? "#FADB14" : "#E8E8E8",
+                        marginRight: '2px'
+                    }} 
+                />
+            ))}
+            <Text style={{ marginLeft: 8, color: '#666' }}>({numRating.toFixed(1)})</Text>
         </div>
-    )
+    );
+};
+
+    // Hàm format ngày giờ
+    const formatDate = (dateStr: string) => {
+        const date = new Date(dateStr);
+        return date.toLocaleString("en-GB", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        }).replace(",", "");
+    };
+
+    // Định nghĩa cột cho Table
+    const columns = [
+        {
+            title: "Cửa hàng",
+            dataIndex: "shopName",
+            key: "shopName",
+            width: 300, // Đặt độ rộng cố định cho cột này
+            render: (text: string, record: IFollowingShopDto) => (
+                <div className="shop-column-content" style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ paddingLeft: 46, display: 'flex', alignItems: 'center' }}>
+                        <Avatar
+                            src={record.photo ? `http://localhost:5173/src/assets/shop-images/shop2.png` : "https://via.placeholder.com/40"}
+                            alt={text}
+                            size={50}
+                            style={{ marginRight: 12 }}
+                        />
+                        <div>
+                            <Text strong style={{ fontSize: "16px", display: "block" }}>{text}</Text>
+                        </div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            title: "Đánh giá",
+            dataIndex: "rating",
+            key: "rating",
+            render: (rating: number) => renderStars(rating),
+        },
+        {
+            title: "Tổng đơn hàng",
+            dataIndex: "totalOrders",
+            key: "totalOrders",
+            render: (totalOrders: number) => (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <ShoppingOutlined 
+                        style={{ 
+                            color: "#722ed1", 
+                            marginRight: 5,
+                            fontSize: "16px"
+                        }} 
+                    />
+                    <Text strong>{totalOrders}</Text>
+                </div>
+            ),
+        },
+        {
+            title: "Đã chi tiêu",
+            dataIndex: "totalSpent",
+            key: "totalSpent",
+            render: (totalSpent: number) => (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <DollarOutlined 
+                        style={{ 
+                            color: "#52c41a", 
+                            marginRight: 5,
+                            fontSize: "16px"
+                        }} 
+                    />
+                    <Text strong style={{ fontSize: "15px" }}>
+                        {Math.floor(totalSpent).toLocaleString("vi-VN")}₫
+                    </Text>
+                </div>
+            ),
+        },
+        {
+            title: "Đơn hàng gần nhất",
+            dataIndex: "lastOrder",
+            key: "lastOrder",
+            render: (lastOrder: string) => (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <ClockCircleOutlined 
+                        style={{ 
+                            color: "#1890ff", 
+                            marginRight: 5,
+                            fontSize: "16px"
+                        }} 
+                    />
+                    <Text>{formatDate(lastOrder)}</Text>
+                </div>
+            ),
+        },
+    ];
+
+    if (loading) {
+        return (
+            <div style={{ padding: "40px 0", textAlign: "center" }}>
+                <Spin size="large" />
+            </div>
+        );
+    }
+
+    return (
+        <div className="followed-shops-container" style={{ 
+            background: "white",
+            padding: "20px",
+            borderRadius: "8px",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
+        }}>
+            <Title level={4} style={{ 
+                marginBottom: 5, 
+                display: "flex", 
+                alignItems: "center",
+                paddingBottom: "5px"
+            }}>
+            </Title>
+            
+            {shops.length > 0 ? (
+                <Table
+                    dataSource={shops}
+                    columns={columns}
+                    rowKey="shopId"
+                    pagination={false}
+                    className="followed-shops-table"
+                    bordered={false}
+                    style={{ marginBottom: "16px" }}
+                    rowClassName={() => "shop-row"}
+                />
+            ) : (
+                <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description={
+                        <Text style={{ fontSize: "16px", color: "#666" }}>
+                            Bạn chưa theo dõi shop nào.
+                        </Text>
+                    }
+                    style={{ margin: "40px 0" }}
+                />
+            )}
+            
+            {/* CSS inline */}
+            <style>{`
+    .shop-row:hover {
+        background-color: #f5f5f5;
+    }
+    .followed-shops-table .ant-table-thead > tr > th {
+        background-color: #fafafa;
+        font-weight: 600;
+        text-align: center;
+    }
+    .followed-shops-table .ant-table-cell {
+        padding: 16px 8px;
+        text-align: center;
+    }
+        
+    /* Căn trái cho cột cửa hàng */
+    .followed-shops-table th:first-child ,
+    .followed-shops-table td:first-child {
+        padding-left: center;
+    }
+    /* Căn trái cho cột đánh giá */
+    .followed-shops-table th:nth-child(2),
+    .followed-shops-table td:nth-child(2) {
+        text-align: center;
+    }
+    /* Căn giữa cho các cột còn lại */
+    .followed-shops-table th:nth-child(n+3),
+    .followed-shops-table td:nth-child(n+3) {
+        text-align: center;
+    }
+    .followed-shops-container {
+        transition: all 0.3s ease;
+    }
+    .followed-shops-container:hover {
+        box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+        
+`}</style>
+        </div>
+    );
 };
 
 export default FollowedStores;

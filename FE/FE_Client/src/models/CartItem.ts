@@ -6,6 +6,7 @@ interface ICartItem {
     lastPrice: number;  // Giá sau giảm giá
     photo: string | null;
     attributes: string; // key-value của biến thể sản phẩm
+    shopId: number;
     shopName: string; // tên shop
 }
 

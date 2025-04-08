@@ -1,91 +1,103 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaCommentDots, FaEye, FaShoppingCart } from 'react-icons/fa';
 
-interface Order {
-  id: string;
-  status: string;
-  date: string;
-  customer: {
-    name: string;
-    address: string;
-    phone: string;
-  };
-  shipping: {
-    estimatedDelivery: string;
-    fee: number;
-  };
-  paymentMethod: string;
-  items: Array<{
-    name: string;
-    publisher: string;
-    price: number;
-    quantity: number;
-    discount: number;
-  }>;
-  subtotal: number;
-  shippingFee: number;
-  total: number;
-}
+import { Layout, Skeleton, Row, Col, Card, Typography, Divider, Table } from 'antd';
+import { getOrderDetails } from '../services/order_detail.service';
+import { OrderDetailsResponse } from '../models/order_detail/OrderDetailResponse';
+import { AuthContext } from "../components/context/auth.context";
+
+const { Content } = Layout;
+
 
 const OrderDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [order, setOrder] = useState<Order | null>(null);
+  const { customer } = useContext(AuthContext);
+  const customerId = customer?.id;
 
-  const mockOrders: Order[] = [
-    {
-      id: '714903082',
-      status: 'Giao hàng thành công',
-      date: '09:32 11/11/2022',
-      customer: {
-        name: 'Lưu Việt Hoàng',
-        address: '15 tẩm 8, Phường Hòa Khánh Nam, Quận Liên Chiểu, Đà Nẵng, Việt Nam',
-        phone: '0863190264',
-      },
-      shipping: {
-        estimatedDelivery: '18/11',
-        fee: 44000,
-      },
-      paymentMethod: 'Thanh toán tiền mặt khi nhận hàng',
-      items: [
-        {
-          name: 'Neji - Giấc Tỉnh Thức Nhất Căn Bản Thể Chư Phật (Tập 1) (Kèm CD)',
-          publisher: 'Cung cấp bởi Nhà sách Fahasa',
-          price: 93900,
-          quantity: 1,
-          discount: 0,
-        },
-        {
-          name: 'Neji - Giấc Tỉnh Thức Nhất Căn Bản Thể Chư Phật (Tập 1) (Kèm CD)',
-          publisher: 'Cung cấp bởi Nhà sách Fahasa',
-          price: 93900,
-          quantity: 1,
-          discount: 0,
-        },
-      ],
-      subtotal: 93900,
-      shippingFee: 44000,
-      total: 137900,
-    },
-  ];
+  const { id } = useParams<{ id: string }>();
+
+  const [orderDetails, setOrderDetails] = useState<OrderDetailsResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
 
   useEffect(() => {
-    const foundOrder = mockOrders.find((o) => o.id === id);
-    setOrder(foundOrder || null);
+    const fetchOrderDetails = async () => {
+      if (!id) return;
+
+      try {
+        setLoading(true);
+        console.log('Fetching order details for ID:', id, 'Customer ID:', customerId);
+        const data = await getOrderDetails(parseInt(id), customerId);
+        setOrderDetails(data);
+      } catch (error) {
+        console.error('Lỗi khi lấy thông tin đơn hàng:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
   }, [id]);
 
-  if (!order) {
-    return <div>Đơn hàng không tồn tại</div>;
+  if (loading) {
+    return (
+      <Layout style={{
+        background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',
+        minHeight: '100vh',
+        width: '100%',
+        maxWidth: '1920px',
+        margin: '0 auto',
+        padding: '20px'
+      }}>
+        <Content className='container'>
+          <div style={{ marginBottom: '20px' }}>
+            <Skeleton active paragraph={{ rows: 0 }} />
+          </div>
+
+          <Skeleton.Input style={{ width: 300, marginBottom: 20 }} active size="large" />
+
+          <Row gutter={24}>
+            <Col span={16}>
+              <Card style={{ marginBottom: '20px' }}>
+                <Skeleton active avatar paragraph={{ rows: 3 }} />
+              </Card>
+              <Card>
+                <Skeleton active paragraph={{ rows: 4 }} />
+              </Card>
+            </Col>
+            <Col span={8}>
+              <Card>
+                <Skeleton active paragraph={{ rows: 6 }} />
+              </Card>
+            </Col>
+          </Row>
+        </Content>
+      </Layout>
+    );
   }
 
-  const styles = `
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-    }
+  if (!orderDetails) {
+    return <div className="mt-3 container">Đơn hàng không tồn tại</div>;
+  }
 
+  const { orderDto, cartProductDtoList } = orderDetails;
+
+  // Format date
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  const formatPrice = (price: number) => {
+    return price.toLocaleString('vi-VN') + ' đ';
+  };
+
+  const styles = `
     .order-detail-container {
       max-width: 1200px;
       margin: 20px auto;
@@ -95,7 +107,7 @@ const OrderDetail: React.FC = () => {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
-      position: relative; /* Đảm bảo tham chiếu cho các phần tử con */
+      position: relative;
     }
 
     .header {
@@ -204,46 +216,18 @@ const OrderDetail: React.FC = () => {
       color: #6c757d;
     }
 
-    .items-table .product-info .details .sku {
-      font-size: 12px;
-      color: #6c757d;
-    }
-
-    .items-table .actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .items-table .actions button {
-      padding: 6px 12px;
-      border: 1px solid #e9ecef;
-      border-radius: 5px;
-      background: none;
-      font-size: 12px;
-      color: #6c757d;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      transition: background-color 0.3s ease;
-    }
-
-    .items-table .actions button:hover {
-      background-color: #f1f3f5;
-    }
-
     .summary {
       display: flex;
       justify-content: flex-end;
       margin-bottom: 20px;
-      margin-left: auto; /* Đẩy summary sát mép phải tự động */
-      width: auto; /* Tự động điều chỉnh chiều rộng */
+      margin-left: auto;
+      width: auto;
     }
 
     .summary-table {
       width: 300px;
       text-align: right;
-      margin-right: 0; /* Đảm bảo không có khoảng cách bên phải */
+      margin-right: 0;
     }
 
     .summary-table div {
@@ -303,25 +287,27 @@ const OrderDetail: React.FC = () => {
       <style dangerouslySetInnerHTML={{ __html: styles }} />
       <div className="mt-3 container">
         <div className="header">
-          <h1>Chi tiết đơn hàng #{order.id} - {order.status}</h1>
-          <span className="date">Ngày đặt hàng: {order.date}</span>
+          <h1>Chi tiết đơn hàng #{orderDto.id} - {orderDto.orderStatus}</h1>
+          <span className="date">Ngày đặt hàng: {formatDate(orderDto.orderTime)}</span>
         </div>
 
         <div className="info-section">
           <div className="info-block">
-            <h3>Địa chỉ nguồn nhận</h3>
-            <p>{order.customer.name}</p>
-            <p>Địa chỉ: {order.customer.address}</p>
-            <p>Điện thoại: {order.customer.phone}</p>
+            <h3>Địa chỉ người nhận</h3>
+            <p>{orderDto.firstName} {orderDto.lastName}</p>
+            <p>Địa chỉ: {orderDto.addressLine}</p>
+            <p>Điện thoại: {orderDto.phoneNumber}</p>
           </div>
           <div className="info-block">
             <h3>Hình thức giao hàng</h3>
-            <p>Được giao bởi Nhánh sách Fahasa</p>
-            <p>Phí vận chuyển: {order.shipping.fee.toLocaleString()} đ</p>
+
+            <p>Dự kiến giao: {formatDate(orderDto.deliverDate)}</p>
+            <p>Phí vận chuyển: {formatPrice(orderDto.shippingCost)}</p>
+
           </div>
           <div className="info-block">
             <h3>Hình thức thanh toán</h3>
-            <p>{order.paymentMethod}</p>
+            <p>{orderDto.paymentMethod === 'COD' ? 'Thanh toán khi nhận hàng' : orderDto.paymentMethod}</p>
           </div>
         </div>
 
@@ -332,41 +318,30 @@ const OrderDetail: React.FC = () => {
                 <th>Sản phẩm</th>
                 <th>Giá</th>
                 <th>Số lượng</th>
-                <th>Giảm giá</th>
                 <th>Tạm tính</th>
               </tr>
             </thead>
             <tbody>
-              {order.items.map((item, index) => (
+              {cartProductDtoList.map((item, index) => (
                 <tr key={index}>
                   <td>
                     <div className="product-info">
-                      <img src="https://product.hstatic.net/1000075554/product/-nhat-can-ban-theo-chu-de-vol-1-43s9j_a2aa596ff9304a6ab950bcfadfb01460_f5e7712c6b26437c97d8c3415d425d65.jpg" alt={item.name} />
+                      <img src={item.photo ? `/src/assets/product-images/${item.photo}` : '/src/assets/product-images/default-image.jpg'}
+                        alt={item.productName} />
                       <div className="details">
-                        <span className="name">{item.name}</span>
-                        <span className="publisher">{item.publisher}</span>
+
+                        <span className="name">{item.productName}</span>
+                        <span className="publisher">Cung cấp bởi {item.shopName}</span>
+                        {item.attributes && <span>{item.attributes}</span>}
+
                       </div>
                     </div>
                   </td>
-                  <td>{item.price.toLocaleString()} đ</td>
+                  <td>{formatPrice(item.lastPrice)}</td>
                   <td>{item.quantity}</td>
-                  <td>{item.discount.toLocaleString()} đ</td>
-                  <td>{(item.price * item.quantity - item.discount).toLocaleString()} đ</td>
+                  <td>{formatPrice(item.lastPrice * item.quantity)}</td>
                 </tr>
               ))}
-              <tr>
-                <td colSpan={5} className="actions">
-                  <button>
-                    <FaCommentDots /> Chat với nhà bán
-                  </button>
-                  <button>
-                    <FaEye /> Viết nhận xét
-                  </button>
-                  <button>
-                    <FaShoppingCart /> Mua lại
-                  </button>
-                </td>
-              </tr>
             </tbody>
           </table>
         </div>
@@ -375,21 +350,21 @@ const OrderDetail: React.FC = () => {
           <div className="summary-table">
             <div>
               <span>Tạm tính</span>
-              <span>{order.subtotal.toLocaleString()} đ</span>
+              <span>{formatPrice(orderDto.productCost)}</span>
             </div>
             <div>
               <span>Phí vận chuyển</span>
-              <span>{order.shippingFee.toLocaleString()} đ</span>
+              <span>{formatPrice(orderDto.shippingCost)}</span>
             </div>
             <div className="total">
               <span>Tổng cộng</span>
-              <span>{order.total.toLocaleString()} đ</span>
+              <span>{formatPrice(orderDto.total)}</span>
             </div>
           </div>
         </div>
 
         <div className="footer">
-          <a href="#" className="back-link">
+          <a href="/profile" className="back-link">
             <span>{'<'}</span> Quay lại đơn hàng của tôi
           </a>
           <button className="track-button">Theo dõi đơn hàng</button>

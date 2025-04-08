@@ -4,6 +4,9 @@ interface IFollowingShopDto {
     photo: string
     rating: number
     peopleTracking: number
+    orders: number;
+    totalSpent: number;
+    lastOrder: string;
 }
 
 export default IFollowingShopDto;
