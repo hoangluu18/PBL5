@@ -1,20 +1,23 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+
 import { Layout, Skeleton, Row, Col, Card, Typography, Divider, Table } from 'antd';
 import { getOrderDetails } from '../services/order_detail.service';
 import { OrderDetailsResponse } from '../models/order_detail/OrderDetailResponse';
 import { AuthContext } from "../components/context/auth.context";
 
 const { Content } = Layout;
-// Removed unused destructured elements from Typography
+
 
 const OrderDetail: React.FC = () => {
   const { customer } = useContext(AuthContext);
   const customerId = customer?.id;
 
   const { id } = useParams<{ id: string }>();
+
   const [orderDetails, setOrderDetails] = useState<OrderDetailsResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -297,8 +300,10 @@ const OrderDetail: React.FC = () => {
           </div>
           <div className="info-block">
             <h3>Hình thức giao hàng</h3>
+
             <p>Dự kiến giao: {formatDate(orderDto.deliverDate)}</p>
             <p>Phí vận chuyển: {formatPrice(orderDto.shippingCost)}</p>
+
           </div>
           <div className="info-block">
             <h3>Hình thức thanh toán</h3>
@@ -324,9 +329,11 @@ const OrderDetail: React.FC = () => {
                       <img src={item.photo ? `/src/assets/product-images/${item.photo}` : '/src/assets/product-images/default-image.jpg'}
                         alt={item.productName} />
                       <div className="details">
+
                         <span className="name">{item.productName}</span>
                         <span className="publisher">Cung cấp bởi {item.shopName}</span>
                         {item.attributes && <span>{item.attributes}</span>}
+
                       </div>
                     </div>
                   </td>

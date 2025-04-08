@@ -1,5 +1,16 @@
 package com.pbl5.client.service.impl;
 
+import com.pbl5.client.dto.OrderInfoDto;
+import com.pbl5.client.exception.OrderNotFoundException;
+import com.pbl5.client.repository.OrderRepository;
+import com.pbl5.client.service.OrderService;
+import com.pbl5.common.entity.Order;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+
 import com.pbl5.client.dto.OrderDto;
 import com.pbl5.client.repository.OrderRepository;
 import com.pbl5.client.service.OrderService;
@@ -17,6 +28,8 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderRepository repository;
+
+
     @Override
     public boolean save(Order order) {
         if (order == null) {
@@ -39,6 +52,26 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderInfoDto> getOrdersByCustomerId(Integer customerId) throws OrderNotFoundException {
+        List<Order> orders = repository.findByCustomerId(customerId);
+        if(orders == null) {
+            throw new OrderNotFoundException("Không tìm thấy đơn hàng cho khách hàng: " + customerId);
+        }
+        List<OrderInfoDto> orderInfoDtos = new ArrayList<>();
+
+        orders.forEach(order -> {
+            OrderInfoDto dto = new OrderInfoDto();
+            dto.setOrderId(order.getId());
+            dto.setOrderDate(order.getOrderTime().toString());
+            dto.setTotalAmount(order.getTotal());
+            dto.setOrderStatus(order.getOrderTracks().get(0).getStatus().toString());
+
+            orderInfoDtos.add(dto);
+        });
+
+        return  orderInfoDtos;
+    }
+
     public boolean saveAll(List<Order> order) {
         if (order == null || order.isEmpty()) {
             return false;
@@ -58,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
             return null;
         }
         try {
-            return repository.findById(Long.valueOf(id)).orElse(null);
+            return repository.findById(id).orElse(null);
 
         } catch (Exception e){
             e.printStackTrace();
