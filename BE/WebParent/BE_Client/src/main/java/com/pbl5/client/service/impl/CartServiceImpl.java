@@ -34,6 +34,7 @@ public class CartServiceImpl implements CartService {
                     lastPrice,  // Giá sau cùng
                     item.getProduct().getMainImage(),
                     item.getProduct().getShop().getName(),
+                    item.getProduct().getShop().getId(),
                     item.getProductDetail()  // Dữ liệu biến thể đã lưu trực tiếp
             );
         }).collect(Collectors.toList());
