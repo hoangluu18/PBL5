@@ -8,4 +8,5 @@ public interface OrderTrackService {
     List<OrderTrack> findAll();
     OrderTrack save(OrderTrack orderTrack);
     void deleteById(Integer id);
+    boolean saveAll(List<OrderTrack> orderTracks);
 }

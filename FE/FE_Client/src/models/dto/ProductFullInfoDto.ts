@@ -1,7 +1,7 @@
 import { ICategoryDto } from "./CategoryDto";
 import IProductDto from "./ProductDto";
 import { IProductVariantDto } from "./ProductVariantDto";
-import { IShopDto } from "./ShopDto";
+import IShopDto from "./ShopDto";
 
 export interface IProductFullInfoDto extends IProductDto {
     fullDescription: string;

@@ -20,15 +20,15 @@ interface OrderSummaryProps {
   total: number;
 }
 
-const OrderSummary: React.FC<OrderSummaryProps> = ({ 
-  orderItems, 
-  subtotal, 
-  shippingCost, 
-  total 
+const OrderSummary: React.FC<OrderSummaryProps> = ({
+  orderItems,
+  subtotal,
+  shippingCost,
+  total
 }) => {
   // Nhóm các sản phẩm theo shop
   const itemsByShop: { [key: number]: { shopName: string; items: OrderItem[]; subtotal: number } } = {};
-  
+
   orderItems.forEach(item => {
     if (!itemsByShop[item.shopId]) {
       itemsByShop[item.shopId] = {
@@ -43,7 +43,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
   return (
     <Card
-      title="Đơn hàng"
+      title={<div style={{ textAlign: 'center' }}>Đơn hàng</div>}
       bordered={false}
       style={{ marginBottom: '20px' }}
     >

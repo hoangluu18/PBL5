@@ -9,6 +9,11 @@ export const getCheckoutInfo = async (): Promise<CheckoutInfoDto> => {
         return response.data;
     } catch (error) {
         console.error('Error fetching checkout info:', error);
+        // Log more detailed error information
+        if (axios.isAxiosError(error)) {
+            console.error('Status:', error.response?.status);
+            console.error('Response data:', error.response?.data);
+        }
         throw error;
     }
 };
