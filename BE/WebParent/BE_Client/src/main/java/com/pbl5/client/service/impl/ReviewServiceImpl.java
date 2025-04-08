@@ -1,5 +1,7 @@
 package com.pbl5.client.service.impl;
 
+import com.pbl5.client.dto.ProfileReviewDto;
+import com.pbl5.client.dto.ReviewDto;
 import com.pbl5.client.common.Constants;
 import com.pbl5.client.exception.ReviewNotFoundException;
 import com.pbl5.client.repository.CustomerRepository;
@@ -74,5 +76,19 @@ public class ReviewServiceImpl implements ReviewService {
             }
         });
 
+    }
+
+    @Override
+    public List<ProfileReviewDto> getReviewsByCustomerId(Integer customerId) {
+        List<ProfileReviewDto> res = new ArrayList<>();
+        List<Review> reviews = reviewRepository.findAllByCustomerId(customerId);
+
+        reviews.forEach(r -> {
+            ProfileReviewDto reviewDto = new ProfileReviewDto();
+            reviewDto.clone(r);
+            res.add(reviewDto);
+        });
+
+        return res;
     }
 }
