@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface AddressInfoRepository extends JpaRepository<Address, Integer> {
-    @Query("select s from Address s where s.id = :id and s.isDefault = true")
+    @Query("select s from Address s where s.customerId = :id and s.isDefault = true")
     Address fineByAddressDefault(int id);
 }
