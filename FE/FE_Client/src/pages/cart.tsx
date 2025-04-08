@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect, useMemo, useContext } from 'react';
 import { AuthContext } from "../components/context/auth.context";
 import { FaTrash, FaHeart } from 'react-icons/fa';
+
 import { Link, useParams } from 'react-router-dom';
 import OrderSummary from '../components/OrderSummary';
 import CartService from '../services/cart.service';
@@ -11,8 +13,12 @@ const CartPage: React.FC = () => {
   const customerId = customer?.id;
   const [cartItems, setCartItems] = useState<ICartItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const cartService = new CartService();
+
+  // Hàm tạo key duy nhất từ productId và attributes
+  const getItemKey = (item: ICartItem): string =>
+    `${item.productId}-${item.attributes || ''}`.trim();
 
   useEffect(() => {
     document.title = "Giỏ hàng";
@@ -22,7 +28,7 @@ const CartPage: React.FC = () => {
           const items = await cartService.getCart(customerId);
           setCartItems(items);
           if (items.length > 0) {
-            setSelectedItems([items[items.length - 1].productId]);
+            setSelectedItems([getItemKey(items[items.length - 1])]);
           }
         } catch (error) {
           console.error("Error fetching cart:", error);
@@ -46,11 +52,8 @@ const CartPage: React.FC = () => {
   };
 
   const handleDeleteItem = async (productId: number) => {
-    // Thêm xác nhận trước khi xóa
     const confirmDelete = window.confirm("Bạn có muốn xóa sản phẩm này?");
-    if (confirmDelete) {
-      if (!customerId) return;
-
+    if (confirmDelete && customerId) {
       try {
         await cartService.deleteCartItem(parseInt(customerId, 10), productId);
         setCartItems(cartItems.filter(item => item.productId !== productId));
@@ -60,17 +63,18 @@ const CartPage: React.FC = () => {
     }
   };
 
-  const handleSelectItem = (productId: number) => {
+  const handleSelectItem = (item: ICartItem) => {
+    const key = getItemKey(item);
     setSelectedItems(current =>
-      current.includes(productId)
-        ? current.filter(itemId => itemId !== productId)
-        : [...current, productId]
+      current.includes(key)
+        ? current.filter(k => k !== key)
+        : [...current, key]
     );
   };
 
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      setSelectedItems(cartItems.map(item => item.productId));
+      setSelectedItems(cartItems.map(getItemKey));
     } else {
       setSelectedItems([]);
     }
@@ -85,7 +89,7 @@ const CartPage: React.FC = () => {
 
   const selectedSubtotal = useMemo(() =>
     cartItems
-      .filter(item => selectedItems.includes(item.productId))
+      .filter(item => selectedItems.includes(getItemKey(item)))
       .reduce((sum, item) => sum + item.lastPrice * item.quantity, 0),
     [cartItems, selectedItems]
   );
@@ -99,9 +103,7 @@ const CartPage: React.FC = () => {
     return <div>Giỏ hàng của bạn đang trống. <Link to="/">Tiếp tục mua sắm</Link></div>;
   }
 
-  const formatPrice = (price: number) => {
-    return `${price.toLocaleString()}đ`;
-  };
+  const formatPrice = (price: number) => `${price.toLocaleString()}đ`;
 
   return (
     <div className="cart-container">
@@ -115,68 +117,72 @@ const CartPage: React.FC = () => {
           />
           <span>Chọn tất cả ({cartItems.length} sản phẩm)</span>
         </div>
-        {cartItems.map(item => (
-          <div key={item.productId} className="cart-item-row">
-            <div className="cart-item-checkbox">
-              <input
-                type="checkbox"
-                checked={selectedItems.includes(item.productId)}
-                onChange={() => handleSelectItem(item.productId)}
-              />
-            </div>
-            <div className="cart-item-image">
-              {item.photo && (
-                <img
-                  src={`http://localhost:5173/src/assets/product-images/${item.photo}`}
-                  alt={item.productName}
-                  className="product-image"
+        {cartItems.map(item => {
+          const key = getItemKey(item);
+          return (
+            <div key={key} className="cart-item-row">
+              <div className="cart-item-checkbox">
+                <input
+                  type="checkbox"
+                  checked={selectedItems.includes(key)}
+                  onChange={() => handleSelectItem(item)}
                 />
-              )}
-            </div>
-            <div className="cart-item-details">
-              <div className="cart-item-info">
-                <span className="shop-name">{item.shopName}</span>
-                <span className="product-name">{item.productName}</span>
-                <div className="cart-item-attributes">
-                  <span>{item.attributes || 'N/A'}</span>
+              </div>
+              <div className="cart-item-image">
+                {item.photo && (
+                  <img
+                    src={`http://localhost:5173/src/assets/product-images/${item.photo}`}
+                    alt={item.productName}
+                    className="product-image"
+                  />
+                )}
+              </div>
+              <div className="cart-item-details">
+                <div className="cart-item-info">
+                  <span className="shop-name">{item.shopName}</span>
+                  <span className="product-name">{item.productName}</span>
+                  <div className="cart-item-attributes">
+                    <span>{item.attributes || 'N/A'}</span>
+                  </div>
+                </div>
+                <div className="cart-item-price">
+                  <span className="original-price"><del>{formatPrice(item.originalPrice)}</del></span>
+                  <span className="discounted-price">{formatPrice(item.lastPrice)}</span>
+                </div>
+                <div className="cart-item-quantity">
+                  <button onClick={() => updateQuantity(item.productId, -1)}>-</button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => updateQuantity(item.productId, 1)}>+</button>
+                </div>
+                <div className="cart-item-total">
+                  {formatPrice(item.lastPrice * item.quantity)}
+                </div>
+                <div className="cart-item-actions">
+                  <FaTrash className="delete-icon" onClick={() => handleDeleteItem(item.productId)} />
                 </div>
               </div>
-              <div className="cart-item-price">
-                <span className="original-price"><del>{formatPrice(item.originalPrice)}</del></span>
-                <span className="discounted-price">{formatPrice(item.lastPrice)}</span>
-              </div>
-              <div className="cart-item-quantity">
-                <button onClick={() => updateQuantity(item.productId, -1)}>-</button>
-                <span>{item.quantity}</span>
-                <button onClick={() => updateQuantity(item.productId, 1)}>+</button>
-              </div>
-              <div className="cart-item-total">
-                {formatPrice(item.lastPrice * item.quantity)}
-              </div>
-              <div className="cart-item-actions">
-                <FaTrash className="delete-icon" onClick={() => handleDeleteItem(item.productId)} />
-              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="summary">
         <OrderSummary
           orderItems={cartItems
-            .filter(item => selectedItems.includes(item.productId))
-            .map((item, index) => ({
+            .filter(item => selectedItems.includes(getItemKey(item)))
+            .map(item => ({
               id: item.productId,
               image: item.photo
                 ? `http://localhost:5173/src/assets/product-images/${item.photo}`
                 : 'http://localhost:5173/src/assets/product-images/default-image.jpg',
-              shopId: index % 2 === 0 ? 1 : 2,
+              shopId: item.shopId,
               shopName: item.shopName,
               name: item.productName,
               quantity: item.quantity,
               originalPrice: item.originalPrice,
-              price: item.lastPrice, // Dùng lastPrice để tính tổng tiền
-            }))}
+              price: item.lastPrice,
+            }))
+          }
           subtotal={selectedSubtotal}
           shippingCost={shippingCost}
           total={selectedTotal}

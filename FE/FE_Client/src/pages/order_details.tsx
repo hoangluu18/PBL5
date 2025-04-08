@@ -6,7 +6,7 @@ import { OrderDetailsResponse } from '../models/order_detail/OrderDetailResponse
 import { AuthContext } from "../components/context/auth.context";
 
 const { Content } = Layout;
-const { Title, Text } = Typography;
+// Removed unused destructured elements from Typography
 
 const OrderDetail: React.FC = () => {
   const { customer } = useContext(AuthContext);
