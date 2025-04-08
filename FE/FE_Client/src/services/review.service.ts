@@ -19,6 +19,15 @@ class ReviewService {
         return reviews;
     }
 
+    async voteReview(reviewId: number, customerId: number): Promise<void> {
+
+        try {
+            await axios.post(`${API_URL}/vote_review?reviewId=${reviewId}&customerId=${customerId}`);
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
 }
 
 

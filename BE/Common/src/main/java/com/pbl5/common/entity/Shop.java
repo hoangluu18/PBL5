@@ -34,6 +34,8 @@ public class Shop extends IdBaseEntity{
     private Integer peopleTracking;
 
     private String phone;
+
+    private String city;
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;

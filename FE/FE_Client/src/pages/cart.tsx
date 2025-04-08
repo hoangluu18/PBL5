@@ -17,6 +17,7 @@ const CartPage: React.FC = () => {
     `${item.productId}-${item.attributes || ''}`.trim();
 
   useEffect(() => {
+    document.title = "Giỏ hàng";
     const fetchCart = async () => {
       if (customerId) {
         try {
@@ -33,7 +34,7 @@ const CartPage: React.FC = () => {
       }
     };
 
-    fetchCart();
+    fetchCart(); 
   }, [customerId]);
 
   const updateQuantity = (productId: number, change: number) => {

@@ -7,6 +7,7 @@ import com.pbl5.common.entity.IdBaseEntity;
 import com.pbl5.common.entity.Shop;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.*;
@@ -15,6 +16,7 @@ import java.util.*;
 @Table(name = "products")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Product extends IdBaseEntity {
 
     @Column(nullable = false, unique = true, length = 256)
@@ -79,6 +81,10 @@ public class Product extends IdBaseEntity {
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
+    public Product(int id) {
+        this.id = id;
+    }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -96,5 +102,14 @@ public class Product extends IdBaseEntity {
     @Override
     public int hashCode() {
         return Objects.hashCode(this.getId());
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "name='" + name + '\'' +
+                ", category name=" + category.getName() +
+                ", brand name=" + brand.getName() +
+                '}';
     }
 }

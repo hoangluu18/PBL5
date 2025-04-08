@@ -49,8 +49,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
 
   return (
     <Card
-      title="Đơn hàng"
-      extra={<Button type="link">Chỉnh sửa giỏ hàng</Button>}
+      title={<div style={{ textAlign: 'center' }}>Đơn hàng</div>}
       bordered={false}
       style={{ marginBottom: '20px' }}
     >
