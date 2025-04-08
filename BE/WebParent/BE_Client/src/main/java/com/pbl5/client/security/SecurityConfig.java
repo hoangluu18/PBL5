@@ -34,6 +34,9 @@ public class SecurityConfig {
 
         http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/api/shop/*/shopInfo").permitAll()
+                    .requestMatchers("/api/shop/*/product").permitAll()
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()  // Allow Swagger UI
                 .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/p/**", "/api/r/**", "/api/c/**").permitAll()
                 .requestMatchers("/api/customers/checkUniqueEmail").permitAll()

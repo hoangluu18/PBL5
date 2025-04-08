@@ -151,4 +151,9 @@ public class ShippingRequestServiceImpl implements ShippingRequestService {
 
         return null;
     }
+
+    @Override
+    public List<ShippingRespondDto> getShippingRespondList(List<ShippingRequestDto> shippingRequestDtoList) {
+        return List.of();
+    }
 }

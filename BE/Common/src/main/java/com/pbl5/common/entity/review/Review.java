@@ -61,4 +61,5 @@ public class Review extends IdBaseEntity {
                 ", customerName=" + customer.getFullName() +
                 '}';
     }
+
 }

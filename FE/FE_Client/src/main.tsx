@@ -70,11 +70,11 @@ const router = createBrowserRouter([
         element: <ProductDetailPage />
       },
       {
-        path: "/profile",
+        path: "/profile/:customerId",
         element: <ProfilePage />
       },
       {
-        path: "/cart/:customerId",
+        path: "/cart",
         element: <CartPage />
       },
       {

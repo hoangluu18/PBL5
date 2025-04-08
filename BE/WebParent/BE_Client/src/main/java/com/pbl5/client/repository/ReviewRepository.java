@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
+    List<Review> findAllByCustomerId(Integer customerId);
+  
     @Query("SELECT r FROM Review r WHERE r.product.id = ?1")
     public Page<Review> findAllByProductId(Integer productId, Pageable pageable);
 
@@ -20,4 +22,5 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
             "WHERE r.id = ?1")
     @Modifying
     public void updateVoteCount(Integer reviewId);
+
 }
