@@ -1,7 +1,9 @@
-import { Form, Input, Button, Checkbox, Divider, Typography } from 'antd';
+import { Form, Input, Button, Checkbox, Divider, Typography, notification } from 'antd';
 import { FacebookOutlined, GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-
+import AuthService from '../services/auth.service';
+import { AuthContext } from '../components/context/auth.context';
+import { useContext } from 'react';
 
 const { Title, Text } = Typography;
 type FieldType = {
@@ -10,16 +12,67 @@ type FieldType = {
     remember?: string;
 };
 
-
-
 const LoginPage = () => {
     const [form] = Form.useForm();
+    const [api, contextHolder] = notification.useNotification();
+    const { setCustomer } = useContext(AuthContext);
+    document.title = "Đăng nhập";
+
+    const handleLogin = async () => {
+        try {
+            const values = await form.validateFields();  // Validate form fields
+
+            const authService = new AuthService();
+            const response = await authService.login(values.email, values.password);
+
+
+            api.success({
+                message: 'Đăng nhập thành công',
+                placement: 'topRight',
+                duration: 1,
+                onClose: () => {
+                    const { accessToken, id, email, username, avatar, phoneNumber } = response;
+
+                    localStorage.setItem("access_token", accessToken);
+
+                    const customer = { id, email, username, avatar, phoneNumber };
+                    localStorage.setItem("customer", JSON.stringify(customer));
+
+                    setCustomer(customer);
+                    window.location.href = '/';
+                },
+            });
+        }
+        catch (error: any) {
+            const { data } = error.response;
+            const errorMessage = data?.errors || data?.message || 'Tài khoản hoặc mật khẩu không chính xác.';
+            if (error.response) {
+                console.log('Server error:', error.response);
+
+                api.error({
+                    message: 'Đăng nhập thất bại',
+                    description: error.response.data,
+                    placement: 'topRight',
+                    duration: 2,
+                });
+            } else {
+                // Nếu có lỗi khác, không phải từ server
+                api.error({
+                    message: 'Đăng nhập thất bại',
+                    description: errorMessage,
+                    placement: 'topRight',
+                    duration: 2,
+                });
+            }
+        }
+    }
 
     return (
         <div style={{
             maxWidth: "500px", margin: "80px auto", border: "1px solid #ececec", borderRadius: "10px",
             textAlign: "center", padding: "10px"
         }}>
+            {contextHolder}
             <div>
                 <div>
                     <div>
@@ -56,8 +109,7 @@ const LoginPage = () => {
                     <Form.Item<FieldType>
                         name="email"
                         label={<span className='text-primary'>Email Address</span>}
-                        rules={[{ required: true, message: 'Please input your email!' }]}
-                    >
+                        rules={[{ required: true, message: 'Please input your email!' }]}>
                         <Input
                             prefix={<UserOutlined />}
                             placeholder="name@example.com"
@@ -66,27 +118,23 @@ const LoginPage = () => {
 
                     <Form.Item<FieldType>
                         name="password"
-                        label={<span className='text-primary '>Password</span>}
-                        rules={[{ required: true, type: "email", message: 'Please input your password!' }]}
-                    >
+                        label={<span className='text-primary'>Password</span>}
+                        rules={[{ required: true, message: 'Please input your password!' }]}>
                         <Input.Password
                             prefix={<LockOutlined />}
                             placeholder="Password"
-
                         />
                     </Form.Item>
 
-                    <div
-                        className='d-flex justify-content-between align-items-center'>
+                    <div className='d-flex justify-content-between align-items-center'>
                         <Form.Item<FieldType> name="remember" valuePropName="checked" noStyle>
                             <Checkbox>Remember me</Checkbox>
                         </Form.Item>
-                        <Link to={"/forgot_password"} className='text-primary hover-underline'
-                        >Forgot Password?</Link>
+                        <Link to={"/forgot_password"} className='text-primary hover-underline'>Forgot Password?</Link>
                     </div>
 
                     <Form.Item>
-                        <Button type="primary" style={{ width: "100%", marginTop: "20px" }}>
+                        <Button type="primary" style={{ width: "100%", marginTop: "20px" }} onClick={handleLogin}>
                             Sign In
                         </Button>
                     </Form.Item>

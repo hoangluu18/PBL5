@@ -1,6 +1,6 @@
-import { Breadcrumb, Button, Col, Rate, Row, Tabs, TabsProps, Typography, Divider, Tag, Badge, Tooltip, Image, Spin } from "antd";
+import { Breadcrumb, Button, Col, Rate, Row, Tabs, TabsProps, Typography, Divider, Tag, Badge, Tooltip, Image, Spin, notification } from "antd";
 import CurrencyFormat from "../utils/CurrencyFormat";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { MinusOutlined, PlusOutlined, ShoppingCartOutlined, ThunderboltOutlined, HeartOutlined, ShareAltOutlined } from "@ant-design/icons";
 import ProductDescriptionTab from "../components/product_details/ProductDescriptionTab";
 import ProductDetailTab from "../components/product_details/ProductDetailTab";
@@ -11,6 +11,8 @@ import ProductService from "../services/product.service";
 import { IProductFullInfoDto } from "../models/dto/ProductFullInfoDto";
 import { Link } from "react-router-dom";
 import "../css/style.css";
+import { AuthContext } from "../components/context/auth.context";
+import CartService from "../services/cart.service";
 const { Text, Title } = Typography;
 
 const ProductDetailPage: React.FC = () => {
@@ -28,9 +30,13 @@ const ProductDetailPage: React.FC = () => {
     const tabsRef = useRef<HTMLDivElement>(null);
     const [activeTab, setActiveTab] = useState<string>("description");
 
+    const { customer } = useContext(AuthContext)
+    const [api, contextHolder] = notification.useNotification();
+
     useEffect(() => {
         fetchProduct();
     }, []);
+    document.title = product.name || "Chi tiết sản phẩm";
 
     const fetchProduct = async () => {
         setLoading(true);
@@ -51,6 +57,44 @@ const ProductDetailPage: React.FC = () => {
         }
     };
 
+    const handleAddToCart = async () => {
+        if (!customer || !customer.id) {
+            api.error({
+                message: "Thêm vào giỏ hàng thất bại",
+                description: "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.",
+                placement: "topRight",
+                duration: 2,
+            });
+            return;
+        }
+
+        try {
+            const productDetail = `${selectedVariant ? `Màu sắc: ${selectedVariant},` : ""}${size ? ` Kích thước: ${size}` : ""}`.trim();
+            const cartService = new CartService();
+
+            // Call the addToCart API
+            const response = await cartService.addToCart(customer.id, product.id, quantity, productDetail);
+
+            // Show success notification if the API call succeeds
+            api.success({
+                message: "Thêm vào giỏ hàng thành công",
+                description: response,
+                placement: "topRight",
+                duration: 2,
+            });
+        } catch (error) {
+            console.error("Failed to add to cart:", error);
+
+            // Show error notification if the API call fails
+            api.error({
+                message: "Thêm vào giỏ hàng thất bại",
+                description: "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.",
+                placement: "topRight",
+                duration: 2,
+            });
+        }
+    };
+
     if (loading) {
         return <div className="text-center mt-4">
             <Spin size="large" />
@@ -65,6 +109,12 @@ const ProductDetailPage: React.FC = () => {
         }
         setActiveTab("ratingAndReview");
     };
+
+    const isAddToCartDisabled = product.variantMap && Object.keys(product.variantMap).length > 0
+        ? Object.keys(product.variantMap).includes("Size") && Object.keys(product.variantMap).length === 1
+            ? !size // Only size is required
+            : !selectedVariant || !size // Both variant and size are required
+        : !size; // No variants, only size is required
 
     const items: TabsProps["items"] = [
         {
@@ -108,7 +158,7 @@ const ProductDetailPage: React.FC = () => {
                     })) || []),
                 ]}
             />
-
+            {contextHolder}
             <Row gutter={[24, 24]} className="bg-white p-4 rounded shadow-sm">
                 {/* Cột trái: Hình ảnh sản phẩm */}
                 <Col xs={24} md={8}>
@@ -273,7 +323,7 @@ const ProductDetailPage: React.FC = () => {
                             <div className="d-flex align-items-center mt-1">
                                 <Button
                                     icon={<MinusOutlined />}
-                                    disabled={!selectedVariant || !size || quantity <= 1}
+                                    disabled={isAddToCartDisabled || quantity <= 1}
                                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                                     className="rounded"
                                 />
@@ -282,7 +332,7 @@ const ProductDetailPage: React.FC = () => {
                                 </div>
                                 <Button
                                     icon={<PlusOutlined />}
-                                    disabled={!selectedVariant || !size || (amountAvailable > 0 && quantity >= amountAvailable)}
+                                    disabled={isAddToCartDisabled || (amountAvailable > 0 && quantity >= amountAvailable)}
                                     onClick={() => setQuantity((q) => q + 1)}
                                     className="rounded"
                                 />
@@ -305,7 +355,8 @@ const ProductDetailPage: React.FC = () => {
                             size="large"
                             icon={<ShoppingCartOutlined />}
                             className="px-4 d-flex align-items-center"
-                            disabled={!selectedVariant || !size}
+                            disabled={isAddToCartDisabled}
+                            onClick={() => handleAddToCart()}
                         >
                             Thêm vào giỏ hàng
                         </Button>

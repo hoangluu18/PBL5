@@ -13,6 +13,11 @@ const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Checkout: React.FC = () => {
+
+
+
+    const [deliveryType, setDeliveryType] = useState('standard');
+
     const [checkoutInfo, setCheckoutInfo] = useState<CheckoutInfoDto | null>(null);
     const [paymentMethod, setPaymentMethod] = useState('cash');
     const [loading, setLoading] = useState(true);
@@ -153,7 +158,9 @@ const Checkout: React.FC = () => {
     const shippingCost = checkoutInfo.shippingRespondDtoList.reduce((sum, shipping) => sum + shipping.shippingCost, 0);
     const total = subtotal + shippingCost;
 
-    // Rest of the existing component...
+    useEffect(() => {
+        document.title = "Thanh toán";
+    }, []);
 
     const handlePurchase = () => {
         // Kiểm tra nếu phương thức thanh toán không phải là COD
@@ -180,6 +187,7 @@ const Checkout: React.FC = () => {
         }
     };
     
+
     return (
         <Layout style={{
             background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',

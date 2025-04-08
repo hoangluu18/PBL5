@@ -6,26 +6,32 @@ import '../css/product.css'
 import '../css/style.css'
 import ProductCard from "../components/ProductCard";
 import IProduct from "../models/dto/ProductDto";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ProductService from "../services/product.service";
 import '../css/homepage.css'
 import { DoubleRightOutlined } from "@ant-design/icons";
+import { AuthContext } from "../components/context/auth.context";
 
 const Homepage = () => {
     const [page, setPage] = useState<number>(1);
     const [products, setProducts] = useState<IProduct[]>([]);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
+    const { customer } = useContext(AuthContext);
+
 
     useEffect(() => {
         fetchProducts(page);
     }, []);
 
+    document.title = "Trang chủ";
+
+
     const fetchProducts = async (pageNum: number) => {
         setLoading(true);
         try {
-            const categoryService = new ProductService();
-            const data = await categoryService.getProducts(pageNum);
+            const productService = new ProductService();
+            const data = await productService.getProducts(pageNum);
             if (data.length > 0) {
                 setProducts([...products, ...data]);
                 setPage(pageNum + 1);
@@ -39,7 +45,6 @@ const Homepage = () => {
             setLoading(false);
         }
     };
-
 
     return (
         <>

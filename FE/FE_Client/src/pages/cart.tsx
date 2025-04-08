@@ -13,6 +13,7 @@ const CartPage: React.FC = () => {
   const cartService = new CartService();
 
   useEffect(() => {
+    document.title = "Giỏ hàng";
     const fetchCart = async () => {
       if (customerId) {
         try {
