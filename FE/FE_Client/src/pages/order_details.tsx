@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Layout, Skeleton, Row, Col, Card, Typography, Divider, Table } from 'antd';
 import { getOrderDetails } from '../services/order_detail.service';
 import { OrderDetailsResponse } from '../models/order_detail/OrderDetailResponse';
+import { AuthContext } from "../components/context/auth.context";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const OrderDetail: React.FC = () => {
+  const { customer } = useContext(AuthContext);
+  const customerId = customer?.id;
+
   const { id } = useParams<{ id: string }>();
   const [orderDetails, setOrderDetails] = useState<OrderDetailsResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -18,7 +22,8 @@ const OrderDetail: React.FC = () => {
 
       try {
         setLoading(true);
-        const data = await getOrderDetails(parseInt(id, 10));
+        console.log('Fetching order details for ID:', id, 'Customer ID:', customerId);
+        const data = await getOrderDetails(parseInt(id), customerId);
         setOrderDetails(data);
       } catch (error) {
         console.error('Lỗi khi lấy thông tin đơn hàng:', error);

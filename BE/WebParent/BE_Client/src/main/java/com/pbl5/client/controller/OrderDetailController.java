@@ -18,15 +18,14 @@ public class OrderDetailController {
     }
 
     @GetMapping
-    public ResponseEntity<OrderDetailDto> getOrderDetail(@RequestParam(name = "orderId") Integer orderId) {
-        OrderDetailDto orderDetailDto = orderDetailService.getOrderDetailDto(orderId);
+    public ResponseEntity<OrderDetailDto> getOrderDetailByOrderIdAndCustomerId(@RequestParam(name = "orderId") Integer orderId
+    , @RequestParam(name = "customerId") Integer customerId) {
+        OrderDetailDto orderDetailDto = orderDetailService.getOrderDetailDtoByCustomerId(orderId,customerId);
         if (orderDetailDto != null) {
             return ResponseEntity.ok(orderDetailDto);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
-
-
 
 }
