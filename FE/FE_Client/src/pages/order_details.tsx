@@ -5,7 +5,7 @@ import { getOrderDetails } from '../services/order_detail.service';
 import { OrderDetailsResponse } from '../models/order_detail/OrderDetailResponse';
 
 const { Content } = Layout;
-const { Title, Text } = Typography;
+// Removed unused destructured elements from Typography
 
 const OrderDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
