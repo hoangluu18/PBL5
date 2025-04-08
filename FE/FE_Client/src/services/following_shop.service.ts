@@ -3,9 +3,18 @@ import axios from 'axios';
 import  IFollowingShopDto  from '../models/dto/FollowingShopDto';
 
 class FollowingShopService {
+    private getAuthHeader() {
+        const token = localStorage.getItem("access_token");
+        return {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        };
+    }
     async getFollowingShops(pageNum: number, customerId: number): Promise<IFollowingShopDto[]> {
         try {
             const response = await axios.get(`${API_URL}/shop-tracking`, {
+                ...this.getAuthHeader(),
                 params: {
                     customerId: customerId,
                     pageNum: pageNum

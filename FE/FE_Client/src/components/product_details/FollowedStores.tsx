@@ -19,7 +19,7 @@ const FollowedStores: React.FC<FollowedStoresProps> = ({ customerId }) => {
         const fetchFollowedShops = async () => {
             if (customerId) {
                 try {
-                    const data = await followingShopService.getFollowingShops(customerId, 1); // pageNum mặc định là 1
+                    const data = await followingShopService.getFollowingShops(1, customerId); // pageNum mặc định là 1
                     setShops(data);
                 } catch (error) {
                     console.error("Error fetching shops:", error);

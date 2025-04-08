@@ -12,6 +12,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 public class CartProductDto {
+    private Long id;
     private Integer productId;
     private String productName;
     private Integer quantity;

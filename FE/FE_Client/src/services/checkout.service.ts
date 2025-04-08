@@ -3,6 +3,7 @@ import { CheckoutInfoDto } from '../models/dto/checkout/CheckoutInfoDto';
 
 const API_BASE_URL = 'http://localhost:8081/api/checkout';
 
+
 export const getCheckoutInfo = async (): Promise<CheckoutInfoDto> => {
     try {
         const response = await axios.get<CheckoutInfoDto>(API_BASE_URL);
