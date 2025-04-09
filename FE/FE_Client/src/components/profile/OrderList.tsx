@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Pagination, Table, Tag, Typography, Spin, Empty } from "antd";
 import { 
     ShoppingOutlined, 
@@ -10,6 +10,7 @@ import {
     PayCircleOutlined  
 } from '@ant-design/icons';
 import axios from "axios";
+import { AuthContext } from "../context/auth.context";
 const { Text, Title } = Typography;
 
 const statusColorMap: Record<string, string> = {
@@ -50,6 +51,15 @@ const paymentMethodMap: Record<string, string> = {
     PAYPAL: <PayCircleOutlined style={{ color: "#722ed1", marginRight: 8, fontSize: 16 }} />
 };
 
+// Hàm trợ giúp để tạo config với header xác thực
+const getAuthConfig = () => {
+  return {
+      headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+  };
+};
+
     // Hàm format ngày giờ
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
@@ -68,8 +78,10 @@ const OrderList: React.FC = () => {
   const [totalItems, setTotalItems] = useState(0);
   const pageSize = 5;
 
+  const { customer } = useContext(AuthContext);
+    const customerId = customer?.id;
   useEffect(() => {
-    axios.get(`http://localhost:8081/api/profile/1/orders?page=${currentPage - 1}&size=${pageSize}`)
+    axios.get(`http://localhost:8081/api/profile/${customerId}/orders?page=${currentPage - 1}&size=${pageSize}`,getAuthConfig())
       .then(res => {
         setOrders(res.data.data);
         setTotalItems(res.data.totalItems);

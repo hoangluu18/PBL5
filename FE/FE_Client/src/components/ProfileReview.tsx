@@ -15,6 +15,14 @@ const ProfileReview: React.FC<ProfileReviewProps> = ({ id }) => {
     const [reviews, setReviews] = useState<IProfileReviewDto[]>([]);
     const [loading, setLoading] = useState(true);
 
+// Hàm trợ giúp để tạo config với header xác thực
+const getAuthConfig = () => {
+  return {
+      headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+      }
+  };
+};
     useEffect(() => {
         fetchReviews();
     }, [id]);

@@ -26,28 +26,31 @@ public class CartServiceImpl implements CartService {
         return cartItems.stream().map(item -> {
             double originalPrice = item.getProduct().getPrice();
             double discountPercent = item.getProduct().getDiscountPercent();
-            double lastPrice = originalPrice * (1 - discountPercent / 100);  // Tính giá sau giảm giá
+            double lastPrice = originalPrice * (1 - discountPercent / 100);
 
-            return new CartProductDto(
-                    item.getProduct().getId(),
-                    item.getProduct().getName(),
-                    item.getQuantity(),
-                    originalPrice,  // Thêm giá gốc
-                    discountPercent,  // Thêm phần trăm giảm giá
-                    lastPrice,  // Giá sau cùng
-                    item.getProduct().getMainImage(),
-                    item.getProduct().getShop().getName(),
-                    item.getProduct().getShop().getId(),
-                    item.getProductDetail()  // Dữ liệu biến thể đã lưu trực tiếp
-            );
+            CartProductDto dto = new CartProductDto(
+                    item.getProduct().getId().longValue(),
+                    item.getId(),
+                                item.getProduct().getName(),
+                                item.getQuantity(),
+                                originalPrice,
+                                discountPercent,
+                                lastPrice,
+                                item.getProduct().getMainImage(),
+                                item.getProduct().getShop().getName(),
+                                item.getProduct().getShop().getId(),
+                                item.getProductDetail()
+                        );
+            dto.setId(Long.valueOf(item.getId()));
+            return dto;
         }).collect(Collectors.toList());
     }
 
     @Override
-    public boolean deleteCartItem(Integer customerId, Integer productId) {
-        Optional<CartItems> cartItem = cartItemRepository.findByCustomerIdAndProductId(customerId, productId);
-        if (cartItem.isPresent()) {
-            cartItemRepository.delete(cartItem.get());
+    public boolean deleteCartItemById(Long cartItemId) {
+        Optional<CartItems> item = cartItemRepository.findById(cartItemId);
+        if (item.isPresent()) {
+            cartItemRepository.deleteById(cartItemId);
             return true;
         }
         return false;

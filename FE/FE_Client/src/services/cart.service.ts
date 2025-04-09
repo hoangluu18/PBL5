@@ -48,13 +48,13 @@ class CartService {
         }
     }
 
-    async deleteCartItem(customerId: number, productId: number): Promise<void> {
+    async deleteCartItem(cartItemId: number): Promise<void> {
         try {
-            // Thêm header xác thực vào request
-            await axios.delete(
-                `${API_URL}/delete/${customerId}/${productId}`, 
-                this.getAuthConfig()
-            );
+            await axios.delete(`${API_URL}/delete/${cartItemId}`, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                },
+            });
         } catch (error) {
             console.error("Error deleting cart item:", error);
             

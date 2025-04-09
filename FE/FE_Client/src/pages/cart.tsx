@@ -51,17 +51,17 @@ const CartPage: React.FC = () => {
     );
   };
 
-  const handleDeleteItem = async (productId: number) => {
-    const confirmDelete = window.confirm("Bạn có muốn xóa sản phẩm này?");
-    if (confirmDelete && customerId) {
-      try {
-        await cartService.deleteCartItem(parseInt(customerId, 10), productId);
-        setCartItems(cartItems.filter(item => item.productId !== productId));
-      } catch (error) {
-        console.error("Lỗi khi xóa sản phẩm:", error);
-      }
+  const handleDeleteItem = async (cartItemId: number) => {
+    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?");
+    if (confirmDelete) {
+        try {
+            await cartService.deleteCartItem(cartItemId);
+            setCartItems(cartItems.filter(item => item.id !== cartItemId));
+        } catch (error) {
+            console.error("Lỗi khi xóa cart item:", error);
+        }
     }
-  };
+};
 
   const handleSelectItem = (item: ICartItem) => {
     const key = getItemKey(item);
