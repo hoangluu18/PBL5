@@ -1,12 +1,16 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { FaTrash } from 'react-icons/fa';
+
+import React, { useState, useEffect, useMemo, useContext } from 'react';
+import { AuthContext } from "../components/context/auth.context";
+import { FaTrash, FaHeart } from 'react-icons/fa';
+
 import { Link, useParams } from 'react-router-dom';
 import OrderSummary from '../components/OrderSummary';
 import CartService from '../services/cart.service';
 import ICartItem from '../models/CartItem';
 
 const CartPage: React.FC = () => {
-  const { customerId } = useParams<{ customerId: string }>();
+  const { customer } = useContext(AuthContext);
+  const customerId = customer?.id;
   const [cartItems, setCartItems] = useState<ICartItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -21,7 +25,7 @@ const CartPage: React.FC = () => {
     const fetchCart = async () => {
       if (customerId) {
         try {
-          const items = await cartService.getCart(parseInt(customerId, 10));
+          const items = await cartService.getCart(customerId);
           setCartItems(items);
           if (items.length > 0) {
             setSelectedItems([getItemKey(items[items.length - 1])]);

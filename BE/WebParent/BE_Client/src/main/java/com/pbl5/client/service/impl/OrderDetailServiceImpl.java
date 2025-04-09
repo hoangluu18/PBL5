@@ -79,6 +79,34 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
+    public List<CartProductDto> getOrderDetailByOrderIdAndCustomerId(Integer orderId, Integer customerId) {
+        List<OrderDetail> orderDetailList = orderDetailRepository.findAllByOrderIdAndCustomerId(orderId, customerId);
+        if(orderDetailList == null || orderDetailList.isEmpty()) {
+            return null;
+        }
+        else {
+            return orderDetailList.stream().map(item -> {
+                double originalPrice = item.getProduct().getPrice();
+                double discountPercent = item.getProduct().getDiscountPercent();
+                double lastPrice = originalPrice * (1 - discountPercent / 100);  // Tính giá sau giảm giá
+
+                return new CartProductDto(
+                        item.getProduct().getId(),
+                        item.getProduct().getName(),
+                        item.getQuantity(),
+                        originalPrice,  // Thêm giá gốc
+                        discountPercent,  // Thêm phần trăm giảm giá
+                        lastPrice,  // Giá sau cùng
+                        item.getProduct().getMainImage(),
+                        item.getProduct().getShop().getName(),
+                        item.getProduct().getShop().getId(),
+                        item.getProductVariantDetail()  // Dữ liệu biến thể đã lưu trực tiếp
+                );
+            }).collect(Collectors.toList());
+        }
+    }
+
+    @Override
     public OrderDetailDto getOrderDetailDto(Integer orderId) {
 //        private AddressInfoDto addressInfoDto;
 //        private List<CartProductDto> cartProductDtoList;
@@ -86,6 +114,26 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         OrderDetailDto orderDetailDto = new OrderDetailDto();
         Order order = orderService.findById(orderId);
         List<CartProductDto> cartProductDtoList = getOrderDetailByOrderId(orderId);
+        if(order != null && cartProductDtoList != null && !cartProductDtoList.isEmpty()) {
+            orderDetailDto.setOrderDto(
+                    new OrderDto(order)
+            );
+            orderDetailDto.setCartProductDtoList(cartProductDtoList);
+            return orderDetailDto;
+        }
+        else{
+            return null;
+        }
+    }
+
+    @Override
+    public OrderDetailDto getOrderDetailDtoByCustomerId(Integer orderId, Integer customerId) {
+        //        private AddressInfoDto addressInfoDto;
+//        private List<CartProductDto> cartProductDtoList;
+//        private OrderDto orderDto;
+        OrderDetailDto orderDetailDto = new OrderDetailDto();
+        Order order = orderService.findById(orderId);
+        List<CartProductDto> cartProductDtoList = getOrderDetailByOrderIdAndCustomerId(orderId,customerId);
         if(order != null && cartProductDtoList != null && !cartProductDtoList.isEmpty()) {
             orderDetailDto.setOrderDto(
                     new OrderDto(order)

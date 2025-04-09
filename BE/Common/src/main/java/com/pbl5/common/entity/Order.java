@@ -2,7 +2,10 @@ package com.pbl5.common.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -72,6 +75,10 @@ public class Order extends IdBaseEntity {
     @ManyToOne
     @JoinColumn(name = "shop_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Shop shop;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("updatedTime DESC")
+    private List<OrderTrack> orderTracks = new ArrayList<>();
 
     // Enum cho order_status
     public enum OrderStatus {

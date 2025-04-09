@@ -24,11 +24,16 @@ class CartService {
 
     async getCart(userId: number): Promise<ICartItem[]> {
         try {
-            const response = await axios.get<ICartItem[]>(`${API_URL}/${userId}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            });
+            // Log token để debug
+            console.log("Token:", localStorage.getItem('access_token'));
+            console.log("Request to:", `${API_URL}/${userId}`);
+            
+            // Thêm header xác thực vào request
+            const response = await axios.get<ICartItem[]>(
+                `${API_URL}/${userId}`, 
+                this.getAuthConfig()
+            );
+            console.log("user id", userId);
             return response.data;
         } catch (error) {
             console.error("Error fetching cart:", error);
@@ -59,6 +64,7 @@ class CartService {
             }
         }
     }
+
     async addToCart(customerId: number, productId: number, quantity: number, productDetail: string): Promise<string> {
         try {
             // Log thông tin debug

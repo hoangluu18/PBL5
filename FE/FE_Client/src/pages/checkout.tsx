@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Space, Button, Typography, Spin, Card, Skeleton, Result } from 'antd';
+import React, { useState, useEffect, useContext } from 'react';
+import { Layout, Row, Col, Space, Button, Typography, Card, Skeleton, Result } from 'antd';
 import { RightOutlined, ShoppingCartOutlined, HomeOutlined } from '@ant-design/icons';
 import ShippingInfo from '../components/ShippingInfo';
 import PaymentMethod from '../components/PaymentMethod';
@@ -8,27 +8,38 @@ import { getCheckoutInfo, saveCheckout } from '../services/checkout.service';
 import { CheckoutInfoDto } from '../models/dto/checkout/CheckoutInfoDto';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { AuthContext } from "../components/context/auth.context";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Checkout: React.FC = () => {
+    const { customer } = useContext(AuthContext);
+    const customerId = customer?.id;
+    const navigate = useNavigate();
 
-
-
+    // Định nghĩa tất cả state ở đầu component
     const [deliveryType, setDeliveryType] = useState('standard');
-
     const [checkoutInfo, setCheckoutInfo] = useState<CheckoutInfoDto | null>(null);
     const [paymentMethod, setPaymentMethod] = useState('cash');
     const [loading, setLoading] = useState(true);
     const [isNotFound, setIsNotFound] = useState(false);
-    const navigate = useNavigate();
-    const customerId = 1; // Có thể lấy từ context, params, hoặc localStorage tùy vào thiết kế ứng dụng
     
+    // Đặt tất cả useEffect ở đây, trước các điều kiện return
     useEffect(() => {
+        // Set document title
+        document.title = "Thanh toán";
+        
+        // Fetch checkout info
         const fetchCheckoutInfo = async () => {
+            if (!customerId) {
+                setIsNotFound(true);
+                setLoading(false);
+                return;
+            }
+            
             try {
-                const data = await getCheckoutInfo();
+                const data = await getCheckoutInfo(customerId);
                 setCheckoutInfo(data);
             } catch (error) {
                 console.error('Error fetching checkout info:', error);
@@ -43,8 +54,53 @@ const Checkout: React.FC = () => {
         };
 
         fetchCheckoutInfo();
-    }, []);
+    }, [customerId]); // Thêm customerId vào dependency array
+    
+    // Xử lý mua hàng
+    const handlePurchase = () => {
+        // Kiểm tra nếu không có customerId
+        if (!customerId) {
+            alert('Vui lòng đăng nhập để tiếp tục');
+            navigate('/login');
+            return;
+        }
+        
+        // Kiểm tra nếu phương thức thanh toán không phải là COD
+        if (paymentMethod !== 'cash') {
+            alert('Phương thức thanh toán này chưa được hỗ trợ. Mong bạn thông cảm!');
+            return;
+        }
+        
+        // Nếu là COD, tiếp tục như bình thường
+        if (window.confirm('Bạn có chắc chắn muốn mua hàng không?')) {
+            setLoading(true);
+            saveCheckout(customerId)
+                .then(() => {
+                    alert('Đặt hàng thành công!');
+                    navigate('/'); // Chuyển về trang chủ
+                })
+                .catch((error: any) => {
+                    console.error('Lỗi khi đặt hàng:', error);
+                    alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại sau.');
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
+    };
 
+    // Tính toán subtotal, shippingCost và total
+    const subtotal = checkoutInfo 
+        ? checkoutInfo.cartProductDtoList.reduce((sum, item) => sum + (item.lastPrice * item.quantity), 0)
+        : 0;
+    
+    const shippingCost = checkoutInfo
+        ? checkoutInfo.shippingRespondDtoList.reduce((sum, shipping) => sum + shipping.shippingCost, 0)
+        : 0;
+    
+    const total = subtotal + shippingCost;
+
+    // Các điều kiện render
     if (loading) {
         return (
             <Layout style={{
@@ -82,6 +138,43 @@ const Checkout: React.FC = () => {
         );
     }
 
+    if (!customer) {
+        return (
+            <Layout style={{
+                background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',
+                minHeight: '100vh',
+                width: '100%',
+                maxWidth: '1920px',
+                margin: '0 auto',
+                padding: '20px'
+            }}>
+                <Content className='container'>
+                    <Result
+                        status="403"
+                        title="Chưa đăng nhập"
+                        subTitle="Vui lòng đăng nhập để tiếp tục thanh toán."
+                        extra={[
+                            <Button 
+                                type="primary" 
+                                key="login"
+                                onClick={() => navigate('/login')}
+                            >
+                                Đăng nhập
+                            </Button>,
+                            <Button 
+                                key="home" 
+                                icon={<HomeOutlined />}
+                                onClick={() => navigate('/')}
+                            >
+                                Quay về trang chủ
+                            </Button>
+                        ]}
+                    />
+                </Content>
+            </Layout>
+        );
+    }
+
     if (isNotFound) {
         return (
             <Layout style={{
@@ -102,14 +195,16 @@ const Checkout: React.FC = () => {
                                 type="primary" 
                                 key="cart" 
                                 icon={<ShoppingCartOutlined />}
+                                onClick={() => navigate('/cart')}
                             >
-                                <Link to="/cart">Quay về giỏ hàng</Link>
+                                Quay về giỏ hàng
                             </Button>,
                             <Button 
                                 key="home" 
                                 icon={<HomeOutlined />}
+                                onClick={() => navigate('/')}
                             >
-                                <Link to="/">Tiếp tục mua sắm</Link>
+                                Tiếp tục mua sắm
                             </Button>
                         ]}
                     />
@@ -143,8 +238,9 @@ const Checkout: React.FC = () => {
                             </Button>,
                             <Button 
                                 key="home"
+                                onClick={() => navigate('/')}
                             >
-                                <Link to="/">Quay về trang chủ</Link>
+                                Quay về trang chủ
                             </Button>
                         ]}
                     />
@@ -153,41 +249,7 @@ const Checkout: React.FC = () => {
         );
     }
 
-    // The rest of your existing code
-    const subtotal = checkoutInfo.cartProductDtoList.reduce((sum, item) => sum + (item.lastPrice * item.quantity), 0);
-    const shippingCost = checkoutInfo.shippingRespondDtoList.reduce((sum, shipping) => sum + shipping.shippingCost, 0);
-    const total = subtotal + shippingCost;
-
-    useEffect(() => {
-        document.title = "Thanh toán";
-    }, []);
-
-    const handlePurchase = () => {
-        // Kiểm tra nếu phương thức thanh toán không phải là COD
-        if (paymentMethod !== 'cash') {
-            alert('Phương thức thanh toán này chưa được hỗ trợ. Mong bạn thông cảm!');
-            return;
-        }
-        
-        // Nếu là COD, tiếp tục như bình thường
-        if (window.confirm('Bạn có chắc chắn muốn mua hàng không?')) {
-            setLoading(true);
-            saveCheckout(customerId)
-                .then(() => {
-                    alert('Đặt hàng thành công!');
-                    navigate('/'); // Chuyển về trang chủ hoặc trang xác nhận đơn hàng
-                })
-                .catch((error: any) => {
-                    console.error('Lỗi khi đặt hàng:', error);
-                    alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại sau.');
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
-        }
-    };
-    
-
+    // Render UI chính
     return (
         <Layout style={{
             background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',
@@ -200,9 +262,9 @@ const Checkout: React.FC = () => {
             <Content className='container'>
                 <div style={{ marginBottom: '20px' }}>
                     <Space size="small">
-                        <Button href='/' type="link" style={{ padding: 0 }}>Trang chủ</Button>
+                        <Button type="link" style={{ padding: 0 }} onClick={() => navigate('/')}>Trang chủ</Button>
                         <RightOutlined style={{ fontSize: '12px' }} />
-                        <Button href='/cart' type="link" style={{ padding: 0 }}>Giỏ hàng</Button>
+                        <Button type="link" style={{ padding: 0 }} onClick={() => navigate('/cart')}>Giỏ hàng</Button>
                         <RightOutlined style={{ fontSize: '12px' }} />
                         <Text type="secondary">Thanh toán</Text>
                     </Space>
@@ -253,21 +315,6 @@ const Checkout: React.FC = () => {
                     </Button>
                 </div>
             </Content>
-
-            <div style={{
-                position: 'fixed',
-                bottom: '20px',
-                right: '20px',
-                background: 'white',
-                padding: '10px 15px',
-                borderRadius: '20px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-                cursor: 'pointer'
-            }}>
-            </div>
 
             <style>{`
                 .selected-delivery {

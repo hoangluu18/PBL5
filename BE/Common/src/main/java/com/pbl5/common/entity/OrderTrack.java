@@ -25,6 +25,7 @@ public class OrderTrack extends IdBaseEntity {
     @Column(name = "notes", length = 256)
     private String notes;
 
+
     public enum OrderStatus {
         CANCELLED, DELIVERED, NEW, PACKAGED, PAID, PICKED, PROCCESSING, REFUNDED, RETURNED, RETURN_REQUESTED, SHIPPING
     }
