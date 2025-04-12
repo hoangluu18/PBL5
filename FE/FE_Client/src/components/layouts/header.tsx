@@ -10,14 +10,16 @@ import "antd/dist/reset.css";
 import logo from '../../assets/logo.jpg';
 import '../../css/style.css';
 import { useNavigate } from "react-router";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/auth.context";
+import CartService from "../../services/cart.service";
 
 const { Header } = Layout;
 
 const App = () => {
     const navigate = useNavigate();
     const { customer, setCustomer } = useContext(AuthContext);
+    const [count, setCount] = useState<number>(0);
 
     const isLoggedIn = customer.id !== 0;
 
@@ -27,6 +29,15 @@ const App = () => {
             navigate(`/search?keyword=${encodeURIComponent(value)}`);
         }
     };
+
+    useEffect(() => {
+        const cartService = new CartService();
+        cartService.countProductByCustomerId(customer.id).then((data) => {
+            setCount(data);
+        }).catch((error) => {
+            console.error("Failed to fetch cart count:", error);
+        });
+    }, []);
 
     const userMenu = (
         <Menu
@@ -119,7 +130,7 @@ const App = () => {
                     {/* Icons */}
                     <Space size="large">
                         <Tooltip title="Shopping Cart">
-                            <Badge count={isLoggedIn ? 3 : 0} color="#1890ff">
+                            <Badge count={isLoggedIn ? count : ''} color="#1890ff">
                                 <ShoppingCartOutlined
                                     style={{ fontSize: "24px", cursor: "pointer", color: "#555" }}
                                     onClick={() => navigate('/cart')}

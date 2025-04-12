@@ -35,4 +35,10 @@ public class CartController {
         String res = cartService.addToCart(dto);
         return ResponseEntity.ok(res);
     }
+
+    @GetMapping("/count/{customerId}")
+    public ResponseEntity<Integer> countProducts(@PathVariable("customerId") Integer customerId) {
+        int count = cartService.countProductsByCustomerId(customerId);
+        return ResponseEntity.ok(count);
+    }
 }

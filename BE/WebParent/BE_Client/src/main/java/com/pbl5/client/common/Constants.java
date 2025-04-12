@@ -1,7 +1,7 @@
 package com.pbl5.client.common;
 
 public class Constants {
-    public static final Integer PRODUCTS_PER_PAGE = 12;
+    public static final Integer PRODUCTS_PER_PAGE = 6;
     public static final String FE_URL = "http://localhost:5173";
 
     public static final String PRODUCT_API_URI = "/api/p";
