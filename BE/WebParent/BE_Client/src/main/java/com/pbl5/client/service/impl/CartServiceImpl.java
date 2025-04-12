@@ -84,4 +84,10 @@ public class CartServiceImpl implements CartService {
             return true;
         }
     }
+
+    @Override
+    public int countProductsByCustomerId(Integer customerId) {
+
+        return cartItemRepository.countProductsByCustomerId(customerId);
+    }
 }

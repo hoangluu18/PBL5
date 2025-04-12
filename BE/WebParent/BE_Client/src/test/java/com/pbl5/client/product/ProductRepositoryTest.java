@@ -33,7 +33,7 @@ public class ProductRepositoryTest {
         Product product = repo.findByAlias(alias);
         System.out.println(product.getName() + " -> detail size " + product.getProductDetails().size()
                 + " -> shop " + product.getShop().getName() + " -> images " + product.getImages().size()
-        + " -> variants " + product.getVariants().size() + " -> category " + product.getCategory().getName());
+                + " -> variants " + product.getVariants().size() + " -> category " + product.getCategory().getName());
     }
 
     @Test

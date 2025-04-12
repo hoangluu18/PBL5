@@ -19,10 +19,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("SELECT o FROM Order o WHERE o.customer.id = ?1")
     public List<Order> findByCustomerId(Integer customerId);
 
-//    // Phương thức hiện có
-//    List<Order> findByCustomerId(Integer customerId);
-
-    // Thêm phương thức phân trang
     Page<Order> findByCustomerId(Integer customerId, Pageable pageable);
 
     @Query("SELECT SUM(o.total) FROM Order o WHERE o.customerId = :customerId AND o.shopId = :shopId")
