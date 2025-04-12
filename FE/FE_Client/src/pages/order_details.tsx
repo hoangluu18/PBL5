@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Layout, Skeleton, Row, Col, Card, Typography, Divider, Table } from 'antd';
+import { Layout, Skeleton, Row, Col, Card } from 'antd';
 import { getOrderDetails } from '../services/order_detail.service';
 import { OrderDetailsResponse } from '../models/order_detail/OrderDetailResponse';
 import { AuthContext } from "../components/context/auth.context";
@@ -364,7 +364,7 @@ const OrderDetail: React.FC = () => {
         </div>
 
         <div className="footer">
-          <a href="/profile" className="back-link">
+          <a href="/orders" className="back-link">
             <span>{'<'}</span> Quay lại đơn hàng của tôi
           </a>
           <button className="track-button">Theo dõi đơn hàng</button>

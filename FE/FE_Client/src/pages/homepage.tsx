@@ -6,35 +6,31 @@ import '../css/product.css'
 import '../css/style.css'
 import ProductCard from "../components/ProductCard";
 import IProduct from "../models/dto/ProductDto";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ProductService from "../services/product.service";
 import '../css/homepage.css'
 import { DoubleRightOutlined } from "@ant-design/icons";
-import { AuthContext } from "../components/context/auth.context";
 
 const Homepage = () => {
     const [page, setPage] = useState<number>(1);
     const [products, setProducts] = useState<IProduct[]>([]);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
-    const { customer } = useContext(AuthContext);
 
 
     useEffect(() => {
-        fetchProducts(page);
-    }, []);
+        fetchProducts();
+    }, [page]);
 
     document.title = "Trang chủ";
 
-
-    const fetchProducts = async (pageNum: number) => {
+    const fetchProducts = async () => {
         setLoading(true);
         try {
             const productService = new ProductService();
-            const data = await productService.getProducts(pageNum);
+            const data = await productService.getProducts(page);
             if (data.length > 0) {
                 setProducts([...products, ...data]);
-                setPage(pageNum + 1);
             } else {
                 setHasMore(false);
             }
@@ -87,7 +83,7 @@ const Homepage = () => {
                         color="Blue"
                     />
                     <Row gutter={[10, 10]}>
-                        {products.slice(0, 10).map((product, index) => (
+                        {products.map((product, index) => (
                             <Col className="gutter-row" key={index} span={4}>
                                 <ProductCard  {...product} />
                             </Col>
@@ -103,7 +99,7 @@ const Homepage = () => {
                                         ghost
                                         size="large"
                                         icon={loading ? <Spin size="small" /> : <DoubleRightOutlined />}
-                                        onClick={() => fetchProducts(page)}
+                                        onClick={() => setPage(page + 1)}
                                         disabled={loading}
                                         className="load-more-button"
                                     >

@@ -14,4 +14,5 @@ public interface CartService {
 
     boolean deleteAllCartItemsByCustomerId(Integer customerId);
 
+    int countProductsByCustomerId(Integer customerId);
 }
