@@ -12,6 +12,7 @@ import com.pbl5.common.entity.OrderDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,25 +83,26 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     public List<CartProductDto> getOrderDetailByOrderIdAndCustomerId(Integer orderId, Integer customerId) {
         List<OrderDetail> orderDetailList = orderDetailRepository.findAllByOrderIdAndCustomerId(orderId, customerId);
         if(orderDetailList == null || orderDetailList.isEmpty()) {
-            return null;
+            return Collections.emptyList(); // Better to return empty list instead of null
         }
         else {
             return orderDetailList.stream().map(item -> {
                 double originalPrice = item.getProduct().getPrice();
                 double discountPercent = item.getProduct().getDiscountPercent();
-                double lastPrice = originalPrice * (1 - discountPercent / 100);  // Tính giá sau giảm giá
+                double lastPrice = originalPrice * (1 - discountPercent / 100);
 
                 return new CartProductDto(
+                        item.getProduct().getId() != null ? item.getProduct().getId().longValue() : null, // Convert Integer to Long
                         item.getProduct().getId(),
                         item.getProduct().getName(),
                         item.getQuantity(),
-                        originalPrice,  // Thêm giá gốc
-                        discountPercent,  // Thêm phần trăm giảm giá
-                        lastPrice,  // Giá sau cùng
+                        originalPrice,
+                        discountPercent,
+                        lastPrice,
                         item.getProduct().getMainImage(),
                         item.getProduct().getShop().getName(),
                         item.getProduct().getShop().getId(),
-                        item.getProductVariantDetail()  // Dữ liệu biến thể đã lưu trực tiếp
+                        item.getProductVariantDetail()
                 );
             }).collect(Collectors.toList());
         }
