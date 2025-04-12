@@ -20,7 +20,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     public List<Order> findByCustomerId(Integer customerId);
 
     // Phương thức hiện có
-    List<Order> findByCustomerId(Integer customerId);
+//    List<Order> findByCustomerId(Integer customerId);
 
     // Thêm phương thức phân trang
     Page<Order> findByCustomerId(Integer customerId, Pageable pageable);

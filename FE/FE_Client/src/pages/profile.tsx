@@ -1,7 +1,7 @@
 // src/components/ProfilePage.tsx
 import { Card, Avatar, Tabs, Input, Button, Divider } from "antd";
 import { EditOutlined, UploadOutlined, ShoppingOutlined, ClockCircleOutlined, DollarOutlined } from "@ant-design/icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import OrderList from "../components/profile/OrderList";
 import ReviewList from "../components/product_details/ProductReviews";
@@ -9,12 +9,15 @@ import FollowedStores from "../components/product_details/FollowedStores";
 import ProfileReview from "../components/ProfileReview"; // Adjust the path as needed
 import ProfileService from "../services/profile.service";
 import IProfile from "../models/dto/Profile";
+import { AuthContext } from "../components/context/auth.context";
 
 
 const { TabPane } = Tabs;
 
 const ProfilePage: React.FC = () => {
-    const { customerId } = useParams<{ customerId: string }>();
+    const { customer } = useContext(AuthContext);
+    const customerId = customer?.id;
+
     const [profile, setProfile] = useState<IProfile | null>(null);
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -27,7 +30,7 @@ const ProfilePage: React.FC = () => {
         const fetchProfile = async () => {
             if (customerId) {
                 try {
-                    const data = await profileService.getProfile(parseInt(customerId, 10));
+                    const data = await profileService.getProfile(customerId);
                     if (data) {
                         setProfile(data);
                         setEmail(data.email);

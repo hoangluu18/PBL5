@@ -70,7 +70,7 @@ const router = createBrowserRouter([
         element: <ProductDetailPage />
       },
       {
-        path: "/profile/:customerId",
+        path: "/profile",
         element: <ProfilePage />
       },
       {
