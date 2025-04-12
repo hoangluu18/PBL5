@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CartService {
     List<CartProductDto> getCartByCustomerId(Integer customerId);
-    boolean deleteCartItem(Integer customerId, Integer productId);
+    boolean deleteCartItemById(Long cartItemId);
 
 
     String addToCart(AddToCartDto addToCartDto);

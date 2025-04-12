@@ -20,13 +20,13 @@ public class CartController {
         return cartService.getCartByCustomerId(customerId);
     }
 
-    @DeleteMapping("/delete/{customerId}/{productId}")
-    public ResponseEntity<String> deleteCartItem(@PathVariable Integer customerId, @PathVariable Integer productId) {
-        boolean deleted = cartService.deleteCartItem(customerId, productId);
+    @DeleteMapping("/delete/{cartItemId}")
+    public ResponseEntity<String> deleteCartItemById(@PathVariable Long cartItemId) {
+        boolean deleted = cartService.deleteCartItemById(cartItemId);
         if (deleted) {
-            return ResponseEntity.ok("Sản phẩm đã được xóa khỏi giỏ hàng");
+            return ResponseEntity.ok("Cart item deleted successfully");
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sản phẩm không tồn tại trong giỏ hàng");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart item not found");
         }
     }
 
