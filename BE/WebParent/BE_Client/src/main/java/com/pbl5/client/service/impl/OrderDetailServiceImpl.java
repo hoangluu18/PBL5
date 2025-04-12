@@ -91,6 +91,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                 double lastPrice = originalPrice * (1 - discountPercent / 100);  // Tính giá sau giảm giá
 
                 return new CartProductDto(
+                        null,
                         item.getProduct().getId(),
                         item.getProduct().getName(),
                         item.getQuantity(),
