@@ -14,6 +14,7 @@ import ProductFilterPage from './pages/products_filter.tsx';
 import Checkout from './pages/checkout.tsx';
 import AddAddress from './pages/add_address.tsx';
 import EditAddress from './pages/edit_address.tsx';
+import UpdateAddress from './pages/update_address.tsx';
 import ShopDetail from './pages/shop_detail.tsx';
 import FollowedShops from './pages/followed_shops.tsx';
 import ProductDetailPage from './pages/product_detail.tsx';
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
       }, {
         path: "/edit_address",
         element: <EditAddress />
+      },
+      {
+        path: "update_address",
+        element: <UpdateAddress />
       },
       {
         path: "/shop/:id",
