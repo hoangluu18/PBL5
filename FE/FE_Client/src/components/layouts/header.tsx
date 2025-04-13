@@ -41,7 +41,7 @@ const App = () => {
                     key: '2',
                     label: 'Favorites',
                     icon: <HeartOutlined />,
-                    onClick: () => navigate('/favorites')
+                    onClick: () => navigate('/followed_shops')
                 },
                 {
                     key: '3',
