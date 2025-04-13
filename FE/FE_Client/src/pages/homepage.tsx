@@ -87,7 +87,7 @@ const Homepage = () => {
                         color="Blue"
                     />
                     <Row gutter={[10, 10]}>
-                        {products.slice(0, 10).map((product, index) => (
+                        {products.map((product, index) => (
                             <Col className="gutter-row" key={index} span={4}>
                                 <ProductCard  {...product} />
                             </Col>

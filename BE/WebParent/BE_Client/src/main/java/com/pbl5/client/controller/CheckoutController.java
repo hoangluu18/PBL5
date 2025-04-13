@@ -28,12 +28,19 @@ public class CheckoutController {
     @Autowired
     private CheckoutService checkoutService;
 
-    @GetMapping("/{customerId}")
-    public ResponseEntity<CheckoutInfoDto> getCheckoutInfo(
-            @PathVariable Integer customerId
+    @PostMapping("/{customerId}")
+    public ResponseEntity<CheckoutInfoDto> getCheckoutInfoForSelectedProducts(
+            @PathVariable Integer customerId,
+            @RequestBody List<Integer> cartIds
     ) throws ProductNotFoundException {
+        System.out.println("cartIds: " + cartIds);
+        if (cartIds == null || cartIds.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        //
 
-        CheckoutInfoDto checkoutInfo = checkoutService.getCheckoutInfo(customerId);
+        // Get checkout info with only the selected products
+        CheckoutInfoDto checkoutInfo = checkoutService.getCheckoutInfoForSelectedProducts(customerId, cartIds);
 
         return checkoutInfo != null ?
                 ResponseEntity.ok(checkoutInfo) :
@@ -41,10 +48,14 @@ public class CheckoutController {
     }
 
 
-    @PostMapping("/save")
-    public ResponseEntity<CheckoutInfoDto> saveCheckoutInfo(@RequestParam Integer customerId) throws ProductNotFoundException {
-        return checkoutService.saveCheckoutInfo(customerId) != null ?
-                ResponseEntity.ok(checkoutService.saveCheckoutInfo(customerId)) :
+    @PostMapping("/save/{customerId}")
+    public ResponseEntity<String> saveCheckoutInfo(
+            @PathVariable Integer customerId,
+            @RequestBody List<Integer> cartIds
+    ) throws ProductNotFoundException {
+        return checkoutService.saveCheckoutInfo(customerId,cartIds) != null ?
+                ResponseEntity.ok("Checkout info saved successfully") :
                 ResponseEntity.notFound().build();
     }
+
 }

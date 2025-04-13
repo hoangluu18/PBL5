@@ -14,8 +14,6 @@ import com.pbl5.common.entity.OrderDetail;
 import com.pbl5.common.entity.OrderTrack;
 import com.pbl5.common.entity.product.Product;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -45,7 +43,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     }
 
     @Override
-    public CheckoutInfoDto getCheckoutInfo(int customerId) throws ProductNotFoundException {
+    public CheckoutInfoDto getCheckoutInfo(int customerId,List<Integer> cartIds) throws ProductNotFoundException {
         //set up tam thoi voi customerId = 1
         //find data addressInfo
         AddressInfoDto addressInfoDto = addressInfoService.fineByAddressDefault(customerId);
@@ -53,7 +51,7 @@ public class CheckoutServiceImpl implements CheckoutService {
         List<CartProductDto> cartProductDtoList = cartService.getCartByCustomerId(customerId);
 
         //find data shippingRequest
-        List<ShippingRequestDto> shippingRequestList = shippingRequestService.getShippingRequestList(customerId);
+        List<ShippingRequestDto> shippingRequestList = shippingRequestService.getShippingRequestList(customerId,cartIds);
 
         //find data shippingRespond
 
@@ -165,11 +163,11 @@ public class CheckoutServiceImpl implements CheckoutService {
 
 
     @Override
-    public CheckoutInfoDto saveCheckoutInfo(int customerId) throws ProductNotFoundException {
+    public CheckoutInfoDto saveCheckoutInfo(int customerId,List<Integer> cartIds) throws ProductNotFoundException {
         // Find data for the specific customer
         AddressInfoDto addressInfoDto = addressInfoService.fineByAddressDefault(customerId);
-        List<CartProductDto> cartProductDtoList = cartService.getCartByCustomerId(customerId);
-        List<ShippingRequestDto> shippingRequestList = shippingRequestService.getShippingRequestList(customerId);
+        List<CartProductDto> cartProductDtoList = cartService.getCartByCustomerIdAndProductIdList(customerId, cartIds);
+        List<ShippingRequestDto> shippingRequestList = shippingRequestService.getShippingRequestList(customerId,cartIds);
 
         // Find shipping responses
         List<ShippingRespondDto> shippingRespondList = new ArrayList<>();
@@ -256,7 +254,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                 }
 
                 // Clear the customer's cart
-                cartService.deleteAllCartItemsByCustomerId(customerId);
+                cartService.deleteCartItemByCustomerIdAndCartId(customerId,cartIds);
 
                 return checkoutInfoDto;
             } else {
@@ -267,5 +265,40 @@ public class CheckoutServiceImpl implements CheckoutService {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public CheckoutInfoDto getCheckoutInfoForSelectedProducts(int customerId, List<Integer> cartIds) throws ProductNotFoundException {
+        //set up tam thoi voi customerId = 1
+        //find data addressInfo
+        AddressInfoDto addressInfoDto = addressInfoService.fineByAddressDefault(customerId);
+        //find data cartProduct
+        List<CartProductDto> cartProductDtoList = cartService.getCartByCustomerIdAndProductIdList(customerId, cartIds);
+
+        //find data shippingRequest
+        List<ShippingRequestDto> shippingRequestList = shippingRequestService.getShippingRequestList(customerId,cartIds);
+
+        //find data shippingRespond
+
+        List<ShippingRespondDto> shippingRespondList = new ArrayList<>();
+
+        for(ShippingRequestDto shippingRequest : shippingRequestList) {
+            System.out.println("respond: " + shippingRequest);
+            ShippingRespondDto shippingRespond = shippingRequestService.getShippingRespond(shippingRequest);
+            if(shippingRespond != null) {
+                shippingRespondList.add(shippingRespond);
+            }
+        }
+
+        //update data checkoutInfo
+        CheckoutInfoDto checkoutInfoDto = new CheckoutInfoDto();
+        checkoutInfoDto.setAddressInfoDto(addressInfoDto);
+        checkoutInfoDto.setCartProductDtoList(cartProductDtoList);
+        checkoutInfoDto.setShippingRequestDtoList(shippingRequestList);
+        checkoutInfoDto.setShippingRespondDtoList(shippingRespondList);
+        if(addressInfoDto == null || cartProductDtoList.isEmpty() || shippingRequestList.isEmpty() || shippingRespondList.isEmpty()) {
+            return null;
+        }
+        return checkoutInfoDto;
     }
 }

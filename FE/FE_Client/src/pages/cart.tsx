@@ -7,6 +7,7 @@ import { Link, useParams } from 'react-router-dom';
 import OrderSummary from '../components/OrderSummary';
 import CartService from '../services/cart.service';
 import ICartItem from '../models/CartItem';
+import { useNavigate } from 'react-router-dom';
 
 const CartPage: React.FC = () => {
   const { customer } = useContext(AuthContext);
@@ -15,6 +16,7 @@ const CartPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const cartService = new CartService();
+  const navigate = useNavigate();
 
   // Hàm tạo key duy nhất từ productId và attributes
   const getItemKey = (item: ICartItem): string =>
@@ -105,6 +107,30 @@ const CartPage: React.FC = () => {
 
   const formatPrice = (price: number) => `${price.toLocaleString()}đ`;
 
+  const handleCheckout = () => {
+    if (!customerId) {
+      alert("Vui lòng đăng nhập để tiến hành thanh toán");
+      return;
+    }
+    
+    if (selectedItems.length === 0) {
+      alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán");
+      return;
+    }
+    
+    // Lấy ra ID của các cart items đã chọn
+    const selectedCartIds = cartItems
+      .filter(item => selectedItems.includes(getItemKey(item)))
+      .map(item => item.id);
+    
+    console.log("Các sản phẩm đã chọn để thanh toán:", selectedCartIds);
+    
+    // Lưu vào localStorage
+    localStorage.setItem('selectedCartIds', JSON.stringify(selectedCartIds));
+    
+    // Chuyển hướng đến trang checkout
+    navigate('/checkout');
+  };
   return (
     <div className="cart-container">
       <div className="cart-items">
@@ -187,9 +213,12 @@ const CartPage: React.FC = () => {
           shippingCost={shippingCost}
           total={selectedTotal}
         />
-        <Link to="/checkout" className="checkout-button">
+        <button
+          onClick={handleCheckout}
+          className="checkout-button"
+        >
           Tiến hành thanh toán {'>'}
-        </Link>
+        </button>
       </div>
     </div>
   );
