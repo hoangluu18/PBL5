@@ -31,7 +31,7 @@ const PaymentMethod: React.FC<{
 
                 {shippingCosts.map((cost) => (
                     <div key={cost.shopId} style={{ marginBottom: '10px' }}>
-                        <Text strong>Shop {cost.shopId}:</Text>
+                        <Text strong>{cost.shopName}:</Text>
                         <Text type="danger" style={{ marginLeft: '8px' }}>
                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(cost.shippingCost)}
                         </Text>

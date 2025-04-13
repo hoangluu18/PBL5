@@ -57,7 +57,9 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     @Override
     public List<CartProductDto> getOrderDetailByOrderId(Integer orderId) {
         List<OrderDetail> orderDetailList = orderDetailRepository.findAllByOrderId(orderId);
-
+        if(orderDetailList == null || orderDetailList.isEmpty()) {
+            return Collections.emptyList();
+        }
         return orderDetailList.stream().map(item -> {
             double originalPrice = item.getProduct().getPrice();
             double discountPercent = item.getProduct().getDiscountPercent();

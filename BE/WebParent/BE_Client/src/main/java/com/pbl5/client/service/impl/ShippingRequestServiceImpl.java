@@ -48,8 +48,8 @@ public class ShippingRequestServiceImpl implements ShippingRequestService {
 
     private List<ShippingRequestDto> result;
     @Override
-    public List<ShippingRequestDto> getShippingRequestList(int customerId) throws ProductNotFoundException {
-        List<CartProductDto> cartProductDtoList = cartService.getCartByCustomerId(customerId);
+    public List<ShippingRequestDto> getShippingRequestList(int customerId ,List<Integer> cartIds) throws ProductNotFoundException {
+        List<CartProductDto> cartProductDtoList = cartService.getCartByCustomerIdAndProductIdList(customerId,cartIds);
 
         // Get customer's address
         String address = addressInfoService.findCityById(customerId);
@@ -65,7 +65,8 @@ public class ShippingRequestServiceImpl implements ShippingRequestService {
         for (Map.Entry<Integer, List<CartProductDto>> entry : groupedByShop.entrySet()) {
             int shopId = entry.getKey();
             List<CartProductDto> shopProducts = entry.getValue();
-
+            System.out.println("shop");
+            System.out.println(shopProducts);
             // Get shop city
             Optional<Shop> shopOptional = shopRepository.findById(shopId);
             String shopCity = shopOptional.map(Shop::getCity).orElse("");
@@ -80,6 +81,7 @@ public class ShippingRequestServiceImpl implements ShippingRequestService {
             for (CartProductDto product : shopProducts) {
                 // In a real application, you would get these values from the product
                 // This is just a placeholder - replace with actual dimension calculation
+                System.out.println("Id: " + product.getProductId());
                 Product productEntity = productService.getByProductId(product.getProductId());
                 float productWeight = productEntity.getWeight();
                 float productHeight = productEntity.getHeight();
@@ -113,10 +115,10 @@ public class ShippingRequestServiceImpl implements ShippingRequestService {
 
         // Tạo đối tượng body request
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("weight", (int) shippingRequestDto.getWeight()); // Ép kiểu về integer
-        requestBody.put("height", (int) shippingRequestDto.getHeight());
-        requestBody.put("width", (int) shippingRequestDto.getWidth());
-        requestBody.put("length", (int) shippingRequestDto.getLength());
+        requestBody.put("weight", (float)shippingRequestDto.getWeight()); // Ép kiểu về integer
+        requestBody.put("height", (float)shippingRequestDto.getHeight());
+        requestBody.put("width", (float)shippingRequestDto.getWidth());
+        requestBody.put("length", (float)shippingRequestDto.getLength());
         requestBody.put("diem_giao_hang", shippingRequestDto.getDeliveryPoint());
         requestBody.put("diem_nhan_hang", shippingRequestDto.getReceivingPoint());
 

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Typography, Breadcrumb, Button, Spin } from 'antd';
 import ShopList from '../components/ShopList';
 import FollowingShopService from '../services/following_shop.service';
 import IFollowingShopDto from '../models/dto/FollowingShopDto';
+import { AuthContext } from "../components/context/auth.context";
 
 const { Title } = Typography;
 
@@ -11,7 +12,8 @@ const FollowedShops: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [pageNum, setPageNum] = useState<number>(1);
     const [hasMore, setHasMore] = useState<boolean>(true);
-    const customerId = 1; // Thay thế bằng ID động từ context hoặc localStorage nếu cần
+    const { customer } = useContext(AuthContext);
+    const customerId = customer?.id;
 
     const followingShopService = new FollowingShopService();
 

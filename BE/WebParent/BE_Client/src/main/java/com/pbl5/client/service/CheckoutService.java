@@ -8,9 +8,9 @@ import com.pbl5.common.entity.Order;
 import java.util.List;
 
 public interface CheckoutService {
-    CheckoutInfoDto getCheckoutInfo(int customerId) throws ProductNotFoundException;
+    CheckoutInfoDto getCheckoutInfo(int customerId,List<Integer> cartIds) throws ProductNotFoundException;
     List<Order> getOrderList(CheckoutInfoDto checkoutInfoDto, CustomerDto customerDto);
     int parseDeliveryDays(String deliveryTime);
-    CheckoutInfoDto saveCheckoutInfo(int customerId) throws ProductNotFoundException;
-
+    CheckoutInfoDto saveCheckoutInfo(int customerId,List<Integer> cartIds) throws ProductNotFoundException;
+    CheckoutInfoDto getCheckoutInfoForSelectedProducts(int customerId, List<Integer> cartIds) throws ProductNotFoundException;
 }

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Card, Row, Col, Typography, Image as AntImage, List, Button, Rate, Tabs, Input, Avatar, 
-    Descriptions, Statistic, Divider,  Empty } from "antd";
+    Descriptions, Statistic, Divider, Empty, message, Spin } from "antd";
 import {
     ShoppingCartOutlined,
     EyeOutlined,
@@ -17,61 +17,17 @@ import {
     MessageOutlined,
     InfoCircleOutlined,
     CheckCircleOutlined,
-    PlusOutlined
+    PlusOutlined,
+    MinusOutlined
 } from "@ant-design/icons";
 import ProductCard from "../components/ProductCard";
 import { useParams } from "react-router-dom";
 import ShopInfoService from "../services/shop_info.service";
 import ShopInfoDto from "../models/dto/detail_shop/ShopInfoDto";
-import { message, Spin } from "antd";
 import ProductDto from "../models/dto/ProductDto";
+import { AuthContext } from "../components/context/auth.context";
+
 const { Title, Text, Paragraph } = Typography;
-
-
-const bestSellingProducts = [
-    {
-        id: 1,
-        name: "Máy tính bảng cho trẻ em chống sốc",
-        price: 1000000,
-        discountPercent: 10,
-        mainImage: "tablet1.jpg", 
-        averageRating: 4.5,
-        reviewCount: 120,
-        alias: "may-tinh-bang-cho-tre-em-chong-soc"
-    },
-    {
-        id: 2,
-        name: "Combo bàn phím + chuột Bluetooth TEKKIN",
-        price: 189000,
-        discountPercent: 5,
-        mainImage: "keyboard-mouse-combo.jpg",
-        averageRating: 4.2,
-        reviewCount: 85,
-        alias: "combo-ban-phim-chuot-bluetooth-tekkin"
-    },
-    {
-        id: 3,
-        name: "Chuột Bluetooth không dây cao cấp TEKKIN",
-        price: 145000,
-        discountPercent: 0,
-        mainImage: "mouse1.jpg",
-        averageRating: 4.8,
-        reviewCount: 230,
-        alias: "chuot-bluetooth-khong-day-cao-cap-tekkin"
-    },
-    {
-        id: 4,
-        name: "Tai nghe gaming TEKKIN X2000",
-        price: 350000,
-        discountPercent: 15,
-        mainImage: "headphone1.jpg",
-        averageRating: 4.6,
-        reviewCount: 78,
-        alias: "tai-nghe-gaming-tekkin-x2000"
-    }
-];
-
-
 
 // Custom Image component that maintains aspect ratio
 const ResponsiveImage = ({ src, alt }: { src: string; alt: string }) => {
@@ -95,8 +51,6 @@ const ResponsiveImage = ({ src, alt }: { src: string; alt: string }) => {
     );
 };
 
-
-
 const ShopDetail: React.FC = () => {
     const [activeTab, setActiveTab] = useState("1");
     const [shopInfo, setShopInfo] = useState<ShopInfoDto | null>(null);
@@ -106,14 +60,18 @@ const ShopDetail: React.FC = () => {
     const [page, setPage] = useState<number>(1);
     const [loadingProducts, setLoadingProducts] = useState<boolean>(false);
     const [hasMore, setHasMore] = useState<boolean>(true);
+    const [isFollowing, setIsFollowing] = useState<boolean>(false);
+    const [followLoading, setFollowLoading] = useState<boolean>(false);
+    
     const { id } = useParams<{ id: string }>();
+    const { customer } = useContext(AuthContext);
+    const shopInfoService = new ShopInfoService();
     
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
                 const shopId = id ? parseInt(id) : 1;
-                const shopInfoService = new ShopInfoService();
                 
                 // Lấy thông tin shop
                 const shopData = await shopInfoService.getShopInfo(shopId);
@@ -130,7 +88,13 @@ const ShopDetail: React.FC = () => {
                 }
                 
                 // Kiểm tra xem có trang tiếp theo không
-                setHasMore(productsData.length >= 12); // Giả sử mỗi trang có 10 sản phẩm
+                setHasMore(productsData.length >= 12); // Giả sử mỗi trang có 12 sản phẩm
+                
+                // Kiểm tra trạng thái follow nếu người dùng đã đăng nhập
+                if (customer && customer.id) {
+                    const followStatus = await shopInfoService.checkIsFollowed(shopId, customer.id);
+                    setIsFollowing(followStatus);
+                }
             } catch (error) {
                 console.error("Lỗi khi tải dữ liệu:", error);
                 message.error("Không thể tải thông tin. Vui lòng thử lại sau.");
@@ -140,14 +104,64 @@ const ShopDetail: React.FC = () => {
         };
 
         fetchData();
+        
         // Reset state khi id thay đổi
         return () => {
             setProducts([]);
             setBestSellingProducts([]);
             setPage(1);
             setHasMore(true);
+            setIsFollowing(false);
         };
-    }, [id]);
+    }, [id, customer]);
+    
+    const handleFollowToggle = async () => {
+        if (!customer || !customer.id) {
+            message.warning("Vui lòng đăng nhập để theo dõi cửa hàng");
+            return;
+        }
+        
+        try {
+            setFollowLoading(true);
+            const shopId = id ? parseInt(id) : 1;
+            
+            let success;
+            if (isFollowing) {
+                success = await shopInfoService.unfollowShop(shopId, customer.id);
+                if (success) {
+                    message.success("Đã hủy theo dõi cửa hàng");
+                    // Cập nhật số lượng người theo dõi
+                    if (shopInfo) {
+                        setShopInfo({
+                            ...shopInfo,
+                            peopleTracking: shopInfo.peopleTracking - 1
+                        });
+                    }
+                }
+            } else {
+                success = await shopInfoService.followShop(shopId, customer.id);
+                if (success) {
+                    message.success("Đã theo dõi cửa hàng");
+                    // Cập nhật số lượng người theo dõi
+                    if (shopInfo) {
+                        setShopInfo({
+                            ...shopInfo,
+                            peopleTracking: shopInfo.peopleTracking + 1
+                        });
+                    }
+                }
+            }
+            
+            if (success) {
+                setIsFollowing(!isFollowing);
+            }
+        } catch (error) {
+            console.error("Lỗi khi thay đổi trạng thái theo dõi:", error);
+            message.error("Không thể thực hiện thao tác. Vui lòng thử lại sau.");
+        } finally {
+            setFollowLoading(false);
+        }
+    };
     
     const loadMoreProducts = async () => {
         if (loadingProducts || !hasMore) return;
@@ -156,14 +170,13 @@ const ShopDetail: React.FC = () => {
             setLoadingProducts(true);
             const nextPage = page + 1;
             const shopId = id ? parseInt(id) : 1;
-            const shopInfoService = new ShopInfoService();
             
             const moreProducts = await shopInfoService.getProductByShopId(shopId, nextPage);
             
             if (moreProducts.length > 0) {
                 setProducts(prev => [...prev, ...moreProducts]);
                 setPage(nextPage);
-                setHasMore(moreProducts.length >= 10); // Giả sử mỗi trang có 10 sản phẩm
+                setHasMore(moreProducts.length >= 12); // Giả sử mỗi trang có 12 sản phẩm
             } else {
                 setHasMore(false);
             }
@@ -191,6 +204,7 @@ const ShopDetail: React.FC = () => {
             </div>
         );
     }
+    
     return (
         <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
             {/* Thông tin Shop */}
@@ -216,8 +230,15 @@ const ShopDetail: React.FC = () => {
                                 <Text type="secondary">{shopInfo.peopleTracking} Người theo dõi</Text>
                             </Col>
                             <Col>
-                                <Button type="primary" size="small">
-                                    + Theo Dõi
+                                <Button 
+                                    type={isFollowing ? "default" : "primary"} 
+                                    danger={isFollowing}
+                                    size="small"
+                                    icon={isFollowing ? <MinusOutlined /> : <PlusOutlined />}
+                                    onClick={handleFollowToggle}
+                                    loading={followLoading}
+                                >
+                                    {isFollowing ? "Hủy theo dõi" : "Theo dõi"}
                                 </Button>
                             </Col>
                         </Row>
@@ -351,7 +372,15 @@ const ShopDetail: React.FC = () => {
                                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                                     <Avatar size={100} src={shopInfo.photo} />
                                     <Title level={4} style={{ marginTop: '16px', marginBottom: '8px' }}>{shopInfo.name}</Title>
-                                    <Button type="primary" icon={<PlusOutlined />}>Theo dõi</Button>
+                                    <Button 
+                                        type={isFollowing ? "default" : "primary"}
+                                        danger={isFollowing}
+                                        icon={isFollowing ? <MinusOutlined /> : <PlusOutlined />}
+                                        onClick={handleFollowToggle}
+                                        loading={followLoading}
+                                    >
+                                        {isFollowing ? "Hủy theo dõi" : "Theo dõi"}
+                                    </Button>
                                 </div>
 
                                 <Descriptions column={1} size="small" layout="vertical" bordered>
@@ -422,5 +451,3 @@ const ShopDetail: React.FC = () => {
 }
 
 export default ShopDetail;
-
-
