@@ -1,128 +1,319 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Row, Col, Card, Typography, Select } from 'antd';
-import { RightOutlined } from '@ant-design/icons';
-
+import React, { useEffect, useState, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { AuthContext } from "../components/context/auth.context";
+import { getAddressesByCustomer, updateAddress, disableAddress } from "../services/address.service";
+import {
+    Card,
+    Col,
+    Row,
+    Tag,
+    Button,
+    Typography,
+    Spin,
+    Empty,
+    Space,
+    Modal,
+    notification,
+} from "antd";
+import {
+    HomeOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    PlusOutlined,
+    CheckCircleOutlined,
+    PhoneOutlined,
+    EnvironmentOutlined,
+    BankOutlined,
+} from "@ant-design/icons";
+import { setDefaultAddress } from "../services/address.service";
 const { Title, Text } = Typography;
-const { Option } = Select;
+
+interface Address {
+    id: number;
+    fullName: string;
+    phoneNumber: string;
+    address: string;
+    city: string;
+    isDefault: number;
+}
 
 const EditAddress: React.FC = () => {
-    const [form] = Form.useForm();
+    // const { id } = useParams<{ id: string }>();
+    // const customerId = Number(id);
+      const { customer } = useContext(AuthContext);
+      const customerId = customer?.id;
+    const navigate = useNavigate();
+    const [addresses, setAddresses] = useState<Address[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [selectedAddress, setSelectedAddress] = useState<number | null>(null);
 
-    // Tạm thời gán thông tin cứng
-    const [fullName, setFullName] = useState('Nguyễn Văn A');
-    const [email, setEmail] = useState('nguyenvana@example.com');
-    const [phone, setPhone] = useState('+84123456789');
-    const [address, setAddress] = useState('1234 Elm Street, Van Nuys, CA');
-    const [city, setCity] = useState('');
-    const [district, setDistrict] = useState('');
-    const [ward, setWard] = useState('');
-    const [street, setStreet] = useState('');
+    useEffect(() => {
+        if (!customerId) return;
+        fetchAddresses();
+    }, [customerId]);
 
-    const handleCityChange = (value: string) => {
-        setCity(value);
-        // Gọi API để lấy danh sách quận/huyện dựa trên tỉnh/thành phố đã chọn
+    const fetchAddresses = async () => {
+        setLoading(true);
+        try {
+            const res = await getAddressesByCustomer(customerId);
+            const mappedAddresses = res.data.map((addr: any) => ({
+                id: addr.id,
+                fullName: addr.fullName || addr.full_name,
+                phoneNumber: addr.phoneNumber || addr.phone_number,
+                address: addr.address,
+                city: addr.city,
+                isDefault: addr.isDefault || addr.default || 0,
+            }));
+            setAddresses(mappedAddresses);
+        } catch (error: any) {
+            console.error("Lỗi khi lấy địa chỉ:", error);
+            if (error.response?.status === 401) {
+                notification.error({ message: "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại." });
+                navigate("/login");
+            } else {
+                notification.error({ message: "Không thể tải danh sách địa chỉ. Vui lòng thử lại." });
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleDistrictChange = (value: string) => {
-        setDistrict(value);
-        // Gọi API để lấy danh sách phường/xã dựa trên quận/huyện đã chọn
+    const handleEdit = (addressId: number) => {
+        console.log("Navigating to /update_address with:", { customerId, addressId });
+        navigate("/update_address", {
+          state: { customerId, addressId },
+        });
+      };
+
+    const showDisableModal = (addressId: number) => {
+        setSelectedAddress(addressId);
+        setIsModalVisible(true);
     };
 
-    const handleWardChange = (value: string) => {
-        setWard(value);
+    const handleDisable = async () => {
+        if (selectedAddress) {
+            try {
+                await disableAddress(selectedAddress);
+                setAddresses(addresses.filter((addr) => addr.id !== selectedAddress));
+                notification.success({ message: "Vô hiệu hóa địa chỉ thành công!" });
+            } catch (error: any) {
+                console.error("Error disabling address:", error);
+                if (error.response?.status === 401) {
+                    notification.error({ message: "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại." });
+                    navigate("/login");
+                } else {
+                    notification.error({ message: "Không thể vô hiệu hóa địa chỉ. Vui lòng thử lại." });
+                }
+            }
+        }
+        setIsModalVisible(false);
+        setSelectedAddress(null);
     };
+
+    const handleSetDefault = async (id: number) => {
+        try {
+            await setDefaultAddress(id, customerId);
+            alert("Đã đặt địa chỉ mặc định thành công!");
+            // Gọi lại danh sách địa chỉ để cập nhật UI
+            fetchAddresses();
+        } catch (error) {
+            console.error("Lỗi khi đặt địa chỉ mặc định:", error);
+        }
+    };
+
+    const handleAddNew = () => {
+        navigate(`/add_address`);
+    };
+
+    if (loading) {
+        return <div style={{ textAlign: "center", padding: "80px 0" }}><Spin size="large" /></div>;
+    }
 
     return (
-        <div style={{ 
-            background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF', 
-            padding: '40px',
-            minHeight: '100vh',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-        }}>
-            <div style={{ width: '100%', maxWidth: '800px' }}>
-                <Title level={2}>Chỉnh sửa địa chỉ nhận hàng</Title>
-                
-                <Card title="Thông tin địa chỉ" bordered={false} style={{ marginBottom: '20px' }}>
-                    <Form
-                        form={form}
-                        layout="vertical"
-                        initialValues={{ fullName, email, phone, address, city, district, ward, street }}
-                    >
-                        <Form.Item label="Họ và tên" name="fullName">
-                            <Input placeholder="Họ và tên" value={fullName} onChange={(e) => setFullName(e.target.value)} />
-                        </Form.Item>
-                        
-                        <Row gutter={16}>
-                            <Col span={12}>
-                                <Form.Item label="Email" name="email">
-                                    <Input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item label="Số điện thoại" name="phone">
-                                    <Input placeholder="+1234567890" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                                </Form.Item>
-                            </Col>
-                        </Row>
-                        
-                        <Form.Item label="Địa chỉ" name="address">
-                            <Input placeholder="1234 Elm Street, Van Nuys, CA" value={address} onChange={(e) => setAddress(e.target.value)} />
-                        </Form.Item>
-
-                        <Row gutter={16}>
-                            <Col span={12}>
-                                <Form.Item label="Tỉnh/Thành phố" name="city">
-                                    <Select placeholder="Chọn Tỉnh/Thành phố" onChange={handleCityChange}>
-                                        {/* Thêm các tùy chọn tỉnh/thành phố */}
-                                        <Option value="hanoi">Hà Nội</Option>
-                                        <Option value="hcm">TP. Hồ Chí Minh</Option>
-                                    </Select>
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item label="Quận/Huyện" name="district">
-                                    <Select placeholder="Chọn Quận/Huyện" onChange={handleDistrictChange}>
-                                        {/* Thêm các tùy chọn quận/huyện */}
-                                        <Option value="district1">Quận 1</Option>
-                                        <Option value="district2">Quận 2</Option>
-                                    </Select>
-                                </Form.Item>
-                            </Col>
-                        </Row>
-
-                        <Form.Item label="Phường/Xã" name="ward">
-                            <Select placeholder="Chọn Phường/Xã" onChange={handleWardChange}>
-                                {/* Thêm các tùy chọn phường/xã */}
-                                <Option value="ward1">Phường 1</Option>
-                                <Option value="ward2">Phường 2</Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item label="Tên đường, Tòa nhà, Số nhà" name="street">
-                            <Input placeholder="Tên đường, Tòa nhà, Số nhà" value={street} onChange={(e) => setStreet(e.target.value)} />
-                        </Form.Item>
-                        
-                        <Form.Item>
-                            <Button type="primary" 
-                                style={{ 
-                                    width: '150px', 
-                                    height: '40px',
-                                    background: '#4F80E1',
-                                    borderColor: '#4F80E1'
-                                }}>
-                                Lưu địa chỉ
-                            </Button>
-                            <Button 
-                                type="link" 
-                                style={{ marginLeft: '10px' }}>
-                                Thoát, không lưu
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                </Card>
+        <div
+            className="address-management-container"
+            style={{
+                background: "white",
+                padding: "24px",
+                borderRadius: "8px",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                maxWidth: "1200px",
+                margin: "0 auto",
+                marginTop: "40px",
+            }}
+        >
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "24px",
+                    borderBottom: "1px solid #f0f0f0",
+                    paddingBottom: "16px",
+                }}
+            >
+                <Title level={4} style={{ margin: 0, display: "flex", alignItems: "center" }}>
+                    <HomeOutlined style={{ marginRight: "10px" }} /> Sổ địa chỉ
+                </Title>
+                <Button type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>
+                    Thêm địa chỉ mới
+                </Button>
             </div>
+
+            {addresses.length > 0 ? (
+                <Row gutter={[16, 16]}>
+                    {addresses.map((addr) => (
+                        <Col xs={24} sm={12} lg={8} key={addr.id}>
+                            <Card
+                                className="address-card"
+                                bordered={false}
+                                style={{
+                                    borderRadius: "8px",
+                                    boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                                    height: "100%",
+                                    position: "relative",
+                                }}
+                            >
+                                <div style={{ marginBottom: "16px", display: "flex", alignItems: "center" }}>
+                                    <Text strong style={{ fontSize: "16px", flex: 1 }}>
+                                        {addr.fullName}
+                                    </Text>
+                                    {Boolean(addr.isDefault) && (
+                                        <Tag color="success" style={{ marginLeft: "8px" }}>
+                                            <CheckCircleOutlined /> Mặc định
+                                        </Tag>
+                                    )}
+                                </div>
+                                <div className="address-info-container">
+        {/* Số điện thoại */}
+        <div className="address-info-row">
+            <PhoneOutlined className="address-icon" style={{ color: "#1890ff" }} />
+            <Text>{addr.phoneNumber}</Text>
+        </div>
+
+        {/* Địa chỉ - giới hạn 2 dòng */}
+        <div className="address-info-row">
+            <EnvironmentOutlined className="address-icon" style={{ color: "#ff4d4f" }} />
+            <Text
+                className="address-text"
+                style={{
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis"
+                }}
+            >
+                {addr.address}
+            </Text>
+        </div>
+
+        {/* Tỉnh thành */}
+        <div className="address-info-row">
+            <BankOutlined className="address-icon" style={{ color: "#52c41a" }} />
+            <Text>{addr.city}</Text>
+        </div>
+    </div>
+                                <div
+                                    style={{
+                                        borderTop: "1px solid #f0f0f0",
+                                        paddingTop: "16px",
+                                        marginTop: "16px",
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                    }}
+                                >
+                                    <Space>
+                                        <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(addr.id)}>
+                                            Sửa
+                                        </Button>
+                                        <Button
+                                            type="text"
+                                            danger
+                                            icon={<DeleteOutlined />}
+                                            onClick={() => showDisableModal(addr.id)}
+                                        >
+                                            Vô hiệu hóa
+                                        </Button>
+                                    </Space>
+                                    {!Boolean(addr.isDefault) && (
+                                        <Button type="link" onClick={() => handleSetDefault(addr.id)}>
+                                            Đặt làm mặc định
+                                        </Button>
+                                    )}
+                                </div>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            ) : (
+                <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description={
+                        <Text style={{ fontSize: "16px", color: "#666" }}>
+                            Bạn chưa có địa chỉ nào. Hãy thêm địa chỉ mới.
+                        </Text>
+                    }
+                    style={{ margin: "60px 0" }}
+                >
+                    <Button type="primary" icon={<PlusOutlined />} onClick={handleAddNew}>
+                        Thêm địa chỉ mới
+                    </Button>
+                </Empty>
+            )}
+
+            <Modal
+                title="Xác nhận vô hiệu hóa"
+                open={isModalVisible}
+                onOk={handleDisable}
+                onCancel={() => setIsModalVisible(false)}
+                okText="Vô hiệu hóa"
+                cancelText="Hủy"
+                okButtonProps={{ danger: true }}
+            >
+                <p>Bạn có chắc chắn muốn vô hiệu hóa địa chỉ này không?</p>
+            </Modal>
+
+            <style>{`
+                .address-card {
+                    transition: all 0.3s ease;
+                }
+                .address-card:hover {
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                }
+                .address-management-container {
+                    transition: all 0.3s ease;
+                }
+                .address-management-container:hover {
+                    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+                }
+                .ant-card-body {
+                    padding: 20px;
+                }
+                    .address-info-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .address-info-row {
+            display: flex;
+            align-items: flex-start;
+            min-height: 24px;
+        }
+        
+        .address-icon {
+            margin-right: 8px;
+            font-size: 16px;
+            margin-top: 2px;
+        }
+        
+        .address-text {
+            min-height: 40px;
+        }
+            `}</style>
         </div>
     );
 };

@@ -116,15 +116,8 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public boolean deleteCartItemByCustomerIdAndCartId(Integer customerId, List<Integer> cartIds) {
-        List<CartItems> cartItems = cartItemRepository.findByCustomerId(customerId);
-        List<CartItems> itemsToDelete = cartItems.stream()
-                .filter(item -> cartIds.contains(item.getId()))
-                .collect(Collectors.toList());
-        if (!itemsToDelete.isEmpty()) {
-            cartItemRepository.deleteAll(itemsToDelete);
-            return true;
-        }
-        return false;
+    public int countProductsByCustomerId(Integer customerId) {
+
+        return cartItemRepository.countProductsByCustomerId(customerId);
     }
 }
