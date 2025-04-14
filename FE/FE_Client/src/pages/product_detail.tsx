@@ -367,7 +367,7 @@ const ProductDetailPage: React.FC = () => {
                             size="large"
                             icon={<ThunderboltOutlined />}
                             className="px-4 d-flex align-items-center"
-                            disabled={!selectedVariant || !size}
+                            disabled={isAddToCartDisabled}
                         >
                             Mua ngay
                         </Button>
