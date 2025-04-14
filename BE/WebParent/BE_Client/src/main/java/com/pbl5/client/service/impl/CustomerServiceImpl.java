@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -72,6 +73,32 @@ public class CustomerServiceImpl implements CustomerService {
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @Override
+    public Optional<Customer> getCustomerById(Integer customerId) {
+        if(customerId == null) {
+            return Optional.empty();
+        }
+        try {
+            return customerRepository.findById(customerId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void saveCustomer(Customer customer) {
+        if(customer == null) {
+            throw new IllegalArgumentException("Khách hàng không được null");
+        }
+        try {
+            customerRepository.save(customer);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Lỗi khi lưu khách hàng: " + e.getMessage());
         }
     }
 }
