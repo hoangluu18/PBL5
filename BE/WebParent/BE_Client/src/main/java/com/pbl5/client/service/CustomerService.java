@@ -21,4 +21,9 @@ public interface CustomerService {
     Optional<Customer> getCustomerById(Integer customerId);
 
     void saveCustomer(Customer customer);
+    Customer findByResetPasswordToken(String token) throws CustomerNotFoundException;
+
+    Customer updateResetPasswordToken(String email) throws CustomerNotFoundException;
+
+    void updatePassword(String token, String newPassword) throws CustomerNotFoundException;
 }

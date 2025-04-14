@@ -34,6 +34,37 @@ class AuthService {
             throw error;
         }
     }
+
+    async forgotPassword(email: string): Promise<any> {
+        try {
+            const response = await axios.post(`${API_URL}/forgot-password?email=${email}`);
+            return response.data;
+        } catch (error) {
+            console.error("Error during forgot password:", error);
+            throw error;
+        }
+    }
+
+    async checkToken(token: string): Promise<any> {
+        try {
+            const response = await axios.get(`${API_URL}/reset-password?token=${token}`);
+            return response.data;
+        }
+        catch (error) {
+            console.error("Error during token check:", error);
+            throw error;
+        }
+    }
+
+    async resetPassword(token: string, newPassword: string): Promise<any> {
+        try {
+            const response = await axios.post(`${API_URL}/reset-password?token=${token}&newPassword=${newPassword}`);
+            return response.data;
+        } catch (error) {
+            console.error("Error during password reset:", error);
+            throw error;
+        }
+    }
 }
 
 export default AuthService;

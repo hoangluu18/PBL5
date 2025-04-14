@@ -88,6 +88,25 @@ public class CustomerServiceImpl implements CustomerService {
             return Optional.empty();
         }
     }
+    public Customer findByResetPasswordToken(String token) throws CustomerNotFoundException {
+        Customer customer = customerRepository.findByResetPasswordToken(token);
+        if (customer == null) {
+            throw new CustomerNotFoundException("Người dùng không tồn tại với mã xác thực: " + token);
+        }
+        return customer;
+    }
+
+    @Override
+    public Customer updateResetPasswordToken(String email) throws CustomerNotFoundException {
+        Customer customer = customerRepository.findByEmail(email);
+        if(customer != null) {
+            String token = RandomStringUtils.randomAlphanumeric(30);
+            customer.setResetPasswordToken(token);
+            return customerRepository.save(customer);
+        } else {
+            throw new CustomerNotFoundException("Không tìm thấy người dùng với email: " + email);
+        }
+    }
 
     @Override
     public void saveCustomer(Customer customer) {
@@ -100,5 +119,14 @@ public class CustomerServiceImpl implements CustomerService {
             e.printStackTrace();
             throw new RuntimeException("Lỗi khi lưu khách hàng: " + e.getMessage());
         }
+    }
+    public void updatePassword(String token, String newPassword) throws CustomerNotFoundException {
+        Customer customer = customerRepository.findByResetPasswordToken(token);
+        if(customer == null) {
+            throw new CustomerNotFoundException("Không tìm thấy người dùng với mã xác thực: " + token);
+        }
+        customer.setPassword(passwordEncoder.encode(newPassword));
+        customer.setResetPasswordToken(null);
+        customerRepository.save(customer);
     }
 }
