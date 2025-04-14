@@ -9,6 +9,7 @@ import FollowedStores from "../components/product_details/FollowedStores";
 import ProfileService from "../services/profile.service";
 import { getAddressesByCustomer, disableAddress } from "../services/address.service";
 import IProfile from "../models/dto/Profile";
+import uploadService from "../services/aws_service/upload.service";
 
 const { TabPane } = Tabs;
 const { Text } = Typography;
@@ -22,9 +23,10 @@ interface Address {
     isDefault: number;
 }
 
+
 const ProfilePage: React.FC = () => {
-      const { customer } = useContext(AuthContext);
-      const customerId = customer?.id;
+    const { customer, setCustomer } = useContext(AuthContext);
+    const customerId = customer?.id;
     //const { customerId } = useParams<{ customerId: string }>();
     const navigate = useNavigate();
     const [profile, setProfile] = useState<IProfile | null>(null);
@@ -34,6 +36,9 @@ const ProfilePage: React.FC = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
     const profileService = new ProfileService();
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [previewModalVisible, setPreviewModalVisible] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -75,13 +80,73 @@ const ProfilePage: React.FC = () => {
         fetchData();
     }, [customerId, navigate]);
 
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        if (file) {
+        if (file && customerId) {
+            if (file.size > 5 * 1024 * 1024) {
+                notification.error({
+                    message: 'File quá lớn',
+                    description: 'Kích thước ảnh không được vượt quá 5MB',
+                });
+                return;
+            }
+
+            // Kiểm tra loại file
+            if (!['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)) {
+                notification.error({
+                    message: 'Định dạng không được hỗ trợ',
+                    description: 'Vui lòng sử dụng các định dạng ảnh: JPEG, PNG, GIF, WEBP',
+                });
+                return;
+            }
+
+            // Tạo preview và hiển thị modal
             const reader = new FileReader();
-            reader.onload = (e) => setAvatar(e.target?.result as string);
+            reader.onload = (e) => {
+                setPreviewImage(e.target?.result as string);
+                setPreviewModalVisible(true);
+            }
             reader.readAsDataURL(file);
-            // TODO: Gọi API để upload avatar nếu cần
+            setImageFile(file);
+        }
+    };
+
+    // Hàm xử lý khi người dùng xác nhận upload
+    const confirmUpload = async () => {
+        if (imageFile && customerId) {
+            try {
+                const key = 'loadingNotification';
+                notification.info({
+                    key,
+                    message: 'Đang tải ảnh lên...',
+                    duration: 0
+                });
+
+                const avatarUrl = await uploadService.uploadAvatar(customerId, imageFile);
+
+                setAvatar(avatarUrl);
+                setPreviewModalVisible(false);
+                setImageFile(null);
+
+                if (customer) {
+                    const updatedCustomer = { ...customer, avatar: avatarUrl };
+                    localStorage.setItem('customer', JSON.stringify(updatedCustomer));
+                    setCustomer(updatedCustomer);
+                }
+
+                notification.info.close(key);
+                notification.success({
+                    message: 'Cập nhật ảnh đại diện thành công!',
+                    duration: 3
+                });
+            } catch (error: any) {
+                notification.error({
+                    message: 'Không thể tải ảnh lên',
+                    description: error.response?.data?.error || 'Đã xảy ra lỗi khi tải ảnh lên',
+                    duration: 3
+                });
+                console.error('Error uploading avatar:', error);
+            }
         }
     };
 
@@ -115,7 +180,7 @@ const ProfilePage: React.FC = () => {
     };
 
     const handleAddNew = () => {
-        navigate(`/add_address/${customerId}`);
+        navigate(`/add_address`);
     };
 
     const handleManageAddresses = () => {
@@ -306,6 +371,24 @@ const ProfilePage: React.FC = () => {
                 okButtonProps={{ danger: true }}
             >
                 <p>Bạn có chắc chắn muốn vô hiệu hóa địa chỉ này không?</p>
+            </Modal>
+
+            <Modal
+                title="Xem trước ảnh đại diện"
+                open={previewModalVisible}
+                onOk={confirmUpload}
+                onCancel={() => setPreviewModalVisible(false)}
+                okText="Xác nhận"
+                cancelText="Hủy"
+            >
+                <div style={{ textAlign: 'center' }}>
+                    <Avatar
+                        size={200}
+                        src={previewImage || undefined}
+                        style={{ marginBottom: '20px' }}
+                    />
+                    <p>Xác nhận sử dụng ảnh này làm ảnh đại diện?</p>
+                </div>
             </Modal>
 
             <style>{`

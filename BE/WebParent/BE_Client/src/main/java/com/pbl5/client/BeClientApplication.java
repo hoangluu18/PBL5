@@ -16,7 +16,15 @@ public class BeClientApplication {
 		System.setProperty("DB_URL", dotenv.get("DB_URL"));
 		System.setProperty("DB_USERNAME", dotenv.get("DB_USERNAME"));
 		System.setProperty("DB_PASSWORD", dotenv.get("DB_PASSWORD"));
-		SpringApplication.run(BeClientApplication.class, args);
+		System.setProperty("YOUR_CLIENT_ID", dotenv.get("YOUR_CLIENT_ID"));
+		System.setProperty("YOUR_CLIENT_SECRET",dotenv.get("YOUR_CLIENT_SECRET"));
+		System.setProperty("BASE_URL_BACKEND", dotenv.get("BASE_URL_BACKEND"));
+		System.setProperty("BASE_URL_FRONTEND", dotenv.get("BASE_URL_FRONTEND"));
+		System.setProperty("AWS_ACCESS_KEY",dotenv.get("AWS_ACCESS_KEY"));
+		System.setProperty("AWS_SECRET_KEY",dotenv.get("AWS_SECRET_KEY"));
+		System.setProperty("AWS_BUCKET_NAME",dotenv.get("AWS_BUCKET_NAME"));
+		System.setProperty("AWS_REGION",dotenv.get("AWS_REGION"));
 
+		SpringApplication.run(BeClientApplication.class, args);
 	}
 }
