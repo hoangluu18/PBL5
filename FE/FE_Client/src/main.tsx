@@ -22,6 +22,7 @@ import { Button, Result } from 'antd';
 import { AuthWrapper } from './components/context/auth.context.tsx';
 
 import 'antd/dist/reset.css';
+import ChangePasswordPage from './pages/change_password_page.tsx';
 
 const router = createBrowserRouter([
   {
@@ -99,6 +100,10 @@ const router = createBrowserRouter([
   {
     path: "/forgot_password",
     element: <ForgotPasswordPage />
+  },
+  {
+    path: "/reset_password",
+    element: <ChangePasswordPage />
   }
 ]);
 

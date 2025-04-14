@@ -21,4 +21,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     public Customer findById(int id);
 
+    Customer findByResetPasswordToken(String token);
 }

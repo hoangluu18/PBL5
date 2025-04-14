@@ -16,4 +16,9 @@ public interface CustomerService {
 
     Customer fineByCustomerId(Integer customerId);
 
+    Customer findByResetPasswordToken(String token) throws CustomerNotFoundException;
+
+    Customer updateResetPasswordToken(String email) throws CustomerNotFoundException;
+
+    void updatePassword(String token, String newPassword) throws CustomerNotFoundException;
 }
