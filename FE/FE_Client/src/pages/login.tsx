@@ -1,9 +1,9 @@
 import { Form, Input, Button, Checkbox, Divider, Typography, notification } from 'antd';
 import { FacebookOutlined, GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthService from '../services/auth.service';
 import { AuthContext } from '../components/context/auth.context';
-import { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 
 const { Title, Text } = Typography;
 type FieldType = {
@@ -16,7 +16,16 @@ const LoginPage = () => {
     const [form] = Form.useForm();
     const [api, contextHolder] = notification.useNotification();
     const { setCustomer } = useContext(AuthContext);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
     document.title = "Đăng nhập";
+
+    const handleGoogleLogin = () => {
+        // Sử dụng đường dẫn đúng đã cấu hình trong backend
+        const redirectUri = `${window.location.origin}/oauth2/redirect`;
+        window.location.href = `http://localhost:8081/api/auth/oauth2/redirect?redirect_uri=${encodeURIComponent(redirectUri)}`;
+    };
 
     const handleLogin = async () => {
         try {
@@ -90,6 +99,7 @@ const LoginPage = () => {
                         <Button
                             icon={<GoogleOutlined className='text-danger' />}
                             className='w-100 hover-underline'
+                            onClick={handleGoogleLogin}
                         >
                             Sign in with Google
                         </Button>

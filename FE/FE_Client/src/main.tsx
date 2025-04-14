@@ -22,7 +22,9 @@ import ProfilePage from './pages/profile.tsx';
 import { Button, Result } from 'antd';
 import { AuthWrapper } from './components/context/auth.context.tsx';
 
+
 import 'antd/dist/reset.css';
+import OAuth2RedirectHandler from './pages/oauth2-redirect.tsx';
 import ChangePasswordPage from './pages/change_password_page.tsx';
 
 const router = createBrowserRouter([
@@ -105,6 +107,10 @@ const router = createBrowserRouter([
   {
     path: "/forgot_password",
     element: <ForgotPasswordPage />
+  },
+  {
+    path: "/oauth2/redirect",
+    element: <OAuth2RedirectHandler />
   },
   {
     path: "/reset_password",

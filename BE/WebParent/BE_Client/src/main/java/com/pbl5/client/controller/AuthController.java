@@ -8,11 +8,13 @@ import com.pbl5.client.exception.CustomerNotFoundException;
 import com.pbl5.client.security.CustomUserDetails;
 import com.pbl5.client.security.jwt.JwtTokenService;
 import com.pbl5.client.service.CustomerService;
+import com.pbl5.client.utils.CookieUtils;
 import com.pbl5.client.utils.MailUtils;
 import com.pbl5.common.entity.Customer;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -135,6 +138,21 @@ public class AuthController {
         helper.setText(content, true);
 
         javaMailSender.send(message);
+    }
+
+
+    @GetMapping("/oauth2/redirect")
+    public void handleOAuth2Redirect(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+
+        // This endpoint is only for redirection purposes
+        String targetUrl = request.getParameter("redirect_uri");
+
+        System.out.println(("OAuth2 redirect called with targetUrl:" + targetUrl));
+        if (targetUrl != null) {
+            CookieUtils.addCookie(response, "redirect_uri", targetUrl, 180);
+        }
+        response.sendRedirect("/oauth2/authorization/google");
     }
 
 
