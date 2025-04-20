@@ -121,7 +121,7 @@ const ProductDetailPage: React.FC = () => {
     
         try {
             // Sửa lại cách tạo productDetail - không dịch thuộc tính
-            const productDetail = `${selectedVariant ? `Color: ${selectedVariant},` : ""}${size ? `Size: ${size}` : ""}`.trim();
+            const productDetail = Object.entries(selectedVariant).map(([key, val]) => `${key}: ${val}`).join(", ");
             console.log("selectedVariant:" + selectedVariant);
             // Gọi API "Mua ngay"
             await buyNow(customer.id, product.id, quantity, productDetail);
