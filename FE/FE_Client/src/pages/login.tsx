@@ -1,6 +1,6 @@
-import { Form, Input, Button, Checkbox, Divider, Typography, notification } from 'antd';
+import { Form, Input, Button, Checkbox, Typography, notification, Row, Col, Divider } from 'antd';
 import { FacebookOutlined, GoogleOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthService from '../services/auth.service';
 import { AuthContext } from '../components/context/auth.context';
 import React, { useContext, useState } from 'react';
@@ -18,22 +18,20 @@ const LoginPage = () => {
     const { setCustomer } = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation();
     document.title = "Đăng nhập";
 
     const handleGoogleLogin = () => {
-        // Sử dụng đường dẫn đúng đã cấu hình trong backend
         const redirectUri = `${window.location.origin}/oauth2/redirect`;
         window.location.href = `http://localhost:8081/api/auth/oauth2/redirect?redirect_uri=${encodeURIComponent(redirectUri)}`;
     };
 
     const handleLogin = async () => {
         try {
-            const values = await form.validateFields();  // Validate form fields
+            setLoading(true);
+            const values = await form.validateFields();
 
             const authService = new AuthService();
             const response = await authService.login(values.email, values.password);
-
 
             api.success({
                 message: 'Đăng nhập thành công',
@@ -53,108 +51,159 @@ const LoginPage = () => {
             });
         }
         catch (error: any) {
-            const { data } = error.response;
+            const { data } = error.response || {};
             const errorMessage = data?.errors || data?.message || 'Tài khoản hoặc mật khẩu không chính xác.';
-            if (error.response) {
-                console.log('Server error:', error.response);
-
-                api.error({
-                    message: 'Đăng nhập thất bại',
-                    description: error.response.data,
-                    placement: 'topRight',
-                    duration: 2,
-                });
-            } else {
-                // Nếu có lỗi khác, không phải từ server
-                api.error({
-                    message: 'Đăng nhập thất bại',
-                    description: errorMessage,
-                    placement: 'topRight',
-                    duration: 2,
-                });
-            }
+            
+            api.error({
+                message: 'Đăng nhập thất bại',
+                description: error.response?.data || errorMessage,
+                placement: 'topRight',
+                duration: 2,
+            });
+        } finally {
+            setLoading(false);
         }
     }
 
     return (
-        <div style={{
-            maxWidth: "500px", margin: "80px auto", border: "1px solid #ececec", borderRadius: "10px",
-            textAlign: "center", padding: "10px"
-        }}>
+        <Row style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
             {contextHolder}
-            <div>
-                <div>
-                    <div>
-                        <span>🔥</span>
-                    </div>
-                </div>
-
-                <div>
-                    <Title level={3}>Sign In</Title>
-                    <Text>Get access to your account</Text>
-                </div>
-
-                <Form form={form} layout="vertical">
-                    <div className='mt-2'>
-                        <Button
-                            icon={<GoogleOutlined className='text-danger' />}
-                            className='w-100 hover-underline'
-                            onClick={handleGoogleLogin}
-                        >
-                            Sign in with Google
-                        </Button>
-                    </div>
-                    <div className='mt-2'>
-                        <Button
-                            icon={<FacebookOutlined className='text-primary' />}
-                            className='w-100 hover-underline'
-                        >
-                            Sign in with Facebook
-                        </Button>
-                    </div>
-                    <div>
-                        <Divider style={{ fontWeight: "300" }}><Text>or use email</Text></Divider>
-                    </div>
-
-                    <Form.Item<FieldType>
-                        name="email"
-                        label={<span className='text-primary'>Email Address</span>}
-                        rules={[{ required: true, message: 'Please input your email!' }]}>
-                        <Input
-                            prefix={<UserOutlined />}
-                            placeholder="name@example.com"
+            
+            {/* Phần form đăng nhập bên trái */}
+            <Col xs={24} sm={24} md={12} lg={12} xl={12} style={{ 
+                padding: '50px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#fff'
+            }}>
+                <div style={{ 
+                    width: '100%',
+                    maxWidth: '450px',
+                    padding: '40px',
+                    border: '1px solid #e8e8e8',
+                    borderRadius: '12px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
+                }}>
+                    {/* Logo và tiêu đề phía trên */}
+                    <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+                        <img 
+                            src="https://pbl5.s3.ap-southeast-1.amazonaws.com/systems/logo.png" 
+                            alt="Logo" 
+                            style={{ height: '40px', marginBottom: '20px' }}
                         />
-                    </Form.Item>
+                        <Title level={3}>Welcome to PBL5 Ecommerce</Title>
+                    </div>
 
-                    <Form.Item<FieldType>
-                        name="password"
-                        label={<span className='text-primary'>Password</span>}
-                        rules={[{ required: true, message: 'Please input your password!' }]}>
-                        <Input.Password
-                            prefix={<LockOutlined />}
-                            placeholder="Password"
-                        />
-                    </Form.Item>
+                    <div style={{ marginBottom: '30px', textAlign: 'center' }}>
+                        <Title level={2} style={{ margin: '0 0 8px' }}>Đăng nhập</Title>
+                        <Text type="secondary">Truy cập vào tài khoản của bạn</Text>
+                    </div>
 
-                    <div className='d-flex justify-content-between align-items-center'>
-                        <Form.Item<FieldType> name="remember" valuePropName="checked" noStyle>
-                            <Checkbox>Remember me</Checkbox>
+                    <Form form={form} layout="vertical" size="large">
+                        <Form.Item<FieldType>
+                            name="email"
+                            rules={[{ required: true, message: 'Vui lòng nhập email!' }]}
+                        >
+                            <Input
+                                prefix={<UserOutlined className="site-form-item-icon" />}
+                                placeholder="Email"
+                                style={{ height: '44px', borderRadius: '6px' }}
+                            />
                         </Form.Item>
-                        <Link to={"/forgot_password"} className='text-primary hover-underline'>Forgot Password?</Link>
-                    </div>
 
-                    <Form.Item>
-                        <Button type="primary" style={{ width: "100%", marginTop: "20px" }} onClick={handleLogin}>
-                            Sign In
-                        </Button>
-                    </Form.Item>
+                        <Form.Item<FieldType>
+                            name="password"
+                            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
+                        >
+                            <Input.Password
+                                prefix={<LockOutlined className="site-form-item-icon" />}
+                                placeholder="Mật khẩu"
+                                style={{ height: '44px', borderRadius: '6px' }}
+                            />
+                        </Form.Item>
 
-                    <div className="text-center">
-                        <Link to={"/register"} className='text-primary'>Create an account</Link>
-                    </div>
-                </Form>
-            </div>
-        </div>
+                        <div style={{ 
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '20px'
+                        }}>
+                            <Form.Item<FieldType> name="remember" valuePropName="checked" noStyle>
+                                <Checkbox>Ghi nhớ đăng nhập</Checkbox>
+                            </Form.Item>
+                            <Link to="/forgot_password" style={{ color: '#1890ff' }}>Quên mật khẩu?</Link>
+                        </div>
+
+                        <Form.Item>
+                            <Button 
+                                type="primary" 
+                                block 
+                                style={{ height: '44px', borderRadius: '6px' }}
+                                onClick={handleLogin}
+                                loading={loading}
+                            >
+                                Đăng nhập
+                            </Button>
+                        </Form.Item>
+
+                        <div style={{ textAlign: 'center', margin: '10px 0' }}>
+                            <Text type="secondary">hoặc đăng nhập với</Text>
+                        </div>
+                        
+                        <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
+                            <Button 
+                                icon={<GoogleOutlined />} 
+                                style={{ flex: 1, height: '44px', borderRadius: '6px' }}
+                                onClick={handleGoogleLogin}
+                            >
+                                Google
+                            </Button>
+                            <Button 
+                                icon={<FacebookOutlined />} 
+                                style={{ flex: 1, height: '44px', borderRadius: '6px' }}
+                            >
+                                Facebook
+                            </Button>
+                        </div>
+
+                        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                            <Text type="secondary">Chưa có tài khoản? </Text>
+                            <Link to="/register" style={{ color: '#1890ff' }}>Tạo tài khoản mới</Link>
+                        </div>
+                    </Form>
+                </div>
+            </Col>
+            
+            {/* Phần hình ảnh bên phải */}
+            <Col xs={0} sm={0} md={12} lg={12} xl={12} style={{ 
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                padding: '50px',
+                backgroundColor: '#fff',
+                position: 'relative'
+            }}>
+                {/* Hình ảnh chính, kích thước lớn hơn */}
+                <img 
+                    src="https://pbl5.s3.ap-southeast-1.amazonaws.com/systems/login.png" 
+                    alt="Login Illustration" 
+                    style={{ 
+                        width: '100%',
+                        maxWidth: '600px',
+                        margin: '0 auto'
+                    }} 
+                />
+
+                {/* Phần giới thiệu phía dưới */}
+                <div style={{ maxWidth: '600px', margin: '30px auto 0' }}>
+                    <Text style={{ color: '#555', fontSize: '16px', lineHeight: '1.6', display: 'block' }}>
+                        PBL5_Ecommerce là một giải pháp thương mại điện tử đầy đủ tính năng và giá cả phải chăng
+                        bao gồm các cửa hàng web, thiết bị di động và mạng xã hội.
+                    </Text>
+                </div>
+            </Col>
+        </Row>
     );
 };
 
