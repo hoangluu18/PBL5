@@ -9,6 +9,8 @@ interface ICartItem {
     attributes: string; // key-value của biến thể sản phẩm
     shopId: number;
     shopName: string; // tên shop
+    productAlias: string;
+    reviewed: boolean; // đã review hay chưa 
 }
 
 export default ICartItem;

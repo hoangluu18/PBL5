@@ -32,3 +32,7 @@
 .customize-star-spacing li.ant-rate-star {
     margin-inline-end: 0 !important;
 }
+
+.img-hover:hover {
+    border: 1px solid red !important;
+}

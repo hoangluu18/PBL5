@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { LikeOutlined, StarFilled, MessageOutlined, LikeFilled } from "@ant-design/icons";
 import { Avatar, Button, Rate, Badge, Progress, Tooltip } from "antd";
 import { IReviewDto } from "../../models/dto/ReviewDto";
 import ReviewService from "../../services/review.service";
 import { extractDate } from "../../utils/DateUtil";
+import { AuthContext } from "../context/auth.context";
+import ReviewModal from "./ReviewModal";
+import { isTokenExpired } from "../../utils/tokenUtil";
 
 interface ProductReviewsTabProps {
     id: number;
@@ -13,6 +16,9 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
 
     const [activeFilter, setActiveFilter] = useState("all");
     const [reviews, setReviews] = useState<IReviewDto[]>([]);
+    const { customer } = useContext(AuthContext);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const customerId = customer?.id || 0;
 
     useEffect(() => {
         fetchReviews();
@@ -30,6 +36,21 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
             console.error("Failed to fetch products:", error);
         }
     };
+
+    const handleOpenReviewModal = () => {
+        console.log("Open review modal");
+        setIsModalVisible(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleReviewSubmitted = () => {
+        // Refresh danh sách đánh giá sau khi gửi thành công
+        fetchReviews();
+    };
+
     const reviewLength = reviews.length;
 
     const count5Star = reviews.filter((review) => review.rating === 5).length;
@@ -62,6 +83,11 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
 
     const clickLikeBtn = async (reviewId: number) => {
         try {
+            if (isTokenExpired(localStorage.getItem("access_token") || "")) {
+                alert("Bạn cần đăng nhập để thực hiện hành động này.");
+                return;
+            }
+
             // Optimistically update the state
             setReviews((prevReviews) =>
                 prevReviews.map((review) =>
@@ -100,6 +126,14 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
 
     return (
         <div>
+            <ReviewModal
+                visible={isModalVisible}
+                onClose={handleCloseModal}
+                productId={id}
+                customerId={customerId}
+                onReviewSubmitted={handleReviewSubmitted}
+            />
+
             {/* Đánh giá tổng quan */}
             <div className="bg-white border p-4 shadow-sm">
                 <h4 className="mb-4 fw-bold">Đánh giá sản phẩm</h4>
@@ -164,7 +198,7 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
                                 <span className="text-muted">Hiển thị {reviewLength} trong tổng số {stats.total} đánh giá</span>
                             </div>
                             <div>
-                                <Button type="primary" className="rounded-pill">Viết đánh giá</Button>
+                                <Button type="primary" className="rounded-pill" onClick={() => handleOpenReviewModal()}>Viết đánh giá</Button>
                             </div>
                         </div>
                     </div>

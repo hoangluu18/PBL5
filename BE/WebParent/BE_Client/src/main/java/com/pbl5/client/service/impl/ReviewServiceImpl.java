@@ -92,4 +92,16 @@ public class ReviewServiceImpl implements ReviewService {
 
         return res;
     }
+
+    @Override
+    public boolean getReviewByProductIdAndCustomerId(Integer productId, Integer customerId) {
+
+        Review review = reviewRepository.findByProductIdAndCustomerId(productId, customerId);
+        return review != null;
+    }
+
+    @Override
+    public Review save(Review review) {
+        return reviewRepository.save(review);
+    }
 }

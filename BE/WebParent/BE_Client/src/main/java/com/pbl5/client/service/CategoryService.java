@@ -18,4 +18,5 @@ public interface CategoryService {
     Category getCategory(String alias) throws CategoryNotFoundException;
 
     List<BrandDto> getBrands(Category category);
+
 }

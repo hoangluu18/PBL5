@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { Layout, Skeleton, Row, Col, Card } from 'antd';
 import { getOrderDetails } from '../services/order_detail.service';
@@ -308,6 +308,7 @@ const OrderDetail: React.FC = () => {
           <div className="info-block">
             <h3>Hình thức thanh toán</h3>
             <p>{orderDto.paymentMethod === 'COD' ? 'Thanh toán khi nhận hàng' : orderDto.paymentMethod}</p>
+            <p>{orderDto.orderStatus}</p>
           </div>
         </div>
 
@@ -319,6 +320,7 @@ const OrderDetail: React.FC = () => {
                 <th>Giá</th>
                 <th>Số lượng</th>
                 <th>Tạm tính</th>
+                {orderDto.orderStatus === 'DELIVERED' && <th>Đánh giá</th>}
               </tr>
             </thead>
             <tbody>
@@ -340,6 +342,20 @@ const OrderDetail: React.FC = () => {
                   <td>{formatPrice(item.lastPrice)}</td>
                   <td>{item.quantity}</td>
                   <td>{formatPrice(item.lastPrice * item.quantity)}</td>
+                  {
+                    item.reviewed === true && (
+                      <td>
+                        <Link to={`/p/${item.productAlias}#ratingAndReview`} className="btn btn-success">Xem đánh giá</Link>
+                      </td>
+                    )
+                  }
+                  {
+                    item.reviewed === false && (
+                      <td>
+                        <Link to={`/p/${item.productAlias}#ratingAndReview`} className="btn btn-primary">Đánh giá</Link>
+                      </td>
+                    )
+                  }
                 </tr>
               ))}
             </tbody>

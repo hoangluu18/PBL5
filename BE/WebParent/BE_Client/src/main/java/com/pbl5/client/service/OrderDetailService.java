@@ -16,4 +16,6 @@ public interface OrderDetailService {
     List<CartProductDto> getOrderDetailByOrderIdAndCustomerId(Integer orderId, Integer customerId);
     OrderDetailDto getOrderDetailDto(Integer orderId);
     OrderDetailDto getOrderDetailDtoByCustomerId(Integer orderId, Integer customerId);
+
+    OrderDetail checkByProductIdAndCustomerIdWithStatusDelivered(Integer productId, Integer customerId);
 }

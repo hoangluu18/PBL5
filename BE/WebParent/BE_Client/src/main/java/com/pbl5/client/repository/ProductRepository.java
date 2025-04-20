@@ -29,4 +29,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "AND (:#{#param.keyword == null} = true OR LOWER(p.name) " +
             "LIKE LOWER(CONCAT('%', :#{#param.keyword}, '%'))) ")
     public Page<Product> searchProducts(@Param("param") SearchParam param, Pageable pageable);
+
 }

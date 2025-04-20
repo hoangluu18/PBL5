@@ -28,6 +28,7 @@ public class Order extends IdBaseEntity {
 
     @Column(name = "order_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @OrderBy("DESC")
     private Date orderTime;
 
     @Column(name = "city", nullable = false, length = 45)
