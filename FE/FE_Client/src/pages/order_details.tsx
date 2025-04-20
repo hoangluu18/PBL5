@@ -320,7 +320,7 @@ const OrderDetail: React.FC = () => {
                 <th>Giá</th>
                 <th>Số lượng</th>
                 <th>Tạm tính</th>
-                {orderDto.orderStatus === 'DELIVERED' && <th>Đánh giá</th>}
+                <th>Đánh giá</th>
               </tr>
             </thead>
             <tbody>

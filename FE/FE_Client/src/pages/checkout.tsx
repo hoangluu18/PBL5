@@ -11,12 +11,13 @@ import axios from 'axios';
 import { AuthContext } from "../components/context/auth.context";
 
 import { clearBuyNowData } from '../services/checkout.service';
+import CartService from '../services/cart.service';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const Checkout: React.FC = () => {
-    const { customer } = useContext(AuthContext);
+    const { customer, setCartCount } = useContext(AuthContext);
     const customerId = customer?.id;
     const navigate = useNavigate();
 
@@ -27,7 +28,6 @@ const Checkout: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [isNotFound, setIsNotFound] = useState(false);
     const [selectedCartIds, setSelectedCartIds] = useState<number[]>([]);
-
     // Hook để xóa dữ liệu khi rời khỏi trang
     useEffect(() => {
         return () => {
@@ -97,6 +97,16 @@ const Checkout: React.FC = () => {
         fetchCheckoutInfo();
     }, [customerId]);
 
+    const updateCartCount = async () => {
+        try {
+            const cartService = new CartService();
+            const cartCount = await cartService.countProductByCustomerId(customer.id);
+            setCartCount(cartCount);
+        } catch (error) {
+            console.error('Error updating cart count:', error);
+        }
+    };
+
     // Cập nhật hàm handlePurchase để xử lý trường hợp "Mua ngay"
     const handlePurchase = () => {
         // Kiểm tra nếu không có customerId
@@ -124,7 +134,9 @@ const Checkout: React.FC = () => {
                     .then(() => {
                         alert('Đặt hàng thành công!');
                         clearBuyNowData(); // Xóa dữ liệu sau khi đặt hàng thành công
+                        updateCartCount(); // Cập nhật số lượng sản phẩm trong giỏ hàng
                         navigate('/');
+
                     })
                     .catch((error: any) => {
                         console.error('Lỗi khi đặt hàng:', error);
@@ -140,6 +152,7 @@ const Checkout: React.FC = () => {
                         alert('Đặt hàng thành công!');
                         // Xóa localStorage sau khi đặt hàng thành công
                         localStorage.removeItem('selectedCartIds');
+                        updateCartCount(); // Cập nhật số lượng sản phẩm trong giỏ hàng
                         navigate('/'); // Chuyển về trang chủ
                     })
                     .catch((error: any) => {
@@ -156,18 +169,18 @@ const Checkout: React.FC = () => {
     const validateBuyNowData = (): boolean => {
         const buyNowTimestamp = localStorage.getItem('buyNowTimestamp');
         const buyNowInfo = localStorage.getItem('buyNowInfo');
-        
+
         if (!buyNowTimestamp || !buyNowInfo) {
             return false;
         }
-        
+
         // Kiểm tra thời gian lưu - nếu quá 30 phút (1800000ms) thì không hợp lệ
         const timestamp = parseInt(buyNowTimestamp);
         const now = Date.now();
         if (now - timestamp > 1800000) {
             return false;
         }
-        
+
         return true;
     };
 

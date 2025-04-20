@@ -40,8 +40,8 @@ interface Address {
 const EditAddress: React.FC = () => {
     // const { id } = useParams<{ id: string }>();
     // const customerId = Number(id);
-      const { customer } = useContext(AuthContext);
-      const customerId = customer?.id;
+    const { customer } = useContext(AuthContext);
+    const customerId = customer?.id;
     const navigate = useNavigate();
     const [addresses, setAddresses] = useState<Address[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -82,9 +82,9 @@ const EditAddress: React.FC = () => {
     const handleEdit = (addressId: number) => {
         console.log("Navigating to /update_address with:", { customerId, addressId });
         navigate("/update_address", {
-          state: { customerId, addressId },
+            state: { customerId, addressId },
         });
-      };
+    };
 
     const showDisableModal = (addressId: number) => {
         setSelectedAddress(addressId);
@@ -123,7 +123,7 @@ const EditAddress: React.FC = () => {
     };
 
     const handleAddNew = () => {
-        navigate(`/add_address`);
+        navigate(`/add-address`);
     };
 
     if (loading) {
@@ -186,35 +186,35 @@ const EditAddress: React.FC = () => {
                                     )}
                                 </div>
                                 <div className="address-info-container">
-        {/* Số điện thoại */}
-        <div className="address-info-row">
-            <PhoneOutlined className="address-icon" style={{ color: "#1890ff" }} />
-            <Text>{addr.phoneNumber}</Text>
-        </div>
+                                    {/* Số điện thoại */}
+                                    <div className="address-info-row">
+                                        <PhoneOutlined className="address-icon" style={{ color: "#1890ff" }} />
+                                        <Text>{addr.phoneNumber}</Text>
+                                    </div>
 
-        {/* Địa chỉ - giới hạn 2 dòng */}
-        <div className="address-info-row">
-            <EnvironmentOutlined className="address-icon" style={{ color: "#ff4d4f" }} />
-            <Text
-                className="address-text"
-                style={{
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis"
-                }}
-            >
-                {addr.address}
-            </Text>
-        </div>
+                                    {/* Địa chỉ - giới hạn 2 dòng */}
+                                    <div className="address-info-row">
+                                        <EnvironmentOutlined className="address-icon" style={{ color: "#ff4d4f" }} />
+                                        <Text
+                                            className="address-text"
+                                            style={{
+                                                display: "-webkit-box",
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: "vertical",
+                                                overflow: "hidden",
+                                                textOverflow: "ellipsis"
+                                            }}
+                                        >
+                                            {addr.address}
+                                        </Text>
+                                    </div>
 
-        {/* Tỉnh thành */}
-        <div className="address-info-row">
-            <BankOutlined className="address-icon" style={{ color: "#52c41a" }} />
-            <Text>{addr.city}</Text>
-        </div>
-    </div>
+                                    {/* Tỉnh thành */}
+                                    <div className="address-info-row">
+                                        <BankOutlined className="address-icon" style={{ color: "#52c41a" }} />
+                                        <Text>{addr.city}</Text>
+                                    </div>
+                                </div>
                                 <div
                                     style={{
                                         borderTop: "1px solid #f0f0f0",

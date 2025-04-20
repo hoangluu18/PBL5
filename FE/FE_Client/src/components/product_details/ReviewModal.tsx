@@ -26,7 +26,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
 
     useEffect(() => {
         if (visible) {
-            console.log("Modal opened, checking review status..."); // Debug log
             checkReviewStatus();
         }
     }, [visible]);
@@ -37,7 +36,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
             const reviewService = new ReviewService();
             const response = await reviewService.checkReview(productId, customerId);
             // Xử lý 3 trường hợp từ API
-            if (response === "Bạn chưa mua sản phẩm này") {
+            if (response === "Bạn chưa mua sản phẩm này hoặc đơn hàng chưa giao đến") {
                 setStatus("notPurchased");
             } else if (response === "Bạn đã đánh giá sản phẩm này") {
                 setStatus("alreadyReviewed");
@@ -82,8 +81,8 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
                 return (
                     <Result
                         icon={<ShoppingFilled style={{ color: "#faad14" }} />}
-                        title="Bạn chưa mua sản phẩm này"
-                        subTitle="Bạn cần mua sản phẩm trước khi có thể đánh giá."
+                        title="Bạn chưa mua sản phẩm này hoặc đơn hàng chưa giao đến"
+                        subTitle="Bạn chưa mua sản phẩm này hoặc đơn hàng chưa giao đến."
                         extra={[
                             <Button key="close" onClick={onClose}>
                                 Đóng

@@ -15,7 +15,7 @@ const ShippingInfo: React.FC<ShippingInfoProps> = ({ addressInfo }) => {
             title={
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span>Thông tin giao hàng</span>
-                    <Button href='/edit_address' type="link" style={{ padding: 0 }}>Sửa</Button>
+                    <Button href='/edit-address' type="link" style={{ padding: 0 }}>Sửa</Button>
                 </div>
             }
             bordered={false}

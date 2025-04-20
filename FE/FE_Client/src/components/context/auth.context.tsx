@@ -13,6 +13,8 @@ interface AuthContextType {
     setCustomer: (customer: Customer) => void;
     isAppLoading: boolean;
     setIsAppLoading: (isLoading: boolean) => void;
+    cartCount: number;
+    setCartCount: (count: number) => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -22,10 +24,13 @@ export const AuthContext = createContext<AuthContextType>({
         email: "",
         phoneNumber: "",
         avatar: ""
+
     },
     setCustomer: () => { },
     isAppLoading: true,
-    setIsAppLoading: () => { }
+    setIsAppLoading: () => { },
+    cartCount: 0,
+    setCartCount: () => { }
 });
 
 export const AuthWrapper = (props: React.PropsWithChildren<{}>) => {
@@ -42,11 +47,11 @@ export const AuthWrapper = (props: React.PropsWithChildren<{}>) => {
     });
 
     const [isAppLoading, setIsAppLoading] = useState(true);
-
+    const [cartCount, setCartCount] = useState<number>(0);
 
 
     return (
-        <AuthContext.Provider value={{ customer, setCustomer, isAppLoading, setIsAppLoading }}>
+        <AuthContext.Provider value={{ customer, setCustomer, isAppLoading, setIsAppLoading, cartCount, setCartCount }}>
             {props.children}
         </AuthContext.Provider>
     );

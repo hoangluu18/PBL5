@@ -19,7 +19,7 @@ const { Header } = Layout;
 
 const App = () => {
     const navigate = useNavigate();
-    const { customer, setCustomer } = useContext(AuthContext);
+    const { customer, setCustomer, cartCount, setCartCount } = useContext(AuthContext);
     const [count, setCount] = useState<number>(0);
 
     const isLoggedIn = customer.id !== 0;
@@ -35,10 +35,11 @@ const App = () => {
         const cartService = new CartService();
         cartService.countProductByCustomerId(customer.id).then((data) => {
             setCount(data);
+            setCartCount(data);
         }).catch((error) => {
             console.error("Failed to fetch cart count:", error);
         });
-    }, []);
+    }, [customer.id, cartCount]);
 
     const handleCartClick = () => {
         // Xóa dữ liệu mua ngay khi người dùng chọn xem giỏ hàng

@@ -72,7 +72,7 @@ public class ReviewController {
         boolean isReviewed = reviewService.getReviewByProductIdAndCustomerId(productId, customerId);
         OrderDetail orderDetail = orderDetailService.checkByProductIdAndCustomerIdWithStatusDelivered(productId, customerId);
         if (orderDetail == null) {
-            return ResponseEntity.ok("Bạn chưa mua sản phẩm này");
+            return ResponseEntity.ok("Bạn chưa mua sản phẩm này hoặc đơn hàng chưa giao đến");
         } else if (isReviewed) {
             return ResponseEntity.ok("Bạn đã đánh giá sản phẩm này");
         } else {
