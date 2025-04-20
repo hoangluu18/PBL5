@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 import "../css/style.css";
 import { AuthContext } from "../components/context/auth.context";
 import CartService from "../services/cart.service";
+import { buyNow } from '../services/checkout.service';
+import { useNavigate } from 'react-router-dom';
 const { Text, Title } = Typography;
 
 const ProductDetailPage: React.FC = () => {
@@ -32,10 +34,12 @@ const ProductDetailPage: React.FC = () => {
 
     const { customer } = useContext(AuthContext)
     const [api, contextHolder] = notification.useNotification();
-
+    // const [navigate, setNavigate] = useState(false);
+    const navigate = useNavigate();
+    const [reloadHeader, setReloadHeader] = useState(false);
     useEffect(() => {
         fetchProduct();
-    }, []);
+    }, [reloadHeader]);
     document.title = product.name || "Chi tiết sản phẩm";
 
     const fetchProduct = async () => {
@@ -67,14 +71,13 @@ const ProductDetailPage: React.FC = () => {
             });
             return;
         }
-
+    
         try {
             const productDetail = `${selectedVariant ? `Màu sắc: ${selectedVariant},` : ""}${size ? ` Kích thước: ${size}` : ""}`.trim();
             const cartService = new CartService();
 
             // Call the addToCart API
             const response = await cartService.addToCart(customer.id, product.id, quantity, productDetail);
-
             // Show success notification if the API call succeeds
             api.success({
                 message: "Thêm vào giỏ hàng thành công",
@@ -83,12 +86,42 @@ const ProductDetailPage: React.FC = () => {
                 duration: 2,
             });
         } catch (error) {
-            console.error("Failed to add to cart:", error);
-
             // Show error notification if the API call fails
             api.error({
                 message: "Thêm vào giỏ hàng thất bại",
                 description: "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.",
+                placement: "topRight",
+                duration: 2,
+            });
+        }
+    };
+
+
+    const handleBuyNow = async () => {
+        if (!customer || !customer.id) {
+            api.error({
+                message: "Mua hàng thất bại",
+                description: "Bạn cần đăng nhập để mua sản phẩm.",
+                placement: "topRight",
+                duration: 2,
+            });
+            return;
+        }
+    
+        try {
+            // Sửa lại cách tạo productDetail - không dịch thuộc tính
+            const productDetail = `${selectedVariant ? `Color: ${selectedVariant},` : ""}${size ? `Size: ${size}` : ""}`.trim();
+            console.log("selectedVariant:" + selectedVariant);
+            // Gọi API "Mua ngay"
+            await buyNow(customer.id, product.id, quantity, productDetail);
+    
+            // Điều hướng đến trang checkout
+            navigate("/checkout");
+        } catch (error) {
+            // Hiển thị thông báo lỗi
+            api.error({
+                message: "Không thể tiến hành mua hàng",
+                description: "Đã xảy ra lỗi. Vui lòng thử lại sau.",
                 placement: "topRight",
                 duration: 2,
             });
@@ -280,17 +313,17 @@ const ProductDetailPage: React.FC = () => {
                                         }}
                                         onMouseEnter={() => {
                                             if (key !== "Size")
-                                                setSelectedImage(`http://localhost:5173/src/assets/product-variants-images/${val.photo}`);
+                                                setSelectedImage(`http://localhost:5173/src/assets/product-extra-images/${val.photo}`);
                                         }}
                                         onMouseLeave={() => {
                                             if (key !== "Size")
                                                 setSelectedImage(
-                                                    selectedVariantImg || selectedExtraImage || `http://localhost:5173/src/assets/product-images/${product.mainImage}`
+                                                    selectedVariantImg || selectedExtraImage || `http://localhost:5173/src/assets/product-extra-images/${product.mainImage}`
                                                 );
                                         }}
                                         onClick={() => {
                                             if (key !== "Size") {
-                                                const variantImage = `http://localhost:5173/src/assets/product-variants-images/${val.photo}`;
+                                                const variantImage = `http://localhost:5173/src/assets/product-extra-images/${val.photo}`;
                                                 setSelectedVariantImg(variantImage);
                                                 setSelectedImage(variantImage);
                                                 setAmountAvailable(val.quantity);
@@ -302,7 +335,7 @@ const ProductDetailPage: React.FC = () => {
                                     >
                                         {val.photo && (
                                             <img
-                                                src={`http://localhost:5173/src/assets/product-variants-images/${val.photo}`}
+                                                src={`http://localhost:5173/src/assets/product-extra-images/${val.photo}`}
                                                 alt={`${key} - ${val.value}`}
                                                 style={{ height: '24px', marginRight: '8px' }}
                                             />
@@ -368,6 +401,7 @@ const ProductDetailPage: React.FC = () => {
                             icon={<ThunderboltOutlined />}
                             className="px-4 d-flex align-items-center"
                             disabled={isAddToCartDisabled}
+                            onClick={() => handleBuyNow()}
                         >
                             Mua ngay
                         </Button>
