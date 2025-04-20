@@ -212,7 +212,7 @@ const ShopDetail: React.FC = () => {
                 <Row align="middle" gutter={16}>
                     <Col>
                         <AntImage
-                            src={shopInfo.photo || "https://via.placeholder.com/80"}
+                            src={'http://localhost:5173/src/assets/shop-images/' + shopInfo.photo || "https://via.placeholder.com/80"}
                             alt="Shop logo"
                             preview={false}
                             width={80}
