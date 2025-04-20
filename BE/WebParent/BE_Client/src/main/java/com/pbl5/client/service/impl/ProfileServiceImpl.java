@@ -38,7 +38,7 @@ public class ProfileServiceImpl implements ProfileService {
         Customer profile = profileOpt.get();
 
         // Lấy danh sách địa chỉ
-        List<Address> addresses = addressRepository.findByCustomerId(id.intValue());
+        List<Address> addresses = addressRepository.findEnabledByCustomerId(id.intValue());
         List<String> addressList = addresses.stream()
                 .map(addr -> addr.getAddress() + ", " + addr.getCity())
                 .collect(Collectors.toList());

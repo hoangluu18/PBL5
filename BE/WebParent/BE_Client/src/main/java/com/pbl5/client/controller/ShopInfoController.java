@@ -4,7 +4,9 @@ import com.pbl5.client.dto.product.ProductDto;
 import com.pbl5.client.dto.shop_detail.ShopInfoDto;
 import com.pbl5.client.service.ProductService;
 import com.pbl5.client.service.ShopInfoService;
+import com.pbl5.client.service.ShopTrackingService;
 import com.pbl5.common.entity.Shop;
+import com.pbl5.common.entity.ShopTracking;
 import com.pbl5.common.entity.product.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,9 @@ public class ShopInfoController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ShopTrackingService shopTrackingService;
 
     @GetMapping({"/{id}/shopInfo"})
     public ResponseEntity<ShopInfoDto> getShopInfo(@PathVariable int id) {
@@ -62,6 +67,36 @@ public class ShopInfoController {
         }).toList();
         return ResponseEntity.ok(productDtos);
     }
+
+    @GetMapping("/{id}/checkIsFollowed")
+    public ResponseEntity<Boolean> checkIsFollowed(@PathVariable int id ,
+                                                    @RequestParam(name = "customerId", defaultValue = "1") int customerId
+                                                   ) {
+        boolean isFollowed = shopTrackingService.existsShopTrackingByCustomerId(customerId,id);
+        return ResponseEntity.ok(isFollowed);
+    }
+
+    @PostMapping("/{id}/follow")
+    public ResponseEntity<Boolean> followShop(@PathVariable int id,
+                                               @RequestParam(name = "customerId", defaultValue = "1") int customerId) {
+        if(shopTrackingService.saveFollowingShop(customerId,id)) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.ok(false);
+        }
+    }
+
+    @DeleteMapping("/{id}/unfollow")
+    public ResponseEntity<Boolean> unfollowShop(@PathVariable int id,
+                                                 @RequestParam(name = "customerId", defaultValue = "1") int customerId) {
+        if(shopTrackingService.deleteFollowingShop(customerId,id)) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.ok(false);
+        }
+    }
+
+
 
 
 

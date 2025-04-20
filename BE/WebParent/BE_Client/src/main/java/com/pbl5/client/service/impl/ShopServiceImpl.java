@@ -22,4 +22,10 @@ public class ShopServiceImpl implements ShopService {
         List<Shop> shops = shopRepository.findAllById(ids);
         return shops;
     }
+
+    @Override
+    public boolean updatePeopleTracking(int shopId) {
+        shopRepository.updatePeopleTracking(shopId);
+        return true;
+    }
 }

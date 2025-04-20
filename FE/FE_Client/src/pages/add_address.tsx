@@ -1,128 +1,317 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Row, Col, Card, Typography, Select } from 'antd';
-import { RightOutlined } from '@ant-design/icons';
+import React, { useEffect, useState, useCallback, useContext } from "react";
+import { AuthContext } from "../components/context/auth.context";
+import { useParams, useNavigate } from "react-router-dom";
+import { Form, Input, Button, notification, Select } from "antd";
+import axios from "axios";
+import { addAddress, updateAddress, getAddressesByCustomer } from "../services/address.service";
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 
+interface AddressForm {
+    fullName: string;
+    phoneNumber: string;
+    detailedAddress: string;
+    city: string;
+    district: string;
+    ward: string;
+}
+
+interface Province {
+    name: string;
+}
+
+interface District {
+    name: string;
+}
+
+interface Ward {
+    name: string;
+}
+
 const AddAddress: React.FC = () => {
+    const { addressId } = useParams<{ addressId?: string }>();
+      const { customer } = useContext(AuthContext);
+      const customerId = customer?.id;
+    const navigate = useNavigate();
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
+    const [provinces, setProvinces] = useState<Province[]>([]);
+    const [districts, setDistricts] = useState<District[]>([]);
+    const [wards, setWards] = useState<Ward[]>([]);
+    const [selectedCity, setSelectedCity] = useState<string | null>(null);
+    const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
 
-    // Tạm thời gán thông tin cứng
-    const [fullName, setFullName] = useState('Nguyễn Văn A');
-    const [email, setEmail] = useState('nguyenvana@example.com');
-    const [phone, setPhone] = useState('+84123456789');
-    const [address, setAddress] = useState('1234 Elm Street, Van Nuys, CA');
-    const [city, setCity] = useState('');
-    const [district, setDistrict] = useState('');
-    const [ward, setWard] = useState('');
-    const [street, setStreet] = useState('');
+    // Lấy danh sách tỉnh/thành
+    useEffect(() => {
+        const fetchProvinces = async () => {
+            try {
+                const response = await axios.get("https://pmshoanghot-apitinhthanhdocker.hf.space/api/list");
+                console.log("API provinces response:", response.data);
+                setProvinces(response.data);
+            } catch (error) {
+                console.error("Lỗi khi lấy danh sách tỉnh/thành:", error);
+                notification.error({ message: "Không thể tải danh sách tỉnh/thành." });
+            }
+        };
+        fetchProvinces();
+    }, []);
 
-    const handleCityChange = (value: string) => {
-        setCity(value);
-        // Gọi API để lấy danh sách quận/huyện dựa trên tỉnh/thành phố đã chọn
+    // Lấy danh sách quận/huyện
+    const fetchDistricts = useCallback(async () => {
+        if (selectedCity) {
+            try {
+                const response = await axios.get(
+                    `https://pmshoanghot-apitinhthanhdocker.hf.space/api/city/${encodeURIComponent(selectedCity)}/districts`
+                );
+                console.log("API districts response:", response.data);
+                setDistricts(response.data);
+                setWards([]);
+                form.setFieldsValue({ district: undefined, ward: undefined });
+            } catch (error) {
+                console.error("Lỗi khi lấy danh sách quận/huyện:", error);
+                notification.error({ message: "Không thể tải danh sách quận/huyện." });
+            }
+        } else {
+            setDistricts([]);
+            setWards([]);
+        }
+    }, [selectedCity, form]);
+
+    useEffect(() => {
+        fetchDistricts();
+    }, [fetchDistricts]);
+
+    // Lấy danh sách xã/phường
+    const fetchWards = useCallback(async () => {
+        if (selectedCity && selectedDistrict) {
+            try {
+                const response = await axios.get(
+                    `https://pmshoanghot-apitinhthanhdocker.hf.space/api/city/${encodeURIComponent(selectedCity)}/district/${encodeURIComponent(selectedDistrict)}/wards`
+                );
+                console.log("API wards response:", response.data);
+                setWards(response.data);
+                form.setFieldsValue({ ward: undefined });
+            } catch (error) {
+                console.error("Lỗi khi lấy danh sách xã/phường:", error);
+                notification.error({ message: "Không thể tải danh sách xã/phường." });
+            }
+        } else {
+            setWards([]);
+        }
+    }, [selectedCity, selectedDistrict, form]);
+
+    useEffect(() => {
+        fetchWards();
+    }, [fetchWards]);
+
+    // Lấy dữ liệu địa chỉ khi sửa
+    useEffect(() => {
+        if (addressId && customerId) {
+            setLoading(true);
+            getAddressesByCustomer(Number(customerId))
+                .then((res) => {
+                    const address = res.data.find((addr: any) => addr.id === Number(addressId));
+                    if (address) {
+                        form.setFieldsValue({
+                            fullName: address.fullName || address.full_name,
+                            phoneNumber: address.phoneNumber || address.phone_number,
+                            detailedAddress: address.address,
+                            city: address.city,
+                        });
+                        setSelectedCity(address.city);
+                    }
+                })
+                .catch((error: any) => {
+                    console.error("Error fetching address:", error);
+                    notification.error({ message: "Không thể tải thông tin địa chỉ." });
+                })
+                .finally(() => setLoading(false));
+        }
+    }, [addressId, customerId, form]);
+
+    const onFinish = async (values: AddressForm) => {
+        console.log("onFinish được gọi với values:", values);
+
+        // Hiển thị alert xác nhận
+        const confirmed = window.confirm("Bạn có muốn thêm địa chỉ này?");
+        if (!confirmed) {
+            console.log("Hủy thêm địa chỉ");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            if (!customerId) {
+                throw new Error("Không tìm thấy customerId.");
+            }
+
+            const token = localStorage.getItem("access_token");
+            console.log("Access token:", token);
+            if (!token) {
+                throw new Error("Không tìm thấy token. Vui lòng đăng nhập lại.");
+            }
+
+            // Tạo chuỗi địa chỉ: detailedAddress + ward + district
+            const fullAddress = `${values.detailedAddress}, ${values.ward}, ${values.district}`;
+
+            const data = {
+                customerId: Number(customerId),
+                fullName: values.fullName,
+                phoneNumber: values.phoneNumber,
+                address: fullAddress,
+                city: values.city,
+                enable: true,
+                default: false,
+            };
+
+            console.log("Data gửi đi:", data);
+
+            let response;
+            if (addressId) {
+                response = await updateAddress(Number(addressId), data);
+                console.log("Response từ updateAddress:", response.data);
+                alert("Cập nhật địa chỉ thành công!");
+            } else {
+                response = await addAddress(data);
+                console.log("Response từ addAddress:", response.data);
+                alert("Đã thêm địa chỉ thành công!");
+            }
+
+            navigate(`/edit_address`);
+        } catch (error: any) {
+            console.error("Lỗi trong onFinish:", error);
+            const errorMessage = error.response?.data?.message || error.message || "Không thể lưu địa chỉ.";
+            notification.error({ message: errorMessage });
+            if (error.response?.status === 401) {
+                navigate("/login");
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleDistrictChange = (value: string) => {
-        setDistrict(value);
-        // Gọi API để lấy danh sách phường/xã dựa trên quận/huyện đã chọn
-    };
-
-    const handleWardChange = (value: string) => {
-        setWard(value);
+    const onFinishFailed = (errorInfo: any) => {
+        console.log("Validation thất bại:", errorInfo);
+        notification.error({ message: "Vui lòng kiểm tra lại các trường bắt buộc." });
     };
 
     return (
-        <div style={{
-            background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',
-            padding: '40px',
-            minHeight: '100vh',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-        }}>
-            <div className='container'>
-                <Title level={2}>Thêm địa chỉ nhận hàng</Title>
-
-                <Card title="Thông tin địa chỉ" bordered={false} style={{ marginBottom: '20px' }}>
-                    <Form
-                        form={form}
-                        layout="vertical"
-                        initialValues={{ fullName, email, phone, address, city, district, ward, street }}
+        <div style={{ maxWidth: 600, margin: "0 auto", padding: "24px" }}>
+            <h2>{addressId ? "Sửa địa chỉ" : "Thêm địa chỉ mới"}</h2>
+            <Form
+                form={form}
+                onFinish={onFinish}
+                onFinishFailed={onFinishFailed}
+                layout="vertical"
+            >
+                <Form.Item
+                    name="fullName"
+                    label="Họ và tên"
+                    rules={[{ required: true, message: "Vui lòng nhập họ và tên" }]}
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item
+                    name="phoneNumber"
+                    label="Số điện thoại"
+                    rules={[
+                        { required: true, message: "Vui lòng nhập số điện thoại" },
+                        { pattern: /^\d{10,11}$/, message: "Số điện thoại không hợp lệ" },
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+                <Form.Item
+                    name="city"
+                    label="Tỉnh/Thành phố"
+                    rules={[{ required: true, message: "Vui lòng chọn tỉnh/thành phố" }]}
+                >
+                    <Select
+                        showSearch
+                        placeholder="Chọn tỉnh/thành phố"
+                        onChange={(value) => setSelectedCity(value)}
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                            (option?.children as unknown as string)?.toLowerCase().includes(input.toLowerCase())
+                        }
+                        loading={provinces.length === 0}
                     >
-                        <Form.Item label="Họ và tên" name="fullName">
-                            <Input placeholder="Họ và tên" value={fullName} onChange={(e) => setFullName(e.target.value)} />
-                        </Form.Item>
-
-                        <Row gutter={16}>
-                            <Col span={12}>
-                                <Form.Item label="Email" name="email">
-                                    <Input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item label="Số điện thoại" name="phone">
-                                    <Input placeholder="+1234567890" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                                </Form.Item>
-                            </Col>
-                        </Row>
-
-                        <Form.Item label="Địa chỉ" name="address">
-                            <Input placeholder="1234 Elm Street, Van Nuys, CA" value={address} onChange={(e) => setAddress(e.target.value)} />
-                        </Form.Item>
-
-                        <Row gutter={16}>
-                            <Col span={12}>
-                                <Form.Item label="Tỉnh/Thành phố" name="city">
-                                    <Select placeholder="Chọn Tỉnh/Thành phố" onChange={handleCityChange}>
-                                        {/* Thêm các tùy chọn tỉnh/thành phố */}
-                                        <Option value="hanoi">Hà Nội</Option>
-                                        <Option value="hcm">TP. Hồ Chí Minh</Option>
-                                    </Select>
-                                </Form.Item>
-                            </Col>
-                            <Col span={12}>
-                                <Form.Item label="Quận/Huyện" name="district">
-                                    <Select placeholder="Chọn Quận/Huyện" onChange={handleDistrictChange}>
-                                        {/* Thêm các tùy chọn quận/huyện */}
-                                        <Option value="district1">Quận 1</Option>
-                                        <Option value="district2">Quận 2</Option>
-                                    </Select>
-                                </Form.Item>
-                            </Col>
-                        </Row>
-
-                        <Form.Item label="Phường/Xã" name="ward">
-                            <Select placeholder="Chọn Phường/Xã" onChange={handleWardChange}>
-                                {/* Thêm các tùy chọn phường/xã */}
-                                <Option value="ward1">Phường 1</Option>
-                                <Option value="ward2">Phường 2</Option>
-                            </Select>
-                        </Form.Item>
-
-                        <Form.Item label="Tên đường, Tòa nhà, Số nhà" name="street">
-                            <Input placeholder="Tên đường, Tòa nhà, Số nhà" value={street} onChange={(e) => setStreet(e.target.value)} />
-                        </Form.Item>
-
-                        <Form.Item>
-                            <Button type="primary"
-                                style={{
-                                    width: '150px',
-                                    height: '40px',
-                                    background: '#4F80E1',
-                                    borderColor: '#4F80E1'
-                                }}>
-                                Lưu địa chỉ
-                            </Button>
-                            <Button
-                                type="link"
-                                style={{ marginLeft: '10px' }}>
-                                Thoát, không lưu
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                </Card>
-            </div>
+                        {provinces.map((province) => (
+                            <Option key={province.name} value={province.name}>
+                                {province.name}
+                            </Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+                <Form.Item
+                    name="district"
+                    label="Quận/Huyện"
+                    rules={[{ required: true, message: "Vui lòng chọn quận/huyện" }]}
+                >
+                    <Select
+                        showSearch
+                        placeholder="Chọn quận/huyện"
+                        onChange={(value) => setSelectedDistrict(value)}
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                            (option?.children as unknown as string)?.toLowerCase().includes(input.toLowerCase())
+                        }
+                        disabled={!selectedCity}
+                        loading={!!selectedCity && districts.length === 0}
+                    >
+                        {districts.map((district) => (
+                            <Option key={district.name} value={district.name}>
+                                {district.name}
+                            </Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+                <Form.Item
+                    name="ward"
+                    label="Xã/Phường"
+                    rules={[{ required: true, message: "Vui lòng chọn xã/phường" }]}
+                >
+                    <Select
+                        showSearch
+                        placeholder="Chọn xã/phường"
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                            (option?.children as unknown as string)?.toLowerCase().includes(input.toLowerCase())
+                        }
+                        disabled={!selectedDistrict}
+                        loading={!!selectedDistrict && wards.length === 0}
+                    >
+                        {wards.map((ward) => (
+                            <Option key={ward.name} value={ward.name}>
+                                {ward.name}
+                            </Option>
+                        ))}
+                    </Select>
+                </Form.Item>
+                <Form.Item
+                    name="detailedAddress"
+                    label="Địa chỉ chi tiết"
+                    rules={[{ required: true, message: "Vui lòng nhập địa chỉ chi tiết" }]}
+                >
+                    <Input placeholder="Ví dụ: 123 Lê Lợi" />
+                </Form.Item>
+                <Form.Item>
+                    <Button
+                        type="primary"
+                        htmlType="submit"
+                        loading={loading}
+                        disabled={loading}
+                    >
+                        {addressId ? "Cập nhật" : "Thêm mới"}
+                    </Button>
+                    <Button
+                        style={{ marginLeft: 8 }}
+                        onClick={() => navigate(`/edit_address`)}
+                    >
+                        Hủy
+                    </Button>
+                </Form.Item>
+            </Form>
         </div>
     );
 };

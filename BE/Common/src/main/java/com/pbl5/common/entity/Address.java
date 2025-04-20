@@ -26,6 +26,10 @@ public class Address extends IdBaseEntity {
     @Column(name = "city", nullable = false, length = 45)
     private String city;
 
+    @Column(name = "enable", nullable = false)
+    @ColumnDefault("1")
+    private boolean enable;
+
     @Column(name = "is_default", nullable = false)
     @ColumnDefault("0")
     private boolean isDefault;

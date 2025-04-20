@@ -49,6 +49,36 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public List<CartProductDto> getCartByCustomerIdAndProductIdList(Integer customerId, List<Integer> productIdList) {
+        List<CartItems> cartItems = cartItemRepository.findByCustomerId(customerId);
+
+        return cartItems.stream()
+                .filter(item -> productIdList.contains(item.getId())) // Only include items with matching product IDs
+                .map(item -> {
+                    double originalPrice = item.getProduct().getPrice();
+                    double discountPercent = item.getProduct().getDiscountPercent();
+                    double lastPrice = originalPrice * (1 - discountPercent / 100);
+
+                    CartProductDto dto = new CartProductDto(
+                            item.getProduct().getId().longValue(),
+                            item.getProduct().getId(),
+                            item.getProduct().getName(),
+                            item.getQuantity(),
+                            originalPrice,
+                            discountPercent,
+                            lastPrice,
+                            item.getProduct().getMainImage(),
+                            item.getProduct().getShop().getName(),
+                            item.getProduct().getShop().getId(),
+                            item.getProductDetail()
+                    );
+                    dto.setId(Long.valueOf(item.getId()));
+                    return dto;
+                }).collect(Collectors.toList());
+    }
+
+
+    @Override
     public boolean deleteCartItemById(Long cartItemId) {
         Optional<CartItems> item = cartItemRepository.findById(cartItemId);
         if (item.isPresent()) {
@@ -85,6 +115,19 @@ public class CartServiceImpl implements CartService {
             cartItemRepository.deleteAll(cartItemRepository.findByCustomerId(customerId));
             return true;
         }
+    }
+
+    @Override
+    public boolean deleteCartItemByCustomerIdAndCartId(Integer customerId, List<Integer> cartIds) {
+        List<CartItems> cartItems = cartItemRepository.findByCustomerId(customerId);
+        List<CartItems> itemsToDelete = cartItems.stream()
+                .filter(item -> cartIds.contains(item.getId()))
+                .collect(Collectors.toList());
+        if (!itemsToDelete.isEmpty()) {
+            cartItemRepository.deleteAll(itemsToDelete);
+            return true;
+        }
+        return false;
     }
 
     @Override

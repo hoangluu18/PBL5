@@ -7,7 +7,7 @@ import com.pbl5.client.exception.ProductNotFoundException;
 import java.util.List;
 
 public interface ShippingRequestService {
-    List<ShippingRequestDto> getShippingRequestList(int customerId) throws ProductNotFoundException;
+    List<ShippingRequestDto> getShippingRequestList(int customerId, List<Integer> cartIds ) throws ProductNotFoundException;
     ShippingRespondDto getShippingRespond(ShippingRequestDto shippingRequestDto);
     List<ShippingRespondDto> getShippingRespondList(List<ShippingRequestDto> shippingRequestDtoList);
 }

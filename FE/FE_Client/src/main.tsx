@@ -14,6 +14,7 @@ import ProductFilterPage from './pages/products_filter.tsx';
 import Checkout from './pages/checkout.tsx';
 import AddAddress from './pages/add_address.tsx';
 import EditAddress from './pages/edit_address.tsx';
+import UpdateAddress from './pages/update_address.tsx';
 import ShopDetail from './pages/shop_detail.tsx';
 import FollowedShops from './pages/followed_shops.tsx';
 import ProductDetailPage from './pages/product_detail.tsx';
@@ -21,7 +22,9 @@ import ProfilePage from './pages/profile.tsx';
 import { Button, Result } from 'antd';
 import { AuthWrapper } from './components/context/auth.context.tsx';
 
+
 import 'antd/dist/reset.css';
+import OAuth2RedirectHandler from './pages/oauth2-redirect.tsx';
 import ChangePasswordPage from './pages/change_password_page.tsx';
 import ProductDetailPageV2 from './pages/product_detail.tsx';
 
@@ -58,6 +61,10 @@ const router = createBrowserRouter([
       }, {
         path: "/edit_address",
         element: <EditAddress />
+      },
+      {
+        path: "update_address",
+        element: <UpdateAddress />
       },
       {
         path: "/shop/:id",
@@ -101,6 +108,10 @@ const router = createBrowserRouter([
   {
     path: "/forgot_password",
     element: <ForgotPasswordPage />
+  },
+  {
+    path: "/oauth2/redirect",
+    element: <OAuth2RedirectHandler />
   },
   {
     path: "/reset_password",

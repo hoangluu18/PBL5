@@ -4,7 +4,7 @@ import { RightOutlined, ShoppingCartOutlined, HomeOutlined } from '@ant-design/i
 import ShippingInfo from '../components/ShippingInfo';
 import PaymentMethod from '../components/PaymentMethod';
 import OrderSummary from '../components/OrderSummary';
-import { getCheckoutInfo, saveCheckout } from '../services/checkout.service';
+import { getCheckoutInfoForSelectedCartItems, saveCheckout } from '../services/checkout.service';
 import { CheckoutInfoDto } from '../models/dto/checkout/CheckoutInfoDto';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
@@ -24,12 +24,12 @@ const Checkout: React.FC = () => {
     const [paymentMethod, setPaymentMethod] = useState('cash');
     const [loading, setLoading] = useState(true);
     const [isNotFound, setIsNotFound] = useState(false);
-    
-    // Đặt tất cả useEffect ở đây, trước các điều kiện return
+    const [selectedCartIds, setSelectedCartIds] = useState<number[]>([]);
+
     useEffect(() => {
         // Set document title
         document.title = "Thanh toán";
-        
+
         // Fetch checkout info
         const fetchCheckoutInfo = async () => {
             if (!customerId) {
@@ -37,13 +37,29 @@ const Checkout: React.FC = () => {
                 setLoading(false);
                 return;
             }
-            
+
             try {
-                const data = await getCheckoutInfo(customerId);
-                setCheckoutInfo(data);
+                // Lấy danh sách các cart IDs đã chọn từ localStorage
+                const savedCartIds = localStorage.getItem('selectedCartIds');
+
+                if (savedCartIds) {
+                    // Parse các cart ID đã chọn
+                    const parsedCartIds = JSON.parse(savedCartIds) as number[];
+                    setSelectedCartIds(parsedCartIds);
+
+                    // Gọi API để lấy thông tin checkout cho các sản phẩm đã chọn
+                    console.log('Fetching checkout info for selected cart items:', parsedCartIds);
+                    const checkoutInfo = await getCheckoutInfoForSelectedCartItems(customerId, parsedCartIds);
+                    setCheckoutInfo(checkoutInfo);
+                } else {
+                    // Nếu không có cart ID đã chọn, gọi API lấy toàn bộ thông tin checkout
+                    console.log('No product selected');
+                    //   const data = await getCheckoutInfo(customerId);
+                    //   setCheckoutInfo(data);
+                }
             } catch (error) {
                 console.error('Error fetching checkout info:', error);
-                
+
                 // Check if this is a 404 error
                 if (axios.isAxiosError(error) && error.response?.status === 404) {
                     setIsNotFound(true);
@@ -54,9 +70,8 @@ const Checkout: React.FC = () => {
         };
 
         fetchCheckoutInfo();
-    }, [customerId]); // Thêm customerId vào dependency array
-    
-    // Xử lý mua hàng
+    }, [customerId]);
+
     const handlePurchase = () => {
         // Kiểm tra nếu không có customerId
         if (!customerId) {
@@ -64,19 +79,21 @@ const Checkout: React.FC = () => {
             navigate('/login');
             return;
         }
-        
+
         // Kiểm tra nếu phương thức thanh toán không phải là COD
         if (paymentMethod !== 'cash') {
             alert('Phương thức thanh toán này chưa được hỗ trợ. Mong bạn thông cảm!');
             return;
         }
-        
+
         // Nếu là COD, tiếp tục như bình thường
         if (window.confirm('Bạn có chắc chắn muốn mua hàng không?')) {
             setLoading(true);
-            saveCheckout(customerId)
+                saveCheckout(customerId, selectedCartIds)
                 .then(() => {
                     alert('Đặt hàng thành công!');
+                    // Xóa localStorage sau khi đặt hàng thành công
+                    localStorage.removeItem('selectedCartIds');
                     navigate('/'); // Chuyển về trang chủ
                 })
                 .catch((error: any) => {
@@ -90,14 +107,14 @@ const Checkout: React.FC = () => {
     };
 
     // Tính toán subtotal, shippingCost và total
-    const subtotal = checkoutInfo 
+    const subtotal = checkoutInfo
         ? checkoutInfo.cartProductDtoList.reduce((sum, item) => sum + (item.lastPrice * item.quantity), 0)
         : 0;
-    
+
     const shippingCost = checkoutInfo
         ? checkoutInfo.shippingRespondDtoList.reduce((sum, shipping) => sum + shipping.shippingCost, 0)
         : 0;
-    
+
     const total = subtotal + shippingCost;
 
     // Các điều kiện render
@@ -115,9 +132,9 @@ const Checkout: React.FC = () => {
                     <div style={{ marginBottom: '20px' }}>
                         <Skeleton active paragraph={{ rows: 0 }} />
                     </div>
-                    
+
                     <Skeleton.Input style={{ width: 300, marginBottom: 20 }} active size="large" />
-                    
+
                     <Row gutter={24}>
                         <Col span={16}>
                             <Card style={{ marginBottom: '20px' }}>
@@ -154,15 +171,15 @@ const Checkout: React.FC = () => {
                         title="Chưa đăng nhập"
                         subTitle="Vui lòng đăng nhập để tiếp tục thanh toán."
                         extra={[
-                            <Button 
-                                type="primary" 
+                            <Button
+                                type="primary"
                                 key="login"
                                 onClick={() => navigate('/login')}
                             >
                                 Đăng nhập
                             </Button>,
-                            <Button 
-                                key="home" 
+                            <Button
+                                key="home"
                                 icon={<HomeOutlined />}
                                 onClick={() => navigate('/')}
                             >
@@ -191,16 +208,16 @@ const Checkout: React.FC = () => {
                         title="Giỏ hàng trống"
                         subTitle="Bạn chưa chọn sản phẩm nào để thanh toán. Vui lòng thêm sản phẩm vào giỏ hàng trước."
                         extra={[
-                            <Button 
-                                type="primary" 
-                                key="cart" 
+                            <Button
+                                type="primary"
+                                key="cart"
                                 icon={<ShoppingCartOutlined />}
                                 onClick={() => navigate('/cart')}
                             >
                                 Quay về giỏ hàng
                             </Button>,
-                            <Button 
-                                key="home" 
+                            <Button
+                                key="home"
                                 icon={<HomeOutlined />}
                                 onClick={() => navigate('/')}
                             >
@@ -229,14 +246,14 @@ const Checkout: React.FC = () => {
                         title="Lỗi tải thông tin"
                         subTitle="Có lỗi xảy ra khi tải thông tin thanh toán. Vui lòng thử lại sau."
                         extra={[
-                            <Button 
-                                type="primary" 
+                            <Button
+                                type="primary"
                                 key="retry"
                                 onClick={() => window.location.reload()}
                             >
                                 Thử lại
                             </Button>,
-                            <Button 
+                            <Button
                                 key="home"
                                 onClick={() => navigate('/')}
                             >
@@ -270,16 +287,19 @@ const Checkout: React.FC = () => {
                     </Space>
                 </div>
 
-                <Title level={2}>Thanh toán</Title>
+                <Title level={2}>
+                    Thanh toán {selectedCartIds.length > 0 ? `(${selectedCartIds.length} sản phẩm đã chọn)` : ''}
+                </Title>
 
                 <Row gutter={24}>
                     <Col span={16}>
                         <ShippingInfo addressInfo={checkoutInfo.addressInfoDto} />
-                        <PaymentMethod 
-                            paymentMethod={paymentMethod} 
-                            setPaymentMethod={setPaymentMethod} 
+                        <PaymentMethod
+                            paymentMethod={paymentMethod}
+                            setPaymentMethod={setPaymentMethod}
                             shippingCosts={checkoutInfo.shippingRespondDtoList.map(shipping => ({
                                 shopId: shipping.shopId,
+                                shopName: shipping.shippingCompany,
                                 shippingCost: shipping.shippingCost
                             }))}
                         />
@@ -304,9 +324,9 @@ const Checkout: React.FC = () => {
                 </Row>
 
                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                    <Button 
-                        type="primary" 
-                        size="large" 
+                    <Button
+                        type="primary"
+                        size="large"
                         style={{ width: '300px', height: '45px' }}
                         onClick={handlePurchase}
                         loading={loading}

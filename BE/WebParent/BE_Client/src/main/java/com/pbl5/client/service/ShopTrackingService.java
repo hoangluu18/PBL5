@@ -8,4 +8,10 @@ import java.util.List;
 
 public interface ShopTrackingService {
     Page<Integer> findAll(int customerId, int page);
+    boolean existsShopTrackingByCustomerId(int customerId, int shopId);
+
+    boolean saveFollowingShop(int customerId, int shopId);
+
+    boolean deleteFollowingShop(int customerId, int shopId);
+
 }
