@@ -11,9 +11,10 @@ public interface CheckoutService {
     CheckoutInfoDto getCheckoutInfo(int customerId,List<Integer> cartIds) throws ProductNotFoundException;
     List<Order> getOrderList(CheckoutInfoDto checkoutInfoDto, CustomerDto customerDto);
     int parseDeliveryDays(String deliveryTime);
+    //save checkout (cart)
     CheckoutInfoDto saveCheckoutInfo(int customerId,List<Integer> cartIds) throws ProductNotFoundException;
     CheckoutInfoDto getCheckoutInfoForSelectedProducts(int customerId, List<Integer> cartIds) throws ProductNotFoundException;
-
+    //save checkout (buy now)
     CheckoutInfoDto getCheckoutInfoForBuyNow(Integer customerId, Integer productId, Integer quantity, String productDetail) throws ProductNotFoundException;
     boolean saveCheckoutInfoBuyNow(int customerId, CheckoutInfoDto checkoutInfoDto);
 }

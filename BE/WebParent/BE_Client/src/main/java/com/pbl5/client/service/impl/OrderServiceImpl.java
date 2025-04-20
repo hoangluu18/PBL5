@@ -55,7 +55,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderInfoDto> getOrdersByCustomerId(Integer customerId) throws OrderNotFoundException {
         List<Order> orders = repository.findByCustomerId(customerId);
-        orders.sort(Comparator.comparing(Order::getOrderTime).reversed());
+
+        orders.sort((o1, o2) -> o2.getOrderTime().compareTo(o1.getOrderTime()));
+
         if(orders == null) {
             throw new OrderNotFoundException("Không tìm thấy đơn hàng cho khách hàng: " + customerId);
         }
@@ -67,7 +69,6 @@ public class OrderServiceImpl implements OrderService {
             dto.setOrderDate(order.getOrderTime().toString());
             dto.setTotalAmount(order.getTotal());
             dto.setOrderStatus(order.getOrderStatus().toString());
-
             orderInfoDtos.add(dto);
         });
 
