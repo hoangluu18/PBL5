@@ -18,4 +18,8 @@ public interface ReviewService {
 
 
     void markReviewVote4ProductByCurrentCustomer(List<Review> reviews, Integer customerId, Integer productId);
+
+    boolean getReviewByProductIdAndCustomerId(Integer productId, Integer customerId);
+
+    Review save(Review review);
 }

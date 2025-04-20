@@ -8,6 +8,7 @@ import com.pbl5.client.dto.product.ProductDetailDto;
 import com.pbl5.client.dto.product.ProductDto;
 import com.pbl5.client.dto.product.ProductFullInfoDto;
 import com.pbl5.client.dto.product.ProductVariantDto;
+import com.pbl5.client.exception.CategoryNotFoundException;
 import com.pbl5.client.service.CategoryService;
 import com.pbl5.client.service.ProductService;
 import com.pbl5.common.entity.Category;
@@ -83,15 +84,18 @@ public class ProductController {
 
     @GetMapping("/search")
     public ResponseEntity<?> searchProduct(@ModelAttribute SearchParam searchParam,
-                                           @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
+                                           @RequestParam(value = "page", required = false, defaultValue = "1") int page) throws CategoryNotFoundException {
         Page<ProductDto> productDtos = productService.searchProducts(0, searchParam);
 
         if(page < 1) {
             page = 1;
         }
 
-        Map<String, Object> map = new HashMap<>();
 
+
+        Map<String, Object> map = new HashMap<>();
+        //map.put("categories",  categoryService.listAllRootCategories());
+        //map.put("brands",  categoryService.getBrands(new Category(1)));
 
         map.put("totalPages", productDtos.getTotalPages());
         map.put("totalElements", productDtos.getTotalElements());

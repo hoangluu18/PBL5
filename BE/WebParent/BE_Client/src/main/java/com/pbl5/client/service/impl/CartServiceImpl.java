@@ -31,15 +31,17 @@ public class CartServiceImpl implements CartService {
             CartProductDto dto = new CartProductDto(
                     item.getProduct().getId().longValue(),
                     item.getId(),
-                                item.getProduct().getName(),
-                                item.getQuantity(),
-                                originalPrice,
-                                discountPercent,
-                                lastPrice,
-                                item.getProduct().getMainImage(),
-                                item.getProduct().getShop().getName(),
-                                item.getProduct().getShop().getId(),
-                                item.getProductDetail()
+                    item.getProduct().getName(),
+                    item.getProduct().getAlias(),
+                    item.getQuantity(),
+                    originalPrice,
+                    discountPercent,
+                    lastPrice,
+                    item.getProduct().getMainImage(),
+                    item.getProduct().getShop().getName(),
+                    item.getProduct().getShop().getId(),
+                    item.getProductDetail(),
+                    true
                         );
             dto.setId(Long.valueOf(item.getId()));
             return dto;

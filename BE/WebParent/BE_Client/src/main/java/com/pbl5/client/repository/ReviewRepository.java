@@ -23,4 +23,7 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Modifying
     public void updateVoteCount(Integer reviewId);
 
+    @Query("SELECT r FROM Review r WHERE r.product.id = ?1 AND r.customer.id = ?2")
+    Review findByProductIdAndCustomerId(Integer productId, Integer customerId);
+
 }

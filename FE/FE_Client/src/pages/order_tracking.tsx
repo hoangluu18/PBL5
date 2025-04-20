@@ -119,15 +119,17 @@ const OrderTracking: React.FC = () => {
       title: 'Thao tác',
       key: 'action',
       render: (_: any, record: OrderInfoDto) => (
-        <Button
-          type="primary"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleViewDetails(record.orderId);
-          }}
-        >
-          Xem chi tiết
-        </Button>
+        <>
+          <Button
+            type="primary"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleViewDetails(record.orderId);
+            }}
+          >
+            Xem chi tiết
+          </Button>
+        </>
       ),
     },
   ];
