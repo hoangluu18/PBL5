@@ -30,8 +30,9 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final ProductService productService;
     private final OrderService orderService;
     private final CustomerService customerService;
+    private final ProductVariantService productVariantService;
     @Autowired
-    public CheckoutServiceImpl(AddressInfoService addressInfoService, CartService cartService, ShippingRequestService shippingRequestService, OrderDetailService orderDetailService, OrderTrackService orderTrackService, ProductService productService, OrderService orderService, CustomerService customerService) {
+    public CheckoutServiceImpl(AddressInfoService addressInfoService, CartService cartService, ShippingRequestService shippingRequestService, OrderDetailService orderDetailService, OrderTrackService orderTrackService, ProductService productService, OrderService orderService, CustomerService customerService, ProductVariantService productVariantService) {
         this.addressInfoService = addressInfoService;
         this.cartService = cartService;
         this.shippingRequestService = shippingRequestService;
@@ -40,6 +41,7 @@ public class CheckoutServiceImpl implements CheckoutService {
         this.productService = productService;
         this.orderService = orderService;
         this.customerService = customerService;
+        this.productVariantService = productVariantService;
     }
 
     @Override
@@ -168,7 +170,6 @@ public class CheckoutServiceImpl implements CheckoutService {
         AddressInfoDto addressInfoDto = addressInfoService.fineByAddressDefault(customerId);
         List<CartProductDto> cartProductDtoList = cartService.getCartByCustomerIdAndProductIdList(customerId, cartIds);
         List<ShippingRequestDto> shippingRequestList = shippingRequestService.getShippingRequestList(customerId,cartIds);
-
         // Find shipping responses
         List<ShippingRespondDto> shippingRespondList = new ArrayList<>();
         for(ShippingRequestDto shippingRequest : shippingRequestList) {
@@ -255,7 +256,26 @@ public class CheckoutServiceImpl implements CheckoutService {
 
                 // Clear the customer's cart
                 cartService.deleteCartItemByCustomerIdAndCartId(customerId,cartIds);
-
+                //reduce quantity product
+                for(CartProductDto productDto : cartProductDtoList){
+                    // Trừ số lượng sản phẩm
+                    String attributes = productDto.getAttributes();
+                    if (attributes != null && !attributes.isEmpty()) {
+                        if (attributes.contains(",")) {
+                            productVariantService.reduceVariantQuantityForMultipleAttributes(
+                                    productDto.getProductId(),
+                                    productDto.getQuantity(),
+                                    attributes
+                            );
+                        } else {
+                            productVariantService.reduceVariantQuantityForSingleAttribute(
+                                    productDto.getProductId(),
+                                    productDto.getQuantity(),
+                                    attributes
+                            );
+                        }
+                    }
+                }
                 return checkoutInfoDto;
             } else {
                 System.out.println("Failed to save orders");
@@ -265,6 +285,8 @@ public class CheckoutServiceImpl implements CheckoutService {
             e.printStackTrace();
             return null;
         }
+        //reduce quantity product
+
     }
 
     @Override
@@ -317,6 +339,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                 null,
                 productId,
                 product.getName(),
+                product.getAlias(),
                 quantity,
                 originalPrice,
                 discountPercent,
@@ -324,7 +347,8 @@ public class CheckoutServiceImpl implements CheckoutService {
                 product.getMainImage(),
                 product.getShop().getName(),
                 product.getShop().getId(),
-                productDetail
+                productDetail,
+                true
         );
 
         // Tạo danh sách chỉ chứa sản phẩm này
@@ -423,6 +447,29 @@ public class CheckoutServiceImpl implements CheckoutService {
                     orderTrack.setUpdatedTime(new Date());
                     orderTrack.setNotes("Đơn hàng mua ngay đã được tạo và đang chờ xử lý.");
                     orderTrackService.save(orderTrack);
+                    //reduce quantity product
+                }
+
+                //reduce quantity product
+
+                for(CartProductDto productDto : products){
+                    // Trừ số lượng sản phẩm
+                    String attributes = productDto.getAttributes();
+                    if (attributes != null && !attributes.isEmpty()) {
+                        if (attributes.contains(",")) {
+                            productVariantService.reduceVariantQuantityForMultipleAttributes(
+                                    productDto.getProductId(),
+                                    productDto.getQuantity(),
+                                    attributes
+                            );
+                        } else {
+                            productVariantService.reduceVariantQuantityForSingleAttribute(
+                                    productDto.getProductId(),
+                                    productDto.getQuantity(),
+                                    attributes
+                            );
+                        }
+                    }
                 }
             }
 
