@@ -1,8 +1,8 @@
-import { Card, Avatar, Tabs, Button, Divider, Row, Col, Tag, Typography, Spin, Modal, notification, Space } from "antd";
-import { EditOutlined, UploadOutlined, ShoppingOutlined, ClockCircleOutlined, DollarOutlined, HomeOutlined, DeleteOutlined, CheckCircleOutlined, PhoneOutlined, EnvironmentOutlined, BankOutlined, PlusOutlined } from "@ant-design/icons";
+import { Card, Avatar, Tabs, Button, Divider, Tag, Typography, Spin, Modal, notification } from "antd";
+import { UploadOutlined, ShoppingOutlined, ClockCircleOutlined, DollarOutlined, HomeOutlined, CheckCircleOutlined, PhoneOutlined, EnvironmentOutlined, BankOutlined, PlusOutlined } from "@ant-design/icons";
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../components/context/auth.context";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import OrderList from "../components/profile/OrderList";
 import ProfileReview from "../components/ProfileReview";
 import FollowedStores from "../components/product_details/FollowedStores";
@@ -150,14 +150,6 @@ const ProfilePage: React.FC = () => {
         }
     };
 
-    const handleEditAddress = (addressId: number) => {
-        navigate(`/edit_address/${customerId}/${addressId}`);
-    };
-
-    const showDisableModal = (addressId: number) => {
-        setSelectedAddressId(addressId);
-        setIsModalVisible(true);
-    };
 
     const handleDisableAddress = async () => {
         if (selectedAddressId) {

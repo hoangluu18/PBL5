@@ -158,4 +158,25 @@ public class ShippingRequestServiceImpl implements ShippingRequestService {
     public List<ShippingRespondDto> getShippingRespondList(List<ShippingRequestDto> shippingRequestDtoList) {
         return List.of();
     }
+
+    @Override
+    public ShippingRequestDto getShippingRequestForProduct(Integer customerId, Product product, Integer quantity, AddressInfoDto addressInfoDto) {
+        ShippingRequestDto shippingRequestDto = new ShippingRequestDto();
+        shippingRequestDto.setShopId(product.getShop().getId());
+        shippingRequestDto.setWeight(product.getWeight());
+        shippingRequestDto.setHeight(product.getHeight());
+        shippingRequestDto.setWidth(product.getWidth());
+        shippingRequestDto.setLength(product.getLength());
+        shippingRequestDto.setDeliveryPoint(product.getShop().getCity());
+        shippingRequestDto.setReceivingPoint(addressInfoDto.getCity());
+        return shippingRequestDto;
+    }
+
+//    private int shopId;
+//    private float weight;
+//    private float height;
+//    private float width;
+//    private float length;
+//    private String deliveryPoint;
+//    private String receivingPoint;
 }

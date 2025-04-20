@@ -3,10 +3,7 @@ package com.pbl5.client.controller;
 import com.pbl5.client.common.Constants;
 import com.pbl5.client.dto.CartProductDto;
 import com.pbl5.client.dto.CustomerDto;
-import com.pbl5.client.dto.checkout.AddressInfoDto;
-import com.pbl5.client.dto.checkout.CheckoutInfoDto;
-import com.pbl5.client.dto.checkout.ShippingRequestDto;
-import com.pbl5.client.dto.checkout.ShippingRespondDto;
+import com.pbl5.client.dto.checkout.*;
 import com.pbl5.client.exception.ProductNotFoundException;
 import com.pbl5.client.repository.OrderRepository;
 import com.pbl5.client.service.*;
@@ -55,6 +52,36 @@ public class CheckoutController {
     ) throws ProductNotFoundException {
         return checkoutService.saveCheckoutInfo(customerId,cartIds) != null ?
                 ResponseEntity.ok("Checkout info saved successfully") :
+                ResponseEntity.notFound().build();
+    }
+
+
+    //buy now
+    @PostMapping("/buy-now/{customerId}")
+    public ResponseEntity<CheckoutInfoDto> getCheckoutInfoForBuyNow(
+            @PathVariable Integer customerId,
+            @RequestBody BuyNowRequestDto buyNowRequest
+    ) throws ProductNotFoundException {
+        // Chuyển đổi BuyNowRequest thành một checkout info đơn giản
+        CheckoutInfoDto checkoutInfo = checkoutService.getCheckoutInfoForBuyNow(
+                customerId,
+                buyNowRequest.getProductId(),
+                buyNowRequest.getQuantity(),
+                buyNowRequest.getProductDetail()
+        );
+
+        return checkoutInfo != null ?
+                ResponseEntity.ok(checkoutInfo) :
+                ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/save-buy-now/{customerId}")
+    public ResponseEntity<String> saveCheckoutInfoBuyNow(
+            @PathVariable Integer customerId,
+            @RequestBody CheckoutInfoDto checkoutInfoDto
+    ) {
+        return checkoutService.saveCheckoutInfoBuyNow(customerId, checkoutInfoDto) ?
+                ResponseEntity.ok("Buy now order saved successfully") :
                 ResponseEntity.notFound().build();
     }
 

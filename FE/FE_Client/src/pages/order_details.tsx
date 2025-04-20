@@ -383,7 +383,6 @@ const OrderDetail: React.FC = () => {
           <a href="/orders" className="back-link">
             <span>{'<'}</span> Quay lại đơn hàng của tôi
           </a>
-          <button className="track-button">Theo dõi đơn hàng</button>
         </div>
       </div>
     </>
