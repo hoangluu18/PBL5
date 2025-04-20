@@ -1,16 +1,5 @@
-import axios from 'axios';
+import axios from "../axios.customize";
 import { CheckoutInfoDto } from '../models/dto/checkout/CheckoutInfoDto';
-
-const API_BASE_URL = 'http://localhost:8081/api/checkout';
-
-// Hàm trợ giúp để tạo config với header xác thực
-const getAuthConfig = () => {
-    return {
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-        }
-    };
-};
 
 
 export const getCheckoutInfoForSelectedCartItems = async (customerId: number, cartIds: number[]): Promise<CheckoutInfoDto> => {
@@ -18,11 +7,10 @@ export const getCheckoutInfoForSelectedCartItems = async (customerId: number, ca
         if (!cartIds || cartIds.length === 0) {
             throw new Error('Danh sách sản phẩm trong giỏ hàng không được để trống');
         }
-        
+
         const response = await axios.post<CheckoutInfoDto>(
-            `${API_BASE_URL}/${customerId}`,
+            `/checkout/${customerId}`,
             cartIds,  // Gửi mảng cartIds trực tiếp như request body
-            getAuthConfig()
         );
 
         console.log('Selected cart items checkout info for customer:', customerId);
@@ -32,10 +20,10 @@ export const getCheckoutInfoForSelectedCartItems = async (customerId: number, ca
     } catch (error) {
         console.error('Error fetching checkout info for selected cart items:', error);
 
-        if (axios.isAxiosError(error)) {
-            console.error('Status:', error.response?.status);
-            console.error('Response data:', error.response?.data);
-        }
+        // if (axios.isAxiosError(error)) {
+        //     console.error('Status:', error.response?.status);
+        //     console.error('Response data:', error.response?.data);
+        // }
 
         throw error;
     }
@@ -46,23 +34,22 @@ export const saveCheckout = async (customerId: number, cartIds: number[]): Promi
         if (!cartIds || cartIds.length === 0) {
             throw new Error('Danh sách sản phẩm không được để trống');
         }
-        
+
         await axios.post(
-            `${API_BASE_URL}/save/${customerId}`,
+            `/checkout/save/${customerId}`,
             cartIds,  // Gửi mảng cartIds làm request body
-            getAuthConfig()
         );
-        
+
         console.log('Order saved for customer:', customerId);
         console.log('With cart IDs:', cartIds);
     } catch (error) {
         console.error('Error saving checkout:', error);
-        
-        if (axios.isAxiosError(error)) {
-            console.error('Status:', error.response?.status);
-            console.error('Response data:', error.response?.data);
-        }
-        
+
+        // if (axios.isAxiosError(error)) {
+        //     console.error('Status:', error.response?.status);
+        //     console.error('Response data:', error.response?.data);
+        // }
+
         throw error;
     }
 };
@@ -75,13 +62,12 @@ export const buyNow = async (
 ): Promise<CheckoutInfoDto> => {
     try {
         const response = await axios.post<CheckoutInfoDto>(
-            `${API_BASE_URL}/buy-now/${customerId}`,
+            `/checkout/buy-now/${customerId}`,
             {
                 productId,
                 quantity,
                 productDetail
             },
-            getAuthConfig()
         );
 
         console.log('Buy Now checkout info for customer:', customerId);
@@ -91,16 +77,16 @@ export const buyNow = async (
         localStorage.setItem('buyNowInfo', JSON.stringify(response.data));
         localStorage.setItem('isBuyNow', 'true');
 
-         // Thêm timestamp để kiểm tra thời gian lưu
-        localStorage.setItem('buyNowTimestamp', Date.now().toString());       
+        // Thêm timestamp để kiểm tra thời gian lưu
+        localStorage.setItem('buyNowTimestamp', Date.now().toString());
         return response.data;
     } catch (error) {
         console.error('Error getting buy now checkout info:', error);
 
-        if (axios.isAxiosError(error)) {
-            console.error('Status:', error.response?.status);
-            console.error('Response data:', error.response?.data);
-        }
+        // if (axios.isAxiosError(error)) {
+        //     console.error('Status:', error.response?.status);
+        //     console.error('Response data:', error.response?.data);
+        // }
 
         throw error;
     }
@@ -119,24 +105,23 @@ export const saveCheckoutBuyNow = async (customerId: number): Promise<void> => {
         if (!buyNowInfo) {
             throw new Error('Không tìm thấy thông tin mua ngay');
         }
-        
+
         const checkoutInfo = JSON.parse(buyNowInfo);
-        
+
         await axios.post(
-            `${API_BASE_URL}/save-buy-now/${customerId}`,
+            `/checkout/save-buy-now/${customerId}`,
             checkoutInfo,  // Gửi toàn bộ thông tin checkout từ localStorage
-            getAuthConfig()
         );
-        
+
         console.log('Buy now order saved for customer:', customerId);
     } catch (error) {
         console.error('Error saving buy now checkout:', error);
-        
-        if (axios.isAxiosError(error)) {
-            console.error('Status:', error.response?.status);
-            console.error('Response data:', error.response?.data);
-        }
-        
+
+        // if (axios.isAxiosError(error)) {
+        //     console.error('Status:', error.response?.status);
+        //     console.error('Response data:', error.response?.data);
+        // }
+
         throw error;
     }
 };

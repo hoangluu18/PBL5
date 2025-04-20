@@ -2,7 +2,16 @@ import axios from "axios";
 import { isTokenExpired } from "./utils/tokenUtil";
 
 
-const instance = axios.create();
+
+// Define the base URL for your API
+const BASE_URL = "http://localhost:8081/api"; // Replace with your actual API base URL
+
+// Create an Axios instance with the base URL
+const instance = axios.create({
+    baseURL: BASE_URL, // Set the base URL here
+});
+
+
 
 // Add a request interceptor
 instance.interceptors.request.use(function (config) {

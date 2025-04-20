@@ -1,15 +1,15 @@
 
-import axios from "axios";
+import axios from "../axios.customize";
 
 import ShopInfoDto from '../models/dto/detail_shop/ShopInfoDto'
 import ProductDto from '../models/dto/ProductDto';
-const API_URL = 'http://localhost:8081/api';
+
 
 class ShopInfoService {
-    async getShopInfo(shopId: number): Promise<ShopInfoDto>{
+    async getShopInfo(shopId: number): Promise<ShopInfoDto> {
         try {
-            const response = await axios.get(`${API_URL}/shop/${shopId}/shopInfo`);
-            
+            const response = await axios.get(`/shop/${shopId}/shopInfo`);
+
             console.log('Shop info:', response.data);
             return response.data as ShopInfoDto;
         } catch (error) {
@@ -18,9 +18,9 @@ class ShopInfoService {
         }
     }
 
-    async getProductByShopId(shopId: number, pageNum: number): Promise<ProductDto[]>{
+    async getProductByShopId(shopId: number, pageNum: number): Promise<ProductDto[]> {
         try {
-            const response = await axios.get(`${API_URL}/shop/${shopId}/product?pageNum=${pageNum}`);
+            const response = await axios.get(`/shop/${shopId}/product?pageNum=${pageNum}`);
             console.log('Products:', response.data);
             return response.data as ProductDto[];
         } catch (error) {
@@ -31,13 +31,9 @@ class ShopInfoService {
 
     async checkIsFollowed(shopId: number, customerId: number): Promise<boolean> {
         try {
-            const response = await axios.get(`${API_URL}/shop/${shopId}/checkIsFollowed`, {
+            const response = await axios.get(`/shop/${shopId}/checkIsFollowed`, {
                 params: {
                     customerId: customerId
-                },
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                    'Content-Type': 'application/json'
                 }
             });
             console.log('Follow status:', response.data);
@@ -50,13 +46,9 @@ class ShopInfoService {
 
     async followShop(shopId: number, customerId: number): Promise<boolean> {
         try {
-            const response = await axios.post(`${API_URL}/shop/${shopId}/follow`, null, {
+            const response = await axios.post(`/shop/${shopId}/follow`, null, {
                 params: {
                     customerId: customerId
-                },
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                    'Content-Type': 'application/json'
                 }
             });
             return true;
@@ -69,13 +61,9 @@ class ShopInfoService {
 
     async unfollowShop(shopId: number, customerId: number): Promise<boolean> {
         try {
-            const response = await axios.delete(`${API_URL}/shop/${shopId}/unfollow`, {
+            const response = await axios.delete(`/shop/${shopId}/unfollow`, {
                 params: {
                     customerId: customerId
-                },
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                    'Content-Type': 'application/json'
                 }
             });
             return true;

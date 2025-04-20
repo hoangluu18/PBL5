@@ -60,7 +60,7 @@ const App = () => {
                     key: '2',
                     label: 'Cửa hàng yêu thích',
                     icon: <HeartOutlined />,
-                    onClick: () => navigate('/followed_shops')
+                    onClick: () => navigate('/followed-shops')
                 },
                 {
                     key: '3',

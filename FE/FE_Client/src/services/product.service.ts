@@ -1,12 +1,9 @@
-import axios from "axios";
+import axios from "../axios.customize";
 import IProduct from '../models/dto/ProductDto';
 import { IProductFullInfoDto } from "../models/dto/ProductFullInfoDto";
 import IProductDetailDto from "../models/dto/ProductDetailDto";
 import { ICategoryDto } from "../models/dto/CategoryDto";
 import SearchResponse from "../models/bean/SearchResponse";
-
-
-const API_URL = 'http://localhost:8081/api/p';
 
 class ProductService {
     async getProducts(pageNum: number): Promise<IProduct[]> {
@@ -14,7 +11,7 @@ class ProductService {
         let products: IProduct[] | PromiseLike<IProduct[]> = [];
 
         try {
-            const response = await axios.get<IProduct[]>(`${API_URL}`, {
+            const response = await axios.get<IProduct[]>(`/p`, {
                 params: { pageNum }
             });
             products = response.data;
@@ -29,7 +26,7 @@ class ProductService {
         let productInfo: IProductFullInfoDto | PromiseLike<IProductFullInfoDto> = {} as IProductFullInfoDto;
 
         try {
-            const response = await axios.get<IProductFullInfoDto>(`${API_URL}/${alias}`);
+            const response = await axios.get<IProductFullInfoDto>(`/p/${alias}`);
             productInfo = response.data;
         } catch (error) {
             console.error(error);
@@ -41,7 +38,7 @@ class ProductService {
     async getProductDetail(id: number): Promise<IProductDetailDto> {
         let productDetail: IProductDetailDto | PromiseLike<IProductDetailDto> = {} as IProductDetailDto;
         try {
-            const response = await axios.get<IProductDetailDto>(`${API_URL}/${id}/details`);
+            const response = await axios.get<IProductDetailDto>(`/p/${id}/details`);
             productDetail = response.data;
         } catch (error) {
             console.error(error);
@@ -69,7 +66,7 @@ class ProductService {
             if (sortOption) params.sortOption = sortOption;
             if (keyword) params.keyword = keyword;
             if (page) params.page = page;
-            const response = await axios.get<SearchResponse>(`${API_URL}/search`, { params });
+            const response = await axios.get<SearchResponse>(`/p/search`, { params });
             resResponse = response.data;
         } catch (error) {
             console.error(error);
@@ -81,7 +78,7 @@ class ProductService {
     async getBreadcrumb(id: number): Promise<ICategoryDto[]> {
         let breadcrumb: ICategoryDto[] | PromiseLike<ICategoryDto[]> = [];
         try {
-            const response = await axios.get<ICategoryDto[]>(`${API_URL}/${id}/breadcrumbs`);
+            const response = await axios.get<ICategoryDto[]>(`/p/${id}/breadcrumbs`);
             breadcrumb = response.data;
         } catch (error) {
             console.error(error);

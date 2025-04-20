@@ -1,37 +1,17 @@
-import axios from "axios";
+import axios from "../axios.customize";
 import ICartItem from "../models/CartItem";
 
-const API_URL = "http://localhost:8081/api/cart";
-
 class CartService {
-    // Hàm trợ giúp để tạo config với header xác thực
-    private getAuthConfig() {
-        const token = localStorage.getItem('access_token');
-
-        // Kiểm tra token tồn tại
-        if (!token) {
-            console.warn("Không tìm thấy token xác thực. Người dùng có thể chưa đăng nhập.");
-            // Có thể redirect đến trang login ở đây nếu cần
-        }
-
-        return {
-            headers: {
-                'Authorization': `Bearer ${token || ''}`,
-                'Content-Type': 'application/json'
-            }
-        };
-    }
 
     async getCart(userId: number): Promise<ICartItem[]> {
         try {
             // Log token để debug
             console.log("Token:", localStorage.getItem('access_token'));
-            console.log("Request to:", `${API_URL}/${userId}`);
+            console.log("Request to:", `/cart/${userId}`);
 
             // Thêm header xác thực vào request
             const response = await axios.get<ICartItem[]>(
-                `${API_URL}/${userId}`,
-                this.getAuthConfig()
+                `/cart/${userId}`
             );
             console.log("user id", userId);
             return response.data;
@@ -39,10 +19,10 @@ class CartService {
             console.error("Error fetching cart:", error);
 
             // Xử lý lỗi 401 cụ thể
-            if (axios.isAxiosError(error) && error.response?.status === 401) {
-                console.error("Unauthorized error. Token có thể đã hết hạn hoặc không hợp lệ");
-                // Xử lý refresh token hoặc đăng xuất ở đây nếu cần
-            }
+            // if (axios.isAxiosError(error) && error.response?.status === 401) {
+            //     console.error("Unauthorized error. Token có thể đã hết hạn hoặc không hợp lệ");
+            //     // Xử lý refresh token hoặc đăng xuất ở đây nếu cần
+            // }
 
             return [];
         }
@@ -50,18 +30,14 @@ class CartService {
 
     async deleteCartItem(cartItemId: number): Promise<void> {
         try {
-            await axios.delete(`${API_URL}/delete/${cartItemId}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-                },
-            });
+            await axios.delete(`/cart/delete/${cartItemId}`);
         } catch (error) {
             console.error("Error deleting cart item:", error);
 
             // Xử lý lỗi 401 cụ thể
-            if (axios.isAxiosError(error) && error.response?.status === 401) {
-                console.error("Unauthorized error. Token có thể đã hết hạn hoặc không hợp lệ");
-            }
+            // if (axios.isAxiosError(error) && error.response?.status === 401) {
+            //     console.error("Unauthorized error. Token có thể đã hết hạn hoặc không hợp lệ");
+            // }
         }
     }
 
@@ -69,19 +45,18 @@ class CartService {
         try {
 
             const response = await axios.post(
-                `${API_URL}/add`,
-                { customerId, productId, quantity, productDetail },
-                this.getAuthConfig()
+                `/cart/add`,
+                { customerId, productId, quantity, productDetail }
             );
             return response.data;
         } catch (error) {
             console.error("Error adding to cart:", error);
 
             // Xử lý lỗi 401 cụ thể
-            if (axios.isAxiosError(error) && error.response?.status === 401) {
-                console.error("Unauthorized error. Token có thể đã hết hạn hoặc không hợp lệ");
-                return "Lỗi xác thực: Vui lòng đăng nhập lại";
-            }
+            // if (axios.isAxiosError(error) && error.response?.status === 401) {
+            //     console.error("Unauthorized error. Token có thể đã hết hạn hoặc không hợp lệ");
+            //     return "Lỗi xác thực: Vui lòng đăng nhập lại";
+            // }
 
             return "Error adding to cart";
         }
@@ -90,17 +65,16 @@ class CartService {
     async countProductByCustomerId(customerId: number): Promise<number> {
         try {
             const response = await axios.get<number>(
-                `${API_URL}/count/${customerId}`,
-                this.getAuthConfig()
+                `/cart/count/${customerId}`
             );
             return response.data;
         } catch (error) {
             console.error("Error counting products:", error);
 
             // Xử lý lỗi 401 cụ thể
-            if (axios.isAxiosError(error) && error.response?.status === 401) {
-                console.error("Unauthorized error. Token có thể đã hết hạn hoặc không hợp lệ");
-            }
+            // if (axios.isAxiosError(error) && error.response?.status === 401) {
+            //     console.error("Unauthorized error. Token có thể đã hết hạn hoặc không hợp lệ");
+            // }
 
             return 0;
         }
