@@ -29,7 +29,7 @@ const ProductDetailPage: React.FC = () => {
     const tabsRef = useRef<HTMLDivElement>(null);
     const [activeTab, setActiveTab] = useState<string>("description");
 
-    const { customer } = useContext(AuthContext)
+    const { customer, setCartCount } = useContext(AuthContext)
     const [api, contextHolder] = notification.useNotification();
 
     const location = useLocation();
@@ -84,8 +84,18 @@ const ProductDetailPage: React.FC = () => {
         try {
             const cartService = new CartService();
             // Call the addToCart API
-            const response = await cartService.addToCart(customer.id, product.id, quantity, Object.entries(selectedVariant).map(([key, val]) => `${key}: ${val}`).join(", "));
+            const productDetail = Object.entries(selectedVariant).map(([key, val]) => `${key}: ${val}`).join(", ")
+            const response = await cartService.addToCart(customer.id, product.id, quantity, productDetail);
 
+            if (response === 'Lỗi xác thực: Vui lòng đăng nhập lại') {
+                api.error({
+                    message: "Thêm vào giỏ hàng thất bại",
+                    description: response,
+                    placement: "topRight",
+                    duration: 2,
+                });
+                return;
+            }
             // Show success notification if the API call succeeds
             api.success({
                 message: "Thêm vào giỏ hàng thành công",
@@ -93,6 +103,10 @@ const ProductDetailPage: React.FC = () => {
                 placement: "topRight",
                 duration: 2,
             });
+            // Update the cart count in the context
+            const cartCount = await cartService.countProductByCustomerId(customer.id);
+            setCartCount(cartCount);
+
         } catch (error) {
             console.error("Failed to add to cart:", error);
 

@@ -180,11 +180,11 @@ const ProfilePage: React.FC = () => {
     };
 
     const handleAddNew = () => {
-        navigate(`/add_address`);
+        navigate(`/add-address`);
     };
 
     const handleManageAddresses = () => {
-        navigate(`/edit_address`);
+        navigate(`/edit-address`);
     };
 
     const formatJoinDate = (dateStr: string | null): string => {

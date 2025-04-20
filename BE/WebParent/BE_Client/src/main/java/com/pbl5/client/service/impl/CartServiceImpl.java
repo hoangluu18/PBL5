@@ -63,6 +63,7 @@ public class CartServiceImpl implements CartService {
                             item.getProduct().getId().longValue(),
                             item.getProduct().getId(),
                             item.getProduct().getName(),
+                            item.getProduct().getAlias(),
                             item.getQuantity(),
                             originalPrice,
                             discountPercent,
@@ -70,7 +71,8 @@ public class CartServiceImpl implements CartService {
                             item.getProduct().getMainImage(),
                             item.getProduct().getShop().getName(),
                             item.getProduct().getShop().getId(),
-                            item.getProductDetail()
+                            item.getProductDetail(),
+                            true
                     );
                     dto.setId(Long.valueOf(item.getId()));
                     return dto;

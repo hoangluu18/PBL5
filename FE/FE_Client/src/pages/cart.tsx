@@ -10,7 +10,7 @@ import ICartItem from '../models/CartItem';
 import { useNavigate } from 'react-router-dom';
 
 const CartPage: React.FC = () => {
-  const { customer } = useContext(AuthContext);
+  const { customer, setCartCount } = useContext(AuthContext);
   const customerId = customer?.id;
   const [cartItems, setCartItems] = useState<ICartItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -40,7 +40,7 @@ const CartPage: React.FC = () => {
       }
     };
 
-    fetchCart(); 
+    fetchCart();
   }, [customerId]);
 
   const updateQuantity = (productId: number, change: number) => {
@@ -56,14 +56,17 @@ const CartPage: React.FC = () => {
   const handleDeleteItem = async (cartItemId: number) => {
     const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?");
     if (confirmDelete) {
-        try {
-            await cartService.deleteCartItem(cartItemId);
-            setCartItems(cartItems.filter(item => item.id !== cartItemId));
-        } catch (error) {
-            console.error("Lỗi khi xóa cart item:", error);
-        }
+      try {
+        await cartService.deleteCartItem(cartItemId);
+        setCartItems(cartItems.filter(item => item.id !== cartItemId));
+        const cartCount = await cartService.countProductByCustomerId(customer.id);
+        setCartCount(cartCount);
+
+      } catch (error) {
+        console.error("Lỗi khi xóa cart item:", error);
+      }
     }
-};
+  };
 
   const handleSelectItem = (item: ICartItem) => {
     const key = getItemKey(item);
@@ -112,22 +115,20 @@ const CartPage: React.FC = () => {
       alert("Vui lòng đăng nhập để tiến hành thanh toán");
       return;
     }
-    
+
     if (selectedItems.length === 0) {
       alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán");
       return;
     }
-    
+
     // Lấy ra ID của các cart items đã chọn
     const selectedCartIds = cartItems
       .filter(item => selectedItems.includes(getItemKey(item)))
       .map(item => item.id);
-    
-    console.log("Các sản phẩm đã chọn để thanh toán:", selectedCartIds);
-    
+
     // Lưu vào localStorage
     localStorage.setItem('selectedCartIds', JSON.stringify(selectedCartIds));
-    
+
     // Chuyển hướng đến trang checkout
     navigate('/checkout');
   };

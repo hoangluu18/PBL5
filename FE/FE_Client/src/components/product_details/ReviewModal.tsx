@@ -26,7 +26,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
 
     useEffect(() => {
         if (visible) {
-            console.log("Modal opened, checking review status..."); // Debug log
             checkReviewStatus();
         }
     }, [visible]);

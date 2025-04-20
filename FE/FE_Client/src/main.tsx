@@ -22,11 +22,9 @@ import ProfilePage from './pages/profile.tsx';
 import { Button, Result } from 'antd';
 import { AuthWrapper } from './components/context/auth.context.tsx';
 
-
 import 'antd/dist/reset.css';
 import OAuth2RedirectHandler from './pages/oauth2-redirect.tsx';
 import ChangePasswordPage from './pages/change_password_page.tsx';
-import ProductDetailPageV2 from './pages/product_detail.tsx';
 
 const router = createBrowserRouter([
   {
@@ -56,14 +54,14 @@ const router = createBrowserRouter([
         element: <Checkout />
       },
       {
-        path: "/add_address",
+        path: "/add-address",
         element: <AddAddress />
       }, {
-        path: "/edit_address",
+        path: "/edit-address",
         element: <EditAddress />
       },
       {
-        path: "update_address",
+        path: "update-address",
         element: <UpdateAddress />
       },
       {
@@ -71,7 +69,7 @@ const router = createBrowserRouter([
         element: <ShopDetail />
       },
       {
-        path: "/followed_shops",
+        path: "/followed-shops",
         element: <FollowedShops />
       },
       {
@@ -87,7 +85,7 @@ const router = createBrowserRouter([
         element: <CartPage />
       },
       {
-        path: '/order_detail/:id',
+        path: '/order-detail/:id',
         element: <OrderDetail />
       },
       {
@@ -106,7 +104,7 @@ const router = createBrowserRouter([
     element: <RegisterPage />
   },
   {
-    path: "/forgot_password",
+    path: "/forgot-password",
     element: <ForgotPasswordPage />
   },
   {
@@ -114,7 +112,7 @@ const router = createBrowserRouter([
     element: <OAuth2RedirectHandler />
   },
   {
-    path: "/reset_password",
+    path: "/reset-password",
     element: <ChangePasswordPage />
   }
 ]);

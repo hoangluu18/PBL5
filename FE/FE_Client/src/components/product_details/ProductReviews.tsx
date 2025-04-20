@@ -38,7 +38,6 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
     };
 
     const handleOpenReviewModal = () => {
-        console.log("Open review modal");
         setIsModalVisible(true);
     };
 
@@ -230,7 +229,7 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
                                                     allowHalf
                                                     style={{ fontSize: "14px", color: "#f8c51c" }}
                                                 />
-                                                <span className="ms-2 text-muted">{review.rating}</span>
+                                                {/* <span className="ms-2 text-muted">{review.rating}</span> */}
                                             </div>
                                         </div>
                                     </div>
@@ -277,7 +276,7 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
                                             </Button>
                                         </Tooltip>
 
-                                        <Tooltip title="Bình luận">
+                                        {/* <Tooltip title="Bình luận">
                                             <Button
                                                 type="text"
                                                 className="d-flex align-items-center text-muted p-1"
@@ -285,7 +284,7 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
                                             >
                                                 <span>Bình luận</span>
                                             </Button>
-                                        </Tooltip>
+                                        </Tooltip> */}
                                     </div>
                                 </div>
                             </div>

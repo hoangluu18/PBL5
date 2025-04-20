@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -54,6 +55,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderInfoDto> getOrdersByCustomerId(Integer customerId) throws OrderNotFoundException {
         List<Order> orders = repository.findByCustomerId(customerId);
+        orders.sort(Comparator.comparing(Order::getOrderTime).reversed());
         if(orders == null) {
             throw new OrderNotFoundException("Không tìm thấy đơn hàng cho khách hàng: " + customerId);
         }
