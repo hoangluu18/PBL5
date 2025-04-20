@@ -1,18 +1,12 @@
-import axios from "axios";
+import axios from "../axios.customize";
 import { OrderInfoDto } from "../models/dto/OrderInfoDto";
-
-const API_URL = "http://localhost:8081/api/orders";
 
 class OrderService {
 
     async getOrders(customerId: number): Promise<OrderInfoDto[]> {
         try {
 
-            const response = await axios.get(`${API_URL}?customerId=${customerId}`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                },
-            });
+            const response = await axios.get(`/orders?customerId=${customerId}`);
             return response.data;
         } catch (error) {
             console.error("Error adding to cart:", error);

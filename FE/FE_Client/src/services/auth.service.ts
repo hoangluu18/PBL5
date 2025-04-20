@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:8081/api/auth";
+import axios from "../axios.customize";
 
 interface RegisterPayload {
     firstName?: string;
@@ -14,7 +12,7 @@ interface RegisterPayload {
 class AuthService {
     async login(email: string, password: string, rememberMe: boolean = false): Promise<any> {
         try {
-            const response = await axios.post(`${API_URL}/login`, { email, password, rememberMe });
+            const response = await axios.post(`/auth/login`, { email, password, rememberMe });
             if (response.data.accessToken) {
                 localStorage.setItem("access_token", (response.data.accessToken));
             }
@@ -27,7 +25,7 @@ class AuthService {
 
     async register(payload: RegisterPayload): Promise<any> {
         try {
-            const response = await axios.post(`${API_URL}/register`, payload);
+            const response = await axios.post(`/auth/register`, payload);
             return response.data;
         } catch (error) {
             console.error("Error during registration:", error);
@@ -37,7 +35,7 @@ class AuthService {
 
     async forgotPassword(email: string): Promise<any> {
         try {
-            const response = await axios.post(`${API_URL}/forgot-password?email=${email}`);
+            const response = await axios.post(`/auth/forgot-password?email=${email}`);
             return response.data;
         } catch (error) {
             console.error("Error during forgot password:", error);
@@ -47,7 +45,7 @@ class AuthService {
 
     async checkToken(token: string): Promise<any> {
         try {
-            const response = await axios.get(`${API_URL}/reset-password?token=${token}`);
+            const response = await axios.get(`/auth/reset-password?token=${token}`);
             return response.data;
         }
         catch (error) {
@@ -58,7 +56,7 @@ class AuthService {
 
     async resetPassword(token: string, newPassword: string): Promise<any> {
         try {
-            const response = await axios.post(`${API_URL}/reset-password?token=${token}&newPassword=${newPassword}`);
+            const response = await axios.post(`/auth/reset-password?token=${token}&newPassword=${newPassword}`);
             return response.data;
         } catch (error) {
             console.error("Error during password reset:", error);

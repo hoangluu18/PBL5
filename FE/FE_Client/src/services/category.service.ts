@@ -1,10 +1,7 @@
 import SearchResponse from '../models/bean/SearchResponse';
 import Category from '../models/dto/Category';
-import axios from "axios";
+import axios from "../axios.customize";
 import { ICategoryDto } from '../models/dto/CategoryDto';
-
-
-const API_URL = 'http://localhost:8081/api/c';
 
 class CategoryService {
     async getRootCategories(): Promise<Category[]> {
@@ -12,7 +9,7 @@ class CategoryService {
         let categories: Category[] | PromiseLike<Category[]> = [];
 
         try {
-            const response = await axios.get<Category[]>(`${API_URL}`);
+            const response = await axios.get<Category[]>(`/c`);
             categories = response.data;
         } catch (error) {
             console.error(error);
@@ -43,7 +40,7 @@ class CategoryService {
             if (sortOption) params.sortOption = sortOption;
             if (keyword) params.keyword = keyword;
             if (page) params.page = page;
-            const response = await axios.get<SearchResponse>(`${API_URL}/${alias}`, { params });
+            const response = await axios.get<SearchResponse>(`/c/${alias}`, { params });
             resResponse = response.data;
         } catch (error) {
             console.error(error);
@@ -56,7 +53,7 @@ class CategoryService {
         let breadcrumbs: ICategoryDto[] | PromiseLike<ICategoryDto[]> = [];
 
         try {
-            const response = await axios.get<ICategoryDto[]>(`${API_URL}/${alias}/breadcrumbs`);
+            const response = await axios.get<ICategoryDto[]>(`/c/${alias}/breadcrumbs`);
             breadcrumbs = response.data;
         } catch (error) {
             console.error(error);
