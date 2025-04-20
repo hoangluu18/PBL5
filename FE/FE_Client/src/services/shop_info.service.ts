@@ -9,6 +9,7 @@ class ShopInfoService {
     async getShopInfo(shopId: number): Promise<ShopInfoDto>{
         try {
             const response = await axios.get(`${API_URL}/shop/${shopId}/shopInfo`);
+            
             console.log('Shop info:', response.data);
             return response.data as ShopInfoDto;
         } catch (error) {
@@ -27,6 +28,67 @@ class ShopInfoService {
             throw error;
         }
     }
+
+    async checkIsFollowed(shopId: number, customerId: number): Promise<boolean> {
+        try {
+            const response = await axios.get(`${API_URL}/shop/${shopId}/checkIsFollowed`, {
+                params: {
+                    customerId: customerId
+                },
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log('Follow status:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error('Error checking follow status:', error);
+            return false; // Default to false on error
+        }
+    }
+
+    async followShop(shopId: number, customerId: number): Promise<boolean> {
+        try {
+            const response = await axios.post(`${API_URL}/shop/${shopId}/follow`, null, {
+                params: {
+                    customerId: customerId
+                },
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            return true;
+        } catch (error) {
+            console.error('Error following shop:', error);
+            return false;
+        }
+    }
+
+
+    async unfollowShop(shopId: number, customerId: number): Promise<boolean> {
+        try {
+            const response = await axios.delete(`${API_URL}/shop/${shopId}/unfollow`, {
+                params: {
+                    customerId: customerId
+                },
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            return true;
+        } catch (error) {
+            console.error('Error unfollowing shop:', error);
+            return false;
+        }
+    }
+
+
+
+
+
 }
 
 

@@ -62,7 +62,9 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     @Override
     public List<CartProductDto> getOrderDetailByOrderId(Integer orderId) {
         List<OrderDetail> orderDetailList = orderDetailRepository.findAllByOrderId(orderId);
-
+        if(orderDetailList == null || orderDetailList.isEmpty()) {
+            return Collections.emptyList();
+        }
         return orderDetailList.stream().map(item -> {
             double originalPrice = item.getProduct().getPrice();
             double discountPercent = item.getProduct().getDiscountPercent();
@@ -101,7 +103,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                 boolean isReviewed = reviewService.getReviewByProductIdAndCustomerId(item.getProduct().getId(), customerId);
 
                 return new CartProductDto(
-                        item.getProduct().getId() != null ? item.getProduct().getId().longValue() : null, // Convert Integer to Long
+                        null,
                         item.getProduct().getId(),
                         item.getProduct().getName(),
                         item.getProduct().getAlias(),

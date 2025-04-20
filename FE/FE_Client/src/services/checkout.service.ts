@@ -12,34 +12,57 @@ const getAuthConfig = () => {
     };
 };
 
-export const getCheckoutInfo = async (customerId: number): Promise<CheckoutInfoDto> => {
+
+export const getCheckoutInfoForSelectedCartItems = async (customerId: number, cartIds: number[]): Promise<CheckoutInfoDto> => {
     try {
-        const response = await axios.get<CheckoutInfoDto>(
+        if (!cartIds || cartIds.length === 0) {
+            throw new Error('Danh sách sản phẩm trong giỏ hàng không được để trống');
+        }
+        
+        const response = await axios.post<CheckoutInfoDto>(
             `${API_BASE_URL}/${customerId}`,
+            cartIds,  // Gửi mảng cartIds trực tiếp như request body
             getAuthConfig()
         );
-        console.log('id', customerId);
+
+        console.log('Selected cart items checkout info for customer:', customerId);
+        console.log('Cart IDs:', cartIds);
+
         return response.data;
     } catch (error) {
-        console.error('Error fetching checkout info:', error);
-        // Log more detailed error information
+        console.error('Error fetching checkout info for selected cart items:', error);
+
         if (axios.isAxiosError(error)) {
             console.error('Status:', error.response?.status);
             console.error('Response data:', error.response?.data);
         }
+
         throw error;
     }
 };
 
-export const saveCheckout = async (customerId: number): Promise<void> => {
+export const saveCheckout = async (customerId: number, cartIds: number[]): Promise<void> => {
     try {
+        if (!cartIds || cartIds.length === 0) {
+            throw new Error('Danh sách sản phẩm không được để trống');
+        }
+        
         await axios.post(
-            `${API_BASE_URL}/save?customerId=${customerId}`,
-            null,
+            `${API_BASE_URL}/save/${customerId}`,
+            cartIds,  // Gửi mảng cartIds làm request body
             getAuthConfig()
         );
+        
+        console.log('Order saved for customer:', customerId);
+        console.log('With cart IDs:', cartIds);
     } catch (error) {
         console.error('Error saving checkout:', error);
+        
+        if (axios.isAxiosError(error)) {
+            console.error('Status:', error.response?.status);
+            console.error('Response data:', error.response?.data);
+        }
+        
         throw error;
     }
 };

@@ -2,7 +2,9 @@ package com.pbl5.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
@@ -11,6 +13,8 @@ import java.util.Date;
 @Table(name = "shops")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Shop extends IdBaseEntity{
 
     @Column(nullable = false, unique = true, length = 256)
@@ -40,4 +44,7 @@ public class Shop extends IdBaseEntity{
     @JoinColumn(name = "user_id")
     private User user;
 
+    public Shop(int shopId) {
+        this.id = shopId;
+    }
 }

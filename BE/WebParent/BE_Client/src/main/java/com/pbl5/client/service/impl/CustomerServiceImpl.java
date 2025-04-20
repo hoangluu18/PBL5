@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -76,6 +77,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Optional<Customer> getCustomerById(Integer customerId) {
+        if(customerId == null) {
+            return Optional.empty();
+        }
+        try {
+            return customerRepository.findById(customerId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
     public Customer findByResetPasswordToken(String token) throws CustomerNotFoundException {
         Customer customer = customerRepository.findByResetPasswordToken(token);
         if (customer == null) {
@@ -97,6 +109,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public void saveCustomer(Customer customer) {
+        if(customer == null) {
+            throw new IllegalArgumentException("Khách hàng không được null");
+        }
+        try {
+            customerRepository.save(customer);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Lỗi khi lưu khách hàng: " + e.getMessage());
+        }
+    }
     public void updatePassword(String token, String newPassword) throws CustomerNotFoundException {
         Customer customer = customerRepository.findByResetPasswordToken(token);
         if(customer == null) {
