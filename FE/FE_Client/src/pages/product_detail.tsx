@@ -6,11 +6,12 @@ import ProductDescriptionTab from "../components/product_details/ProductDescript
 import ProductDetailTab from "../components/product_details/ProductDetailTab";
 import ReviewList from "../components/product_details/ProductReviews";
 import ShopInfo from "../components/product_details/ShopInfo";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import ProductService from "../services/product.service";
 import { IProductFullInfoDto } from "../models/dto/ProductFullInfoDto";
 import { Link } from "react-router-dom";
 import "../css/style.css";
+import "../css/product.css"
 import { AuthContext } from "../components/context/auth.context";
 import CartService from "../services/cart.service";
 const { Text, Title } = Typography;
@@ -18,13 +19,11 @@ const { Text, Title } = Typography;
 const ProductDetailPage: React.FC = () => {
     const [product, setProduct] = useState<IProductFullInfoDto>({} as IProductFullInfoDto);
     const [quantity, setQuantity] = useState<number>(1);
-    const [selectedImage, setSelectedImage] = useState<string>("");
-    const [amountAvailable, setAmountAvailable] = useState<number>(0);
-    const [selectedExtraImage, setSelectedExtraImage] = useState<string>("");
-    const [selectedVariantImg, setSelectedVariantImg] = useState<string>("");
-    const [selectedVariant, setSelectedVariant] = useState<string>("");
-    const [size, setSize] = useState<string>("");
+    const [selectedMainImage, setSelectedMainImage] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
+    const [selectedVariant, setSelectedVariant] = useState<Record<string, string>>({});
+    const [selectedExtraImage, setSelectedExtraImage] = useState<string>("");
+    const [selectedVariantImage, setSelectedVariantImage] = useState<string>("");
 
     const { alias } = useParams();
     const tabsRef = useRef<HTMLDivElement>(null);
@@ -33,9 +32,23 @@ const ProductDetailPage: React.FC = () => {
     const { customer } = useContext(AuthContext)
     const [api, contextHolder] = notification.useNotification();
 
+    const location = useLocation();
+    const reviewRef = useRef<HTMLDivElement>(null);
+
     useEffect(() => {
         fetchProduct();
+        if (location.hash === "#ratingAndReview") {
+            setActiveTab("ratingAndReview");
+            setTimeout(() => {
+                reviewRef.current?.scrollIntoView({ behavior: "smooth" });
+            }, 300); // hoặc thử 500 nếu component load chậm
+        }
     }, []);
+
+    useEffect(() => {
+        //console.log("Selected variant updated:", selectedVariant);
+    }, [selectedVariant]);
+
     document.title = product.name || "Chi tiết sản phẩm";
 
     const fetchProduct = async () => {
@@ -46,7 +59,7 @@ const ProductDetailPage: React.FC = () => {
             if (alias) {
                 const data = await productService.getProductByAlias(alias);
                 setProduct(data);
-                setSelectedImage(`http://localhost:5173/src/assets/product-images/${data.mainImage}`);
+                setSelectedMainImage(`http://localhost:5173/src/assets/product-images/${data.mainImage}`);
             } else {
                 console.error("Alias is undefined");
             }
@@ -69,11 +82,9 @@ const ProductDetailPage: React.FC = () => {
         }
 
         try {
-            const productDetail = `${selectedVariant ? `Màu sắc: ${selectedVariant},` : ""}${size ? ` Kích thước: ${size}` : ""}`.trim();
             const cartService = new CartService();
-
             // Call the addToCart API
-            const response = await cartService.addToCart(customer.id, product.id, quantity, productDetail);
+            const response = await cartService.addToCart(customer.id, product.id, quantity, Object.entries(selectedVariant).map(([key, val]) => `${key}: ${val}`).join(", "));
 
             // Show success notification if the API call succeeds
             api.success({
@@ -110,11 +121,6 @@ const ProductDetailPage: React.FC = () => {
         setActiveTab("ratingAndReview");
     };
 
-    const isAddToCartDisabled = product.variantMap && Object.keys(product.variantMap).length > 0
-        ? Object.keys(product.variantMap).includes("Size") && Object.keys(product.variantMap).length === 1
-            ? !size // Only size is required
-            : !selectedVariant || !size // Both variant and size are required
-        : !size; // No variants, only size is required
 
     const items: TabsProps["items"] = [
         {
@@ -139,12 +145,50 @@ const ProductDetailPage: React.FC = () => {
             key: "ratingAndReview",
             label: "Đánh giá & Nhận xét",
             children: product.id ? (
-                <ReviewList id={product.id} />
+                <div ref={reviewRef} >
+                    <ReviewList id={product.id} />
+                </div>
             ) : (
                 <Text type="secondary">Chưa có đánh giá</Text>
             ),
         },
     ];
+
+    const handleHoverAndClickImage = (e: any) => {
+        const image = e.target.currentSrc;
+        setSelectedMainImage(image);
+        setSelectedExtraImage(image);
+    };
+
+    const handleVariantHover = (img: string) => {
+        if (img) {
+            setSelectedMainImage(`http://localhost:5173/src/assets/product-variants-images/${img}`);
+        }
+    };
+
+    const handleVariantLeave = (key: string, photo: string) => {
+        if (photo && selectedVariant[key]) {
+            setSelectedMainImage(selectedVariantImage);
+        } else if (photo && !selectedVariant[key]) {
+            setSelectedMainImage(`http://localhost:5173/src/assets/product-images/${product.mainImage}`);
+        }
+    }
+
+
+    const handleSelectVariant = (key: string, val: string, photo: string) => {
+        if (photo) {
+            setSelectedVariantImage(`http://localhost:5173/src/assets/product-variants-images/${photo}`);
+        }
+        setSelectedVariant((prev) => {
+            const updatedVariant = {
+                ...prev,
+                [key]: val,
+            };
+            return updatedVariant;
+        });
+
+    }
+
 
     return (
         <div className="container my-4">
@@ -166,7 +210,7 @@ const ProductDetailPage: React.FC = () => {
                         {/* Ảnh chính */}
                         <div className="mb-3">
                             <Image
-                                src={selectedImage}
+                                src={selectedMainImage}
                                 alt={product.name}
                                 className="rounded"
                                 width={'100%'}
@@ -179,15 +223,12 @@ const ProductDetailPage: React.FC = () => {
                             {product.images && product.images.map((image, index) => (
                                 <div
                                     key={index}
-                                    className={`thumbnail-container ${selectedExtraImage.includes(image) ? 'border border-2 border-primary' : 'border'}`}
+                                    className={`${selectedExtraImage.includes(image) ? "border-danger" : "border-secondary"} border rounded`}
                                     style={{ width: '60px', height: '60px', cursor: 'pointer', borderRadius: '4px', overflow: 'hidden' }}
-                                    onMouseEnter={() => {
-                                        setSelectedImage(`http://localhost:5173/src/assets/product-extra-images/${image}`);
-                                        setSelectedExtraImage(`http://localhost:5173/src/assets/product-extra-images/${image}`);
-                                    }}
                                 >
                                     <img
                                         src={`http://localhost:5173/src/assets/product-extra-images/${image}`}
+                                        onMouseEnter={handleHoverAndClickImage}
                                         alt={`Product thumbnail ${index + 1}`}
                                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                     />
@@ -266,39 +307,15 @@ const ProductDetailPage: React.FC = () => {
                                 {value.map((val, index) => (
                                     <div
                                         key={index}
-                                        className={`variant-item d-flex align-items-center border-hover ${(key !== "Size" && selectedVariantImg === `http://localhost:5173/src/assets/product-variants-images/${val.photo}`) ||
-                                            (key === "Size" && size === val.value)
-                                            ? 'border-primary selected-variant'
-                                            : 'border-secondary'
-                                            }`}
                                         style={{
                                             cursor: 'pointer',
                                             padding: '8px 12px',
-                                            borderRadius: '4px',
-                                            border: '1px solid',
                                             transition: 'all 0.2s'
                                         }}
-                                        onMouseEnter={() => {
-                                            if (key !== "Size")
-                                                setSelectedImage(`http://localhost:5173/src/assets/product-variants-images/${val.photo}`);
-                                        }}
-                                        onMouseLeave={() => {
-                                            if (key !== "Size")
-                                                setSelectedImage(
-                                                    selectedVariantImg || selectedExtraImage || `http://localhost:5173/src/assets/product-images/${product.mainImage}`
-                                                );
-                                        }}
-                                        onClick={() => {
-                                            if (key !== "Size") {
-                                                const variantImage = `http://localhost:5173/src/assets/product-variants-images/${val.photo}`;
-                                                setSelectedVariantImg(variantImage);
-                                                setSelectedImage(variantImage);
-                                                setAmountAvailable(val.quantity);
-                                                setSelectedVariant(val.value);
-                                            } else if (key === "Size") {
-                                                setSize(val.value);
-                                            }
-                                        }}
+                                        className={`${selectedVariant[key]?.includes(val.value) ? 'border-danger' : 'border-secondary'}  img-hover border`}
+                                        onMouseEnter={() => handleVariantHover(val.photo)}
+                                        onMouseLeave={() => handleVariantLeave(key, val.photo)}
+                                        onClick={() => handleSelectVariant(key, val.value, val.photo)}
                                     >
                                         {val.photo && (
                                             <img
@@ -323,29 +340,21 @@ const ProductDetailPage: React.FC = () => {
                             <div className="d-flex align-items-center mt-1">
                                 <Button
                                     icon={<MinusOutlined />}
-                                    disabled={isAddToCartDisabled || quantity <= 1}
                                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                                     className="rounded"
+                                    disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length || quantity <= 1}
                                 />
                                 <div className="mx-2 px-3 py-1 border text-center" style={{ minWidth: '50px' }}>
-                                    {quantity}
+                                    <Text disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length}>{quantity}</Text>
                                 </div>
                                 <Button
                                     icon={<PlusOutlined />}
-                                    disabled={isAddToCartDisabled || (amountAvailable > 0 && quantity >= amountAvailable)}
                                     onClick={() => setQuantity((q) => q + 1)}
                                     className="rounded"
+                                    disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length}
                                 />
-                                &nbsp;&nbsp;&nbsp;
-                                {amountAvailable > 0 && (
-                                    <div>
-                                        <Text type="secondary">Còn {amountAvailable} sản phẩm</Text>
-                                    </div>
-                                )}
                             </div>
                         </div>
-
-
                     </div>
 
                     {/* Nút mua hàng */}
@@ -355,8 +364,8 @@ const ProductDetailPage: React.FC = () => {
                             size="large"
                             icon={<ShoppingCartOutlined />}
                             className="px-4 d-flex align-items-center"
-                            disabled={isAddToCartDisabled}
                             onClick={() => handleAddToCart()}
+                            disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length}
                         >
                             Thêm vào giỏ hàng
                         </Button>
@@ -367,7 +376,7 @@ const ProductDetailPage: React.FC = () => {
                             size="large"
                             icon={<ThunderboltOutlined />}
                             className="px-4 d-flex align-items-center"
-                            disabled={isAddToCartDisabled}
+                            disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length}
                         >
                             Mua ngay
                         </Button>

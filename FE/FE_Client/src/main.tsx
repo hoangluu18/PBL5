@@ -23,6 +23,7 @@ import { AuthWrapper } from './components/context/auth.context.tsx';
 
 import 'antd/dist/reset.css';
 import ChangePasswordPage from './pages/change_password_page.tsx';
+import ProductDetailPageV2 from './pages/product_detail.tsx';
 
 const router = createBrowserRouter([
   {

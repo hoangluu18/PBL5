@@ -4,9 +4,11 @@ import com.pbl5.client.dto.CartProductDto;
 import com.pbl5.client.dto.OrderDto;
 import com.pbl5.client.dto.checkout.AddressInfoDto;
 import com.pbl5.client.dto.order_detail.OrderDetailDto;
+import com.pbl5.client.exception.ReviewNotFoundException;
 import com.pbl5.client.repository.OrderDetailRepository;
 import com.pbl5.client.service.OrderDetailService;
 import com.pbl5.client.service.OrderService;
+import com.pbl5.client.service.ReviewService;
 import com.pbl5.common.entity.Order;
 import com.pbl5.common.entity.OrderDetail;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private ReviewService reviewService;
 
     @Override
     public List<OrderDetail> findAll() {
@@ -67,6 +72,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                     null,
                     item.getProduct().getId(),
                     item.getProduct().getName(),
+                    item.getProduct().getAlias(),
                     item.getQuantity(),
                     originalPrice,  // Thêm giá gốc
                     discountPercent,  // Thêm phần trăm giảm giá
@@ -74,7 +80,8 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                     item.getProduct().getMainImage(),
                     item.getProduct().getShop().getName(),
                     item.getProduct().getShop().getId(),
-                    item.getProductVariantDetail()  // Dữ liệu biến thể đã lưu trực tiếp
+                    item.getProductVariantDetail(), // Dữ liệu biến thể đã lưu trực tiếp,
+                    true // Thêm thuộc tính isReviewed
             );
         }).collect(Collectors.toList());
     }
@@ -91,10 +98,13 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                 double discountPercent = item.getProduct().getDiscountPercent();
                 double lastPrice = originalPrice * (1 - discountPercent / 100);
 
+                boolean isReviewed = reviewService.getReviewByProductIdAndCustomerId(item.getProduct().getId(), customerId);
+
                 return new CartProductDto(
                         item.getProduct().getId() != null ? item.getProduct().getId().longValue() : null, // Convert Integer to Long
                         item.getProduct().getId(),
                         item.getProduct().getName(),
+                        item.getProduct().getAlias(),
                         item.getQuantity(),
                         originalPrice,
                         discountPercent,
@@ -102,7 +112,8 @@ public class OrderDetailServiceImpl implements OrderDetailService {
                         item.getProduct().getMainImage(),
                         item.getProduct().getShop().getName(),
                         item.getProduct().getShop().getId(),
-                        item.getProductVariantDetail()
+                        item.getProductVariantDetail(),
+                        isReviewed
                 );
             }).collect(Collectors.toList());
         }
@@ -146,6 +157,11 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         else{
             return null;
         }
+    }
+
+    @Override
+    public OrderDetail checkByProductIdAndCustomerIdWithStatusDelivered(Integer productId, Integer customerId) {
+        return orderDetailRepository.findByProductIdAndCustomerIdWithStatusDelivered(productId, customerId);
     }
 }
 

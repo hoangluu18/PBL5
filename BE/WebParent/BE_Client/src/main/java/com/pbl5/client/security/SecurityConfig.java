@@ -38,9 +38,9 @@ public class SecurityConfig {
                     .requestMatchers("/api/shop/*/product").permitAll()
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()  // Allow Swagger UI
                 .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/r/vote-review").authenticated()
                     .requestMatchers("/api/p/**", "/api/r/**", "/api/c/**").permitAll()
-                .requestMatchers("/api/customers/checkUniqueEmail").permitAll()
-
+                    .requestMatchers("/api/customers/checkUniqueEmail").permitAll()
                 .anyRequest().authenticated()
             )
             .exceptionHandling(exh -> exh.authenticationEntryPoint((request, response, authException) -> {
