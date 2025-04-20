@@ -162,7 +162,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
-    public OrderDetail checkByProductIdAndCustomerIdWithStatusDelivered(Integer productId, Integer customerId) {
+    public List<OrderDetail> checkByProductIdAndCustomerIdWithStatusDelivered(Integer productId, Integer customerId) {
         return orderDetailRepository.findByProductIdAndCustomerIdWithStatusDelivered(productId, customerId);
     }
 }

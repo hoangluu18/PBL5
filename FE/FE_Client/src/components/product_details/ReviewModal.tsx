@@ -11,6 +11,7 @@ interface ReviewModalProps {
     productId: number;
     customerId: number;
     onReviewSubmitted: () => void;
+    fetchProducts: () => void;
 }
 
 const ReviewModal: React.FC<ReviewModalProps> = ({
@@ -18,7 +19,8 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
     onClose,
     productId,
     customerId,
-    onReviewSubmitted
+    onReviewSubmitted,
+    fetchProducts
 }) => {
     const [status, setStatus] = useState<"checking" | "canReview" | "alreadyReviewed" | "notPurchased" | "submitted">("checking");
     const [loading, setLoading] = useState(false);
@@ -57,6 +59,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
             await reviewService.submitReview(productId, customerId, values.rating, values.content);
             setStatus("submitted");
             onReviewSubmitted(); // Thông báo để component cha cập nhật danh sách đánh giá
+            fetchProducts(); // Cập nhật lại danh sách sản phẩm
         } catch (error) {
             console.error("Không thể gửi đánh giá:", error);
         } finally {

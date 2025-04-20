@@ -80,8 +80,8 @@ const EditAddress: React.FC = () => {
     };
 
     const handleEdit = (addressId: number) => {
-        console.log("Navigating to /update_address with:", { customerId, addressId });
-        navigate("/update_address", {
+        console.log("Navigating to /update-address with:", { customerId, addressId });
+        navigate("/update-address", {
             state: { customerId, addressId },
         });
     };

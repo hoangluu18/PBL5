@@ -38,19 +38,19 @@ class ReviewService {
     }
 
     async voteReview(reviewId: number, customerId: number): Promise<void> {
-
         try {
-            await axios.post(`${API_URL}/vote-review?reviewId=${reviewId}&customerId=${customerId}`,
+            await axios.post(
+                `${API_URL}/vote-review?reviewId=${reviewId}&customerId=${customerId}`,
+                {}, // Empty body
                 {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                    }
+                    },
                 }
             );
         } catch (error) {
-            console.error(error);
+            console.error("Error voting for review:", error);
         }
-
     }
 
     async checkReview(productId: number, customerId: number): Promise<string> {
@@ -59,7 +59,14 @@ class ReviewService {
 
         try {
             console.log("Checking review status..."); // Debug log
-            const response = await axios.post<string>(`${API_URL}/check-review?productId=${productId}&customerId=${customerId}`);
+            const response = await axios.post<string>(`${API_URL}/check-review?productId=${productId}&customerId=${customerId}`,
+                {},
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    },
+                }
+            );
             reviewRes = response.data;
             console.log("Response from checkReview:", reviewRes); // Debug log
         } catch (error) {

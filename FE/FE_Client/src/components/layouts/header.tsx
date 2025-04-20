@@ -52,13 +52,13 @@ const App = () => {
             items={[
                 {
                     key: '1',
-                    label: 'My Profile',
+                    label: 'Hồ sơ cá nhân',
                     icon: <UserOutlined />,
                     onClick: () => navigate('/profile')
                 },
                 {
                     key: '2',
-                    label: 'Favorites',
+                    label: 'Cửa hàng yêu thích',
                     icon: <HeartOutlined />,
                     onClick: () => navigate('/followed_shops')
                 },
@@ -73,7 +73,7 @@ const App = () => {
                 },
                 {
                     key: '4',
-                    label: 'Logout',
+                    label: 'Đăng xuất',
                     icon: <LogoutOutlined />,
                     onClick: () => {
                         localStorage.removeItem("access_token");
@@ -137,7 +137,7 @@ const App = () => {
 
                     {/* Icons */}
                     <Space size="large">
-                        <Tooltip title="Shopping Cart">
+                        <Tooltip title="Giỏ hàng">
                             <Badge count={isLoggedIn ? count : ''} color="#1890ff">
                                 <ShoppingCartOutlined
                                     style={{ fontSize: "24px", cursor: "pointer", color: "#555" }}
@@ -148,7 +148,7 @@ const App = () => {
 
                         {isLoggedIn && (
                             <>
-                                <Tooltip title="Favorites">
+                                <Tooltip title="Cửa hàng yêu thích">
 
                                     <HeartOutlined
                                         style={{ fontSize: "24px", cursor: "pointer", color: "#555" }}
@@ -156,7 +156,7 @@ const App = () => {
                                     />
                                 </Tooltip>
 
-                                <Tooltip title="Notifications">
+                                <Tooltip title="Thông báo">
                                     <Badge dot color="#52c41a">
                                         <BellOutlined
                                             style={{ fontSize: "24px", cursor: "pointer", color: "#555" }}
@@ -188,7 +188,7 @@ const App = () => {
                                 onClick={() => navigate('/login')}
                                 style={{ borderRadius: "20px" }}
                             >
-                                Login
+                                Đăng nhập
                             </Button>
                         )}
                     </Space>

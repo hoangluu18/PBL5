@@ -44,7 +44,7 @@ public class OrderDto {
         this.total = order.getTotal();
         this.orderStatus = order.getOrderStatus();
         this.paymentMethod = order.getPaymentMethod();
-        this.customerId = order.getCustomerId();
+        this.customerId = order.getCustomer().getId();
         this.shopId = order.getShopId();
     }
 }
