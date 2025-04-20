@@ -5,6 +5,7 @@ import com.pbl5.client.common.Constants;
 import com.pbl5.client.dto.ReviewDto;
 import com.pbl5.client.dto.ReviewRequestDto;
 import com.pbl5.client.service.OrderDetailService;
+import com.pbl5.client.service.ProductService;
 import com.pbl5.client.service.ReviewService;
 import com.pbl5.common.entity.Customer;
 import com.pbl5.common.entity.OrderDetail;
@@ -30,6 +31,8 @@ public class ReviewController {
     @Autowired private ReviewService reviewService;
     
     @Autowired private OrderDetailService orderDetailService;
+
+    @Autowired private ProductService productService;
 
     @GetMapping("/{pid}")
     public ResponseEntity<?> getReviews(@PathVariable("pid") Integer pid,
@@ -70,7 +73,7 @@ public class ReviewController {
     public ResponseEntity<String> checkReview(@RequestParam("productId") Integer productId,
                                          @RequestParam("customerId") Integer customerId){
         boolean isReviewed = reviewService.getReviewByProductIdAndCustomerId(productId, customerId);
-        OrderDetail orderDetail = orderDetailService.checkByProductIdAndCustomerIdWithStatusDelivered(productId, customerId);
+        List<OrderDetail> orderDetail = orderDetailService.checkByProductIdAndCustomerIdWithStatusDelivered(productId, customerId);
         if (orderDetail == null) {
             return ResponseEntity.ok("Bạn chưa mua sản phẩm này hoặc đơn hàng chưa giao đến");
         } else if (isReviewed) {
@@ -93,6 +96,7 @@ public class ReviewController {
             review.setVotes(0);
 
             Review savedReview = reviewService.save(review);
+            productService.updateReviewCount(review.getProduct().getId());
             return ResponseEntity.ok().body(savedReview);
         } catch (Exception e) {
             return badRequest().body(e.getMessage());

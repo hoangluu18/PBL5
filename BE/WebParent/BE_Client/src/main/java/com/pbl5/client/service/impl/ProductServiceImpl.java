@@ -7,6 +7,7 @@ import com.pbl5.client.exception.ProductNotFoundException;
 import com.pbl5.client.repository.ProductRepository;
 import com.pbl5.client.service.ProductService;
 import com.pbl5.common.entity.product.Product;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
@@ -77,5 +79,11 @@ public class ProductServiceImpl implements ProductService {
 
             return productDto;
         });
+    }
+
+    @Override
+    public void updateReviewCount(Integer productId) {
+
+        productRepository.updateReviewCount(productId);
     }
 }

@@ -17,4 +17,6 @@ public interface ProductService {
     Product getByProductId(int productId) throws ProductNotFoundException;
 
     Page<ProductDto> searchProducts(int page, SearchParam searchParam);
+
+    void updateReviewCount(Integer productId);
 }

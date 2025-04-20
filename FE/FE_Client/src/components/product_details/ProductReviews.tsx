@@ -10,9 +10,10 @@ import { isTokenExpired } from "../../utils/tokenUtil";
 
 interface ProductReviewsTabProps {
     id: number;
+    fetchProducts: () => void;
 }
 
-const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
+const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id, fetchProducts }) => {
 
     const [activeFilter, setActiveFilter] = useState("all");
     const [reviews, setReviews] = useState<IReviewDto[]>([]);
@@ -48,6 +49,8 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
     const handleReviewSubmitted = () => {
         // Refresh danh sách đánh giá sau khi gửi thành công
         fetchReviews();
+        fetchProducts()
+        setActiveFilter("all");
     };
 
     const reviewLength = reviews.length;
@@ -131,6 +134,7 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id }) => {
                 productId={id}
                 customerId={customerId}
                 onReviewSubmitted={handleReviewSubmitted}
+                fetchProducts={fetchProducts}
             />
 
             {/* Đánh giá tổng quan */}

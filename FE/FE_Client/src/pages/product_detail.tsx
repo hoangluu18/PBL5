@@ -83,7 +83,7 @@ const ProductDetailPage: React.FC = () => {
             });
             return;
         }
-    
+
         try {
             const cartService = new CartService();
             // Call the addToCart API
@@ -132,14 +132,14 @@ const ProductDetailPage: React.FC = () => {
             });
             return;
         }
-    
+
         try {
             // Sửa lại cách tạo productDetail - không dịch thuộc tính
             const productDetail = `${selectedVariant ? `Color: ${selectedVariant},` : ""}${size ? `Size: ${size}` : ""}`.trim();
             console.log("selectedVariant:" + selectedVariant);
             // Gọi API "Mua ngay"
             await buyNow(customer.id, product.id, quantity, productDetail);
-    
+
             // Điều hướng đến trang checkout
             navigate("/checkout");
         } catch (error) {
@@ -193,7 +193,9 @@ const ProductDetailPage: React.FC = () => {
             label: "Đánh giá & Nhận xét",
             children: product.id ? (
                 <div ref={reviewRef} >
-                    <ReviewList id={product.id} />
+                    <ReviewList id={product.id}
+                        fetchProducts={fetchProduct}
+                    />
                 </div>
             ) : (
                 <Text type="secondary">Chưa có đánh giá</Text>
@@ -424,7 +426,7 @@ const ProductDetailPage: React.FC = () => {
                             icon={<ThunderboltOutlined />}
                             className="px-4 d-flex align-items-center"
 
-                    
+
                             onClick={() => handleBuyNow()}
 
                             disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length}
