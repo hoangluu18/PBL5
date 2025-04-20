@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 public class ProductVariant extends IdBaseEntity {
 
-    @Column(length = 50)
+    @Column(length = 50, name = "`key`")
     private String key;
     @Column(length = 50)
     private String value;
