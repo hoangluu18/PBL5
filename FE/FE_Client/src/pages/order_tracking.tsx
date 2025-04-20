@@ -57,7 +57,7 @@ const OrderTracking: React.FC = () => {
   };
 
   const handleViewDetails = (orderId: string) => {
-    navigate(`/order_detail/${orderId}`);
+    navigate(`/order-detail/${orderId}`);
   };
 
   const continueShopping = () => {

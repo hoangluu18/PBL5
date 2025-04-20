@@ -30,8 +30,8 @@ interface Ward {
 
 const AddAddress: React.FC = () => {
     const { addressId } = useParams<{ addressId?: string }>();
-      const { customer } = useContext(AuthContext);
-      const customerId = customer?.id;
+    const { customer } = useContext(AuthContext);
+    const customerId = customer?.id;
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
@@ -177,7 +177,7 @@ const AddAddress: React.FC = () => {
                 alert("Đã thêm địa chỉ thành công!");
             }
 
-            navigate(`/edit_address`);
+            navigate(`/edit-address`);
         } catch (error: any) {
             console.error("Lỗi trong onFinish:", error);
             const errorMessage = error.response?.data?.message || error.message || "Không thể lưu địa chỉ.";

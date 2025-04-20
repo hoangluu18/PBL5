@@ -317,6 +317,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                 null,
                 productId,
                 product.getName(),
+                product.getAlias(),
                 quantity,
                 originalPrice,
                 discountPercent,
@@ -324,7 +325,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                 product.getMainImage(),
                 product.getShop().getName(),
                 product.getShop().getId(),
-                productDetail
+                productDetail,true
         );
 
         // Tạo danh sách chỉ chứa sản phẩm này

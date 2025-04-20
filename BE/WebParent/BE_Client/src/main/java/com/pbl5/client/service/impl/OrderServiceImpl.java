@@ -66,7 +66,7 @@ public class OrderServiceImpl implements OrderService {
             dto.setOrderId(order.getId());
             dto.setOrderDate(order.getOrderTime().toString());
             dto.setTotalAmount(order.getTotal());
-            dto.setOrderStatus(order.getOrderTracks().get(0).getStatus().toString());
+            dto.setOrderStatus(order.getOrderStatus().toString());
 
             orderInfoDtos.add(dto);
         });
