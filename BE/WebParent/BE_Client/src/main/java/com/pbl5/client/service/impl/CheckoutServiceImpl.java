@@ -301,4 +301,136 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
         return checkoutInfoDto;
     }
+
+    @Override
+    public CheckoutInfoDto getCheckoutInfoForBuyNow(Integer customerId, Integer productId, Integer quantity, String productDetail) throws ProductNotFoundException {
+        AddressInfoDto addressInfoDto = addressInfoService.fineByAddressDefault(customerId);
+        Product product = productService.getByProductId(productId);
+        if(product == null){
+            throw new ProductNotFoundException("Product not found with id: " + productId);
+        }
+        double originalPrice = product.getPrice();
+        double discountPercent = product.getDiscountPercent();
+        double lastPrice = originalPrice * (1 - discountPercent / 100);
+
+        CartProductDto cartProductDto = new CartProductDto(
+                null,
+                productId,
+                product.getName(),
+                quantity,
+                originalPrice,
+                discountPercent,
+                lastPrice,
+                product.getMainImage(),
+                product.getShop().getName(),
+                product.getShop().getId(),
+                productDetail
+        );
+
+        // Tạo danh sách chỉ chứa sản phẩm này
+        List<CartProductDto> cartProductDtoList = Collections.singletonList(cartProductDto);
+
+        // Lấy thông tin vận chuyển
+        ShippingRequestDto shippingRequest = shippingRequestService.getShippingRequestForProduct(
+                customerId, product, quantity, addressInfoDto
+        );
+
+        List<ShippingRequestDto> shippingRequestList = Collections.singletonList(shippingRequest);
+        ShippingRespondDto shippingRespond = shippingRequestService.getShippingRespond(shippingRequest);
+        List<ShippingRespondDto> shippingRespondList = Collections.singletonList(shippingRespond);
+
+        CheckoutInfoDto checkoutInfoDto = new CheckoutInfoDto();
+        checkoutInfoDto.setAddressInfoDto(addressInfoDto);
+        checkoutInfoDto.setCartProductDtoList(cartProductDtoList);
+        checkoutInfoDto.setShippingRequestDtoList(shippingRequestList);
+        checkoutInfoDto.setShippingRespondDtoList(shippingRespondList);
+
+        return checkoutInfoDto;
+    }
+
+    @Override
+    public boolean saveCheckoutInfoBuyNow(int customerId, CheckoutInfoDto checkoutInfoDto) {
+        try {
+            // Get customer information
+            Customer customer = customerService.fineByCustomerId(customerId);
+            if (customer == null) {
+                return false;
+            }
+
+            CustomerDto customerDto = new CustomerDto();
+            customerDto.setId(customer.getId());
+            customerDto.setFirstName(customer.getFirstName());
+            customerDto.setLastName(customer.getLastName());
+            customerDto.setEmail(customer.getEmail());
+            customerDto.setPhoneNumber(customer.getPhoneNumber());
+            customerDto.setAvatar(customer.getAvatar());
+
+            // Kiểm tra thông tin checkout
+            if (checkoutInfoDto == null) {
+                return false;
+            }
+
+            // Các bước xử lý giống như đối với saveCheckoutInfo thông thường
+            // Tạo đơn hàng từ thông tin checkout
+            List<Order> orders = getOrderList(checkoutInfoDto, customerDto);
+            if (orders.isEmpty()) {
+                return false;
+            }
+
+            // Lưu đơn hàng
+            boolean ordersSaved = orderService.saveAll(orders);
+            if (!ordersSaved) {
+                return false;
+            }
+
+            // Xử lý chi tiết đơn hàng và theo dõi đơn hàng
+            for (Order order : orders) {
+                int shopId = order.getShopId();
+
+                // Tìm danh sách sản phẩm cho shop này
+                List<CartProductDto> products = checkoutInfoDto.getCartProductDtoList().stream()
+                        .filter(p -> p.getShopId() == shopId)
+                        .collect(Collectors.toList());
+
+                if (!products.isEmpty()) {
+                    // Lưu chi tiết đơn hàng
+                    for (CartProductDto productDto : products) {
+                        OrderDetail orderDetail = new OrderDetail();
+                        orderDetail.setOrder(order);
+
+                        // Lấy thông tin sản phẩm
+                        Product product = productService.getByProductId(productDto.getProductId());
+                        orderDetail.setProduct(product);
+
+                        orderDetail.setProductVariantDetail(productDto.getAttributes());
+                        orderDetail.setQuantity(productDto.getQuantity());
+                        orderDetail.setProductCost((float) (productDto.getLastPrice() * productDto.getQuantity()));
+
+                        // Tính toán chi phí vận chuyển tỷ lệ
+                        float shippingCost = order.getShippingCost() / products.size();
+                        orderDetail.setShippingCost(shippingCost);
+
+                        orderDetail.setSubtotal(orderDetail.getProductCost() + orderDetail.getShippingCost());
+                        orderDetail.setUnitPrice((float) productDto.getLastPrice());
+
+                        orderDetailService.save(orderDetail);
+                    }
+
+                    // Tạo theo dõi đơn hàng
+                    OrderTrack orderTrack = new OrderTrack();
+                    orderTrack.setOrder(order);
+                    orderTrack.setStatus(OrderTrack.OrderStatus.NEW);
+                    orderTrack.setUpdatedTime(new Date());
+                    orderTrack.setNotes("Đơn hàng mua ngay đã được tạo và đang chờ xử lý.");
+                    orderTrackService.save(orderTrack);
+                }
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

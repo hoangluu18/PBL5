@@ -3,6 +3,7 @@ import { Table, Empty, Typography, Spin, Avatar } from "antd";
 import { ShopOutlined, StarFilled, ShoppingOutlined, DollarOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import FollowingShopService from "../../services/following_shop.service";
 import IFollowingShopDto from "../../models/dto/FollowingShopDto";
+import { Link } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -74,12 +75,15 @@ const renderStars = (rating: any) => {
             render: (text: string, record: IFollowingShopDto) => (
                 <div className="shop-column-content" style={{ display: "flex", alignItems: "center" }}>
                     <div style={{ paddingLeft: 46, display: 'flex', alignItems: 'center' }}>
+                        <Link to={`/shop/${record.shopId}`} style={{ textDecoration: "none", color: "inherit" }}>
+                        
                         <Avatar
                             src={record.photo ? `http://localhost:5173/src/assets/shop-images/shop2.png` : "https://via.placeholder.com/40"}
                             alt={text}
                             size={50}
                             style={{ marginRight: 12 }}
                         />
+                        </Link>
                         <div>
                             <Text strong style={{ fontSize: "16px", display: "block" }}>{text}</Text>
                         </div>

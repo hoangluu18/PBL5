@@ -152,7 +152,7 @@ const AddAddress: React.FC = () => {
             }
 
             // Tạo chuỗi địa chỉ: detailedAddress + ward + district
-            const fullAddress = `${values.detailedAddress}, ${values.ward}, ${values.district}`;
+            const fullAddress = `${values.detailedAddress}, ${values.ward}, ${values.district}, ${values.city}`;
 
             const data = {
                 customerId: Number(customerId),

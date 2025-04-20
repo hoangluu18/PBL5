@@ -13,4 +13,7 @@ public interface CheckoutService {
     int parseDeliveryDays(String deliveryTime);
     CheckoutInfoDto saveCheckoutInfo(int customerId,List<Integer> cartIds) throws ProductNotFoundException;
     CheckoutInfoDto getCheckoutInfoForSelectedProducts(int customerId, List<Integer> cartIds) throws ProductNotFoundException;
+
+    CheckoutInfoDto getCheckoutInfoForBuyNow(Integer customerId, Integer productId, Integer quantity, String productDetail) throws ProductNotFoundException;
+    boolean saveCheckoutInfoBuyNow(int customerId, CheckoutInfoDto checkoutInfoDto);
 }

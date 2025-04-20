@@ -23,7 +23,6 @@ interface OrderSummaryProps {
 const OrderSummary: React.FC<OrderSummaryProps> = ({
   orderItems,
   subtotal,
-  shippingCost,
   total,
 }) => {
   // Nhóm sản phẩm theo shop
@@ -117,16 +116,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             <Text>{subtotal.toLocaleString()}đ</Text>
           </div>
 
-          <div
-            style={{
-              marginBottom: '10px',
-              display: 'flex',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Text>Phí vận chuyển:</Text>
-            <Text>{shippingCost.toLocaleString()}đ</Text>
-          </div>
 
           <Divider />
 

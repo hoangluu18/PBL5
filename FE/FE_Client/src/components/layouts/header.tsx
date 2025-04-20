@@ -13,6 +13,7 @@ import { useNavigate } from "react-router";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/auth.context";
 import CartService from "../../services/cart.service";
+import { clearBuyNowData } from "../../services/checkout.service";
 
 const { Header } = Layout;
 
@@ -39,6 +40,12 @@ const App = () => {
             console.error("Failed to fetch cart count:", error);
         });
     }, [customer.id, cartCount]);
+
+    const handleCartClick = () => {
+        // Xóa dữ liệu mua ngay khi người dùng chọn xem giỏ hàng
+        clearBuyNowData();
+        navigate('/cart');
+    };
 
     const userMenu = (
         <Menu
@@ -134,7 +141,7 @@ const App = () => {
                             <Badge count={isLoggedIn ? count : ''} color="#1890ff">
                                 <ShoppingCartOutlined
                                     style={{ fontSize: "24px", cursor: "pointer", color: "#555" }}
-                                    onClick={() => navigate('/cart')}
+                                    onClick={handleCartClick}
                                 />
                             </Badge>
                         </Tooltip>
@@ -142,9 +149,10 @@ const App = () => {
                         {isLoggedIn && (
                             <>
                                 <Tooltip title="Favorites">
+
                                     <HeartOutlined
                                         style={{ fontSize: "24px", cursor: "pointer", color: "#555" }}
-                                        onClick={() => navigate('/favorites')}
+                                        onClick={() => navigate('/followed_shops')}
                                     />
                                 </Tooltip>
 

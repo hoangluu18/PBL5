@@ -89,7 +89,7 @@ const CartPage: React.FC = () => {
     cartItems.reduce((sum, item) => sum + item.lastPrice * item.quantity, 0),
     [cartItems]
   );
-  const shippingCost = 30000;
+  const shippingCost = 0;
   const total = subtotal + shippingCost;
 
   const selectedSubtotal = useMemo(() =>

@@ -4,11 +4,13 @@ import { RightOutlined, ShoppingCartOutlined, HomeOutlined } from '@ant-design/i
 import ShippingInfo from '../components/ShippingInfo';
 import PaymentMethod from '../components/PaymentMethod';
 import OrderSummary from '../components/OrderSummary';
-import { getCheckoutInfoForSelectedCartItems, saveCheckout } from '../services/checkout.service';
+import { getCheckoutInfoForSelectedCartItems, saveCheckout, saveCheckoutBuyNow } from '../services/checkout.service';
 import { CheckoutInfoDto } from '../models/dto/checkout/CheckoutInfoDto';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from "../components/context/auth.context";
+
+import { clearBuyNowData } from '../services/checkout.service';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -26,6 +28,14 @@ const Checkout: React.FC = () => {
     const [isNotFound, setIsNotFound] = useState(false);
     const [selectedCartIds, setSelectedCartIds] = useState<number[]>([]);
 
+    // Hook để xóa dữ liệu khi rời khỏi trang
+    useEffect(() => {
+        return () => {
+            // Cleanup function sẽ chạy khi component unmount
+            clearBuyNowData();
+        };
+    }, []);
+    // Trong useEffect của trang checkout
     useEffect(() => {
         // Set document title
         document.title = "Thanh toán";
@@ -39,27 +49,42 @@ const Checkout: React.FC = () => {
             }
 
             try {
-                // Lấy danh sách các cart IDs đã chọn từ localStorage
-                const savedCartIds = localStorage.getItem('selectedCartIds');
+                setLoading(true);
+                // Kiểm tra xem có phải là "Mua ngay" không
+                const isBuyNow = localStorage.getItem('isBuyNow') === 'true';
 
-                if (savedCartIds) {
-                    // Parse các cart ID đã chọn
-                    const parsedCartIds = JSON.parse(savedCartIds) as number[];
-                    setSelectedCartIds(parsedCartIds);
-
-                    // Gọi API để lấy thông tin checkout cho các sản phẩm đã chọn
-                    console.log('Fetching checkout info for selected cart items:', parsedCartIds);
-                    const checkoutInfo = await getCheckoutInfoForSelectedCartItems(customerId, parsedCartIds);
-                    setCheckoutInfo(checkoutInfo);
+                if (isBuyNow && validateBuyNowData()) {
+                    // Lấy thông tin từ localStorage
+                    const buyNowInfo = localStorage.getItem('buyNowInfo');
+                    if (buyNowInfo) {
+                        setCheckoutInfo(JSON.parse(buyNowInfo));
+                    }
                 } else {
-                    // Nếu không có cart ID đã chọn, gọi API lấy toàn bộ thông tin checkout
-                    console.log('No product selected');
-                    //   const data = await getCheckoutInfo(customerId);
-                    //   setCheckoutInfo(data);
+
+                    if (isBuyNow && !validateBuyNowData()) {
+                        clearBuyNowData();
+                    }
+
+                    // Lấy danh sách các cart IDs đã chọn từ localStorage
+                    const savedCartIds = localStorage.getItem('selectedCartIds');
+
+                    if (savedCartIds) {
+                        // Parse các cart ID đã chọn
+                        const parsedCartIds = JSON.parse(savedCartIds) as number[];
+                        setSelectedCartIds(parsedCartIds);
+
+                        // Gọi API để lấy thông tin checkout cho các sản phẩm đã chọn
+                        console.log('Fetching checkout info for selected cart items:', parsedCartIds);
+                        const checkoutInfo = await getCheckoutInfoForSelectedCartItems(customerId, parsedCartIds);
+                        setCheckoutInfo(checkoutInfo);
+                    } else {
+                        // Nếu không có cart ID đã chọn, gọi API lấy toàn bộ thông tin checkout
+                        console.log('No product selected');
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching checkout info:', error);
-
+                clearBuyNowData();
                 // Check if this is a 404 error
                 if (axios.isAxiosError(error) && error.response?.status === 404) {
                     setIsNotFound(true);
@@ -72,6 +97,7 @@ const Checkout: React.FC = () => {
         fetchCheckoutInfo();
     }, [customerId]);
 
+    // Cập nhật hàm handlePurchase để xử lý trường hợp "Mua ngay"
     const handlePurchase = () => {
         // Kiểm tra nếu không có customerId
         if (!customerId) {
@@ -89,21 +115,60 @@ const Checkout: React.FC = () => {
         // Nếu là COD, tiếp tục như bình thường
         if (window.confirm('Bạn có chắc chắn muốn mua hàng không?')) {
             setLoading(true);
+
+            // Kiểm tra xem có phải là "Mua ngay" không
+            const isBuyNow = localStorage.getItem('isBuyNow') === 'true';
+
+            if (isBuyNow && validateBuyNowData()) {
+                saveCheckoutBuyNow(customerId)
+                    .then(() => {
+                        alert('Đặt hàng thành công!');
+                        clearBuyNowData(); // Xóa dữ liệu sau khi đặt hàng thành công
+                        navigate('/');
+                    })
+                    .catch((error: any) => {
+                        console.error('Lỗi khi đặt hàng:', error);
+                        alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại sau.');
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
+            } else {
+                // Xử lý trường hợp thông thường từ giỏ hàng
                 saveCheckout(customerId, selectedCartIds)
-                .then(() => {
-                    alert('Đặt hàng thành công!');
-                    // Xóa localStorage sau khi đặt hàng thành công
-                    localStorage.removeItem('selectedCartIds');
-                    navigate('/'); // Chuyển về trang chủ
-                })
-                .catch((error: any) => {
-                    console.error('Lỗi khi đặt hàng:', error);
-                    alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại sau.');
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
+                    .then(() => {
+                        alert('Đặt hàng thành công!');
+                        // Xóa localStorage sau khi đặt hàng thành công
+                        localStorage.removeItem('selectedCartIds');
+                        navigate('/'); // Chuyển về trang chủ
+                    })
+                    .catch((error: any) => {
+                        console.error('Lỗi khi đặt hàng:', error);
+                        alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại sau.');
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
+            }
         }
+    };
+
+    const validateBuyNowData = (): boolean => {
+        const buyNowTimestamp = localStorage.getItem('buyNowTimestamp');
+        const buyNowInfo = localStorage.getItem('buyNowInfo');
+        
+        if (!buyNowTimestamp || !buyNowInfo) {
+            return false;
+        }
+        
+        // Kiểm tra thời gian lưu - nếu quá 30 phút (1800000ms) thì không hợp lệ
+        const timestamp = parseInt(buyNowTimestamp);
+        const now = Date.now();
+        if (now - timestamp > 1800000) {
+            return false;
+        }
+        
+        return true;
     };
 
     // Tính toán subtotal, shippingCost và total
