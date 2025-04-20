@@ -92,8 +92,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public String addToCart(AddToCartDto dto) {
-        Optional<CartItems> cartItemsOptional = cartItemRepository.findByCustomerIdAndProductId(dto.getCustomerId(), dto.getProductId());
-        if (cartItemsOptional.isEmpty() || !cartItemsOptional.get().getProductDetail().equals(dto.getProductDetail())) {
+        CartItems cartItem = cartItemRepository.findByCustomerIdAndProductIdWithDetail(dto.getCustomerId(), dto.getProductId(), dto.getProductDetail());
+        if (cartItem == null) {
             CartItems cartItems = new CartItems();
             cartItems.setCustomer(new Customer(dto.getCustomerId()));
             cartItems.setProduct(new Product(dto.getProductId()));
@@ -102,9 +102,9 @@ public class CartServiceImpl implements CartService {
             cartItemRepository.save(cartItems);
             return "Thêm vào giỏ hàng thành công";
         } else {
-            CartItems cartItemsInDb = cartItemsOptional.get();
-            cartItemsInDb.setQuantity(cartItemsInDb.getQuantity() + dto.getQuantity());
-            cartItemRepository.save(cartItemsInDb);
+
+            cartItem.setQuantity(cartItem.getQuantity() + dto.getQuantity());
+            cartItemRepository.save(cartItem);
             return "Cập nhật số lượng sản phẩm trong giỏ hàng thành công";
         }
     }

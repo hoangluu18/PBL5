@@ -9,7 +9,9 @@ import java.util.Optional;
 
 public interface CartItemRepository extends JpaRepository<CartItems, Long> {
     List<CartItems> findByCustomerId(Integer customerId);
-    Optional<CartItems> findByCustomerIdAndProductId(Integer customerId, Integer productId);
+
+    @Query("SELECT ci FROM CartItems ci WHERE ci.customer.id = ?1 AND ci.product.id = ?2 AND ci.productDetail = ?3")
+    CartItems findByCustomerIdAndProductIdWithDetail(Integer customerId, Integer productId, String detail);
 
     @Query("SELECT COUNT(ci) FROM CartItems ci WHERE ci.customer.id = ?1")
     Integer countProductsByCustomerId(Integer customerId);
