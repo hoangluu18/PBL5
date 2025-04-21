@@ -28,6 +28,7 @@ const Checkout: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [isNotFound, setIsNotFound] = useState(false);
     const [selectedCartIds, setSelectedCartIds] = useState<number[]>([]);
+    const [noAddressFound, setNoAddressFound] = useState(false);
     // Hook để xóa dữ liệu khi rời khỏi trang
     useEffect(() => {
         return () => {
@@ -40,6 +41,7 @@ const Checkout: React.FC = () => {
         // Set document title
         document.title = "Thanh toán";
 
+        // Fetch checkout info
         // Fetch checkout info
         const fetchCheckoutInfo = async () => {
             if (!customerId) {
@@ -57,10 +59,15 @@ const Checkout: React.FC = () => {
                     // Lấy thông tin từ localStorage
                     const buyNowInfo = localStorage.getItem('buyNowInfo');
                     if (buyNowInfo) {
-                        setCheckoutInfo(JSON.parse(buyNowInfo));
+                        const parsedData = JSON.parse(buyNowInfo);
+                        // Kiểm tra nếu không có địa chỉ
+                        if (!parsedData.addressInfoDto || !parsedData.addressInfoDto.address) {
+                            setNoAddressFound(true);
+                            return;
+                        }
+                        setCheckoutInfo(parsedData);
                     }
                 } else {
-
                     if (isBuyNow && !validateBuyNowData()) {
                         clearBuyNowData();
                     }
@@ -69,25 +76,53 @@ const Checkout: React.FC = () => {
                     const savedCartIds = localStorage.getItem('selectedCartIds');
 
                     if (savedCartIds) {
-                        // Parse các cart ID đã chọn
-                        const parsedCartIds = JSON.parse(savedCartIds) as number[];
-                        setSelectedCartIds(parsedCartIds);
+                        try {
+                            // Parse các cart ID đã chọn
+                            const parsedCartIds = JSON.parse(savedCartIds) as number[];
+                            setSelectedCartIds(parsedCartIds);
 
-                        // Gọi API để lấy thông tin checkout cho các sản phẩm đã chọn
-                        console.log('Fetching checkout info for selected cart items:', parsedCartIds);
-                        const checkoutInfo = await getCheckoutInfoForSelectedCartItems(customerId, parsedCartIds);
-                        setCheckoutInfo(checkoutInfo);
+                            // Gọi API để lấy thông tin checkout cho các sản phẩm đã chọn
+                            console.log('Fetching checkout info for selected cart items:', parsedCartIds);
+                            const checkoutInfo = await getCheckoutInfoForSelectedCartItems(customerId, parsedCartIds);
+
+                            // Kiểm tra nếu không có địa chỉ
+                            if (!checkoutInfo.addressInfoDto || Object.keys(checkoutInfo.addressInfoDto).length === 0) {
+                                setNoAddressFound(true);
+                                return;
+                            }
+
+                            setCheckoutInfo(checkoutInfo);
+                        } catch (error) {
+                            // Kiểm tra lỗi từ API
+                            if (axios.isAxiosError(error)) {
+                                if (error.response?.data?.message?.includes('address') ||
+                                    error.response?.status === 400) {
+                                    setNoAddressFound(true);
+                                    return;
+                                }
+                            }
+                            throw error; // Ném lỗi để catch bên ngoài xử lý
+                        }
                     } else {
                         // Nếu không có cart ID đã chọn, gọi API lấy toàn bộ thông tin checkout
                         console.log('No product selected');
+                        setIsNotFound(true);
                     }
                 }
             } catch (error) {
                 console.error('Error fetching checkout info:', error);
                 clearBuyNowData();
-                // Check if this is a 404 error
-                if (axios.isAxiosError(error) && error.response?.status === 404) {
-                    setIsNotFound(true);
+
+                // Kiểm tra nếu là lỗi địa chỉ
+                if (axios.isAxiosError(error)) {
+                    // Kiểm tra các trường hợp lỗi liên quan đến địa chỉ
+                    if (error.response?.status === 404 &&
+                        error.response?.data?.message?.includes('address')) {
+                        setNoAddressFound(true);
+                        return;
+                    } else if (error.response?.status === 404) {
+                        setIsNotFound(true);
+                    }
                 }
             } finally {
                 setLoading(false);
@@ -300,6 +335,44 @@ const Checkout: React.FC = () => {
                                 onClick={() => navigate('/')}
                             >
                                 Tiếp tục mua sắm
+                            </Button>
+                        ]}
+                    />
+                </Content>
+            </Layout>
+        );
+    }
+
+    // Thêm sau phần điều kiện isNotFound
+    if (noAddressFound) {
+        return (
+            <Layout style={{
+                background: 'linear-gradient(0deg, #F5F7FA, #F5F7FA), #FFFFFF',
+                minHeight: '100vh',
+                width: '100%',
+                maxWidth: '1920px',
+                margin: '0 auto',
+                padding: '20px'
+            }}>
+                <Content className='container'>
+                    <Result
+                        status="warning"
+                        title="Chưa có địa chỉ giao hàng"
+                        subTitle="Bạn cần thêm địa chỉ giao hàng để có thể tiến hành thanh toán."
+                        extra={[
+                            <Button
+                                type="primary"
+                                key="addAddress"
+                                onClick={() => navigate('/edit-address')}
+                            >
+                                Thêm địa chỉ giao hàng
+                            </Button>,
+                            <Button
+                                key="home"
+                                icon={<HomeOutlined />}
+                                onClick={() => navigate('/')}
+                            >
+                                Quay về trang chủ
                             </Button>
                         ]}
                     />
