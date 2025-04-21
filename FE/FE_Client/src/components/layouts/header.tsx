@@ -152,7 +152,7 @@ const App = () => {
 
                                     <HeartOutlined
                                         style={{ fontSize: "24px", cursor: "pointer", color: "#555" }}
-                                        onClick={() => navigate('/followed_shops')}
+                                        onClick={() => navigate('/followed-shops')}
                                     />
                                 </Tooltip>
 
