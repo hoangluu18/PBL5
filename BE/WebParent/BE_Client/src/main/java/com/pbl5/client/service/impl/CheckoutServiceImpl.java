@@ -146,7 +146,8 @@ public class CheckoutServiceImpl implements CheckoutService {
             order.setPaymentMethod(Order.PaymentMethod.COD);
 
             // Set customer and shop IDs
-            order.setCustomer(new Customer(customerDto.getId()));
+            //order.setCustomer(new Customer(customerDto.getId()));
+            order.setCustomerId(customerDto.getId());
             order.setShopId(shopId);
 
             orders.add(order);
@@ -167,6 +168,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     @Override
     public CheckoutInfoDto saveCheckoutInfo(int customerId,List<Integer> cartIds) throws ProductNotFoundException {
         // Find data for the specific customer
+        System.out.println("hehe " + customerId);
         AddressInfoDto addressInfoDto = addressInfoService.fineByAddressDefault(customerId);
         List<CartProductDto> cartProductDtoList = cartService.getCartByCustomerIdAndProductIdList(customerId, cartIds);
         List<ShippingRequestDto> shippingRequestList = shippingRequestService.getShippingRequestList(customerId,cartIds);
@@ -200,13 +202,13 @@ public class CheckoutServiceImpl implements CheckoutService {
             customerDto.setEmail(customer.getEmail());
             customerDto.setPhoneNumber(customer.getPhoneNumber());
             customerDto.setAvatar(customer.getAvatar());
-
             // Create and save orders
             List<Order> orders = getOrderList(checkoutInfoDto, customerDto);
             if(orders.isEmpty()) {
                 return null;
             }
-
+            System.out.println("check order");
+            System.out.println(orders);
             // Save orders first to get IDs
             if(orderService.saveAll(orders)) {
                 System.out.println("Orders saved successfully");
