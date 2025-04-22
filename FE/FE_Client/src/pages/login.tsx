@@ -132,7 +132,7 @@ const LoginPage = () => {
                             <Form.Item<FieldType> name="remember" valuePropName="checked" noStyle>
                                 <Checkbox>Ghi nhớ đăng nhập</Checkbox>
                             </Form.Item>
-                            <Link to="/forgot_password" style={{ color: '#1890ff' }}>Quên mật khẩu?</Link>
+                            <Link to="/forgot-password" style={{ color: '#1890ff' }}>Quên mật khẩu?</Link>
                         </div>
 
                         <Form.Item>

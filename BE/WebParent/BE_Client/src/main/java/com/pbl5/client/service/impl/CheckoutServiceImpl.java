@@ -146,7 +146,6 @@ public class CheckoutServiceImpl implements CheckoutService {
             order.setPaymentMethod(Order.PaymentMethod.COD);
 
             // Set customer and shop IDs
-            //order.setCustomer(new Customer(customerDto.getId()));
             order.setCustomerId(customerDto.getId());
             order.setShopId(shopId);
 
