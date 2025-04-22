@@ -7,6 +7,7 @@ import com.pbl5.client.service.OrderService;
 import com.pbl5.common.entity.Order;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<OrderDto> getOrdersByCustomerId(Integer customerId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "orderTime"));
         Page<Order> orders = repository.findByCustomerId(customerId, pageable);
         return orders.map(OrderDto::new);
     }

@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo, useContext } from 'react';
 import { AuthContext } from "../components/context/auth.context";
-import { FaTrash, FaHeart } from 'react-icons/fa';
+import { FaTrash, FaHeart, FaShoppingCart } from 'react-icons/fa';
 
 import { Link, useParams } from 'react-router-dom';
 import OrderSummary from '../components/OrderSummary';
@@ -105,7 +105,29 @@ const CartPage: React.FC = () => {
   }
 
   if (cartItems.length === 0) {
-    return <div>Giỏ hàng của bạn đang trống. <Link to="/">Tiếp tục mua sắm</Link></div>;
+    return (
+      <div className="empty-cart-container">
+        <div className="empty-cart-content">
+          <div className="empty-cart-illustration">
+            <div className="cart-image-container">
+              <img 
+                src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-5521508-4610092.png" 
+                alt="Empty Cart" 
+                className="empty-cart-image" 
+              />
+            </div>
+            <div className="cart-icon-overlay">
+              <FaShoppingCart className="cart-icon-animated" />
+            </div>
+          </div>
+          <h2>Giỏ hàng của bạn đang trống</h2>
+          <p>Không có sản phẩm nào trong giỏ hàng của bạn hiện tại</p>
+          <Link to="/" className="continue-shopping-button">
+            <span>Tiếp tục mua sắm</span>
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   const formatPrice = (price: number) => `${price.toLocaleString()}đ`;
@@ -352,7 +374,7 @@ const styles = `
 
 .cart-item-price .discounted-price {
   font-size: 16px;
-  color: #000; /* Đổi thành màu đen */
+  color: #000;
   font-weight: 500;
 }
 
@@ -396,7 +418,7 @@ const styles = `
   flex: 1;
   font-size: 16px;
   font-weight: 500;
-  color: #000; /* Đổi thành màu đen */
+  color: #000;
   text-align: center;
 }
 
@@ -422,7 +444,6 @@ const styles = `
   color: #dc3545;
 }
 
-/* Phần summary giữ nguyên */
 .summary {
   width: 380px;
   background-color: white;
@@ -448,7 +469,134 @@ const styles = `
   background-color: #0b7dda;
 }
 
-/* Responsive cho mobile */
+/* Empty cart styles - properly structured outside of media queries */
+.empty-cart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  background-color: #f9f9f9;
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
+}
+
+.empty-cart-content {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  text-align: center;
+  max-width: 600px;
+  width: 90%;
+  transition: all 0.3s ease;
+}
+
+.empty-cart-content:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.empty-cart-illustration {
+  position: relative;
+  height: 220px;
+  margin: 0 auto 30px;
+  max-width: 100%;
+}
+
+.cart-image-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.empty-cart-image {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.cart-icon-overlay {
+  position: absolute;
+  bottom: -10px;
+  right: 50%;
+  transform: translateX(50%);
+  background-color: #ff6b6b;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.cart-icon-animated {
+  color: white;
+  font-size: 26px;
+  animation: pulse 2s infinite;
+}
+
+.empty-cart-content h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.empty-cart-content p {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 16px;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.continue-shopping-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, rgb(0, 138, 252), rgb(0, 108, 232));
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  text-align: center;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 138, 252, 0.3);
+  border: none;
+  cursor: pointer;
+}
+
+.continue-shopping-button:hover {
+  background: linear-gradient(135deg, rgb(0, 150, 255), rgb(0, 120, 255));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 138, 252, 0.4);
+}
+
+.continue-shopping-button span {
+  margin: 0 8px;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Responsive styles for mobile */
 @media (max-width: 768px) {
   .cart-container {
     flex-direction: column;
@@ -505,6 +653,28 @@ const styles = `
     width: 100%;
   }
 }
+
+@media (max-width: 600px) {
+  .empty-cart-illustration {
+    height: 180px;
+  }
+  
+  .cart-icon-overlay {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .cart-icon-animated {
+    font-size: 22px;
+  }
+  
+  .empty-cart-content h2 {
+    font-size: 24px;
+  }
+  
+  .empty-cart-content p {
+    font-size: 14px;
+  }
 }
 `;
 
