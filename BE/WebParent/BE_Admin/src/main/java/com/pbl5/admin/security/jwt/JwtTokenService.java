@@ -20,6 +20,8 @@ public class JwtTokenService {
         authResponse.setAccessToken(accessToken);
         authResponse.setId(user.getId());
         authResponse.setEmail(user.getEmail());
+
+
         return authResponse;
     }
 }

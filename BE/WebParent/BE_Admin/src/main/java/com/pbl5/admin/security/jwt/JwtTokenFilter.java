@@ -85,12 +85,8 @@ public class JwtTokenFilter  extends OncePerRequestFilter {
         String[] arrays = subject.split(",");
 
         Integer userId = Integer.valueOf(arrays[0]);
-        String shopName = arrays[1];
-
         User user = new User();
         user.setId(userId);
-
-
 
         return new CustomUserDetails(user);
     }

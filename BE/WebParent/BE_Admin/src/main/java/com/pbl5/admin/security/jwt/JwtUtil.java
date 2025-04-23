@@ -28,14 +28,15 @@ public class JwtUtil {
             throw new IllegalArgumentException("Customer cannot be null");
         }
 
-        String subject = String.format("%s,%s", user.getId(), user.getShop().getName());
+        String subject = String.format("%s,%s", user.getShop().getId(), user.getShop().getName());
         long expirationTime = accessTokenExpiration * 60000 + System.currentTimeMillis();
         return Jwts.builder()
                 .setSubject(subject)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(expirationTime))
                 .setIssuer("PBL5")
-                .claim("roles", user.getRoles())
+                .claim("roles", user.getRoles().stream().map(role -> role.getName()).toList())
+
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), Jwts.SIG.HS512)
                 .compact();
     }
