@@ -178,14 +178,16 @@ const CartPage: React.FC = () => {
                 />
               </div>
               <div className="cart-item-image">
-                {item.photo && (
-                  <img
-                    src={`http://localhost:5173/src/assets/product-images/${item.photo}`}
-                    alt={item.productName}
-                    className="product-image"
-                  />
-                )}
-              </div>
+  {item.photo && (
+    <img
+      src={item.photo.startsWith('http') 
+        ? item.photo 
+        : `http://localhost:5173/src/assets/product-images/${item.photo}`}
+      alt={item.productName}
+      className="product-image"
+    />
+  )}
+</div>
               <div className="cart-item-details">
                 <div className="cart-item-info">
                   <span className="shop-name">{item.shopName}</span>
@@ -216,26 +218,28 @@ const CartPage: React.FC = () => {
       </div>
 
       <div className="summary">
-        <OrderSummary
-          orderItems={cartItems
-            .filter(item => selectedItems.includes(getItemKey(item)))
-            .map(item => ({
-              id: item.productId,
-              image: item.photo
-                ? `http://localhost:5173/src/assets/product-images/${item.photo}`
-                : 'http://localhost:5173/src/assets/product-images/default-image.jpg',
-              shopId: item.shopId,
-              shopName: item.shopName,
-              name: item.productName,
-              quantity: item.quantity,
-              originalPrice: item.originalPrice,
-              price: item.lastPrice,
-            }))
-          }
-          subtotal={selectedSubtotal}
-          shippingCost={shippingCost}
-          total={selectedTotal}
-        />
+      <OrderSummary
+  orderItems={cartItems
+    .filter(item => selectedItems.includes(getItemKey(item)))
+    .map(item => ({
+      id: item.productId,
+      image: item.photo
+        ? (item.photo.startsWith('http') 
+            ? item.photo 
+            : `http://localhost:5173/src/assets/product-images/${item.photo}`)
+        : 'http://localhost:5173/src/assets/product-images/default-image.jpg',
+      shopId: item.shopId,
+      shopName: item.shopName,
+      name: item.productName,
+      quantity: item.quantity,
+      originalPrice: item.originalPrice,
+      price: item.lastPrice,
+    }))
+  }
+  subtotal={selectedSubtotal}
+  shippingCost={shippingCost}
+  total={selectedTotal}
+/>
         <button
           onClick={handleCheckout}
           className="checkout-button"
