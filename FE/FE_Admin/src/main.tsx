@@ -1,13 +1,10 @@
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import './index.css'
 import App from './App.tsx'
-import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom';
-import LoginPage from './pages/login.tsx';
-import { Button, Result } from 'antd';
-import { AuthWrapper } from './components/context/auth.context.tsx';
-import 'antd/dist/reset.css';
-import ForgotPasswordPage from './pages/forgot_password.tsx';
-import ChangePasswordPage from './pages/change_password_page.tsx';
-import Homepage from './pages/homepage.tsx';
+import { Result, Button } from 'antd'
+import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom'
+import Hompage from './pages/homepage.tsx'
 
 
 const router = createBrowserRouter([
@@ -23,31 +20,15 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Homepage />
+        element: <Hompage />,
       }
-
     ]
-  },
-  {
-    path: "/login",
-    element: <LoginPage />
-  },
-  {
-    path: "/forgot-password",
-    element: <ForgotPasswordPage />
-  },
-  {
-    path: "/reset-password",
-    element: <ChangePasswordPage />
   }
 ]);
 
-createRoot(document.getElementById('root')!).render(
-  // <StrictMode>
-  //   <RouterProvider router={router} />
-  // </StrictMode>,
 
-  <AuthWrapper>
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
     <RouterProvider router={router} />
-  </AuthWrapper>
+  </StrictMode>,
 )

@@ -20,7 +20,6 @@ instance.interceptors.request.use(function (config) {
         if (isTokenExpired(token)) {
             console.error("Token expired");
             localStorage.removeItem("access_token");
-            localStorage.removeItem("customer");
             window.location.href = "/login";
             return Promise.reject(new Error("Token expired"));
         }
