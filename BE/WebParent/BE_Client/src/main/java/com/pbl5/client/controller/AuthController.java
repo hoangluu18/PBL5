@@ -160,7 +160,7 @@ public class AuthController {
         JavaMailSenderImpl javaMailSender = MailUtils.mailSenderImpl();
 
         String subject = "Đặt lại mật khẩu";
-        String verifyURL = Constants.FE_URL + "/reset_password?token=" + customer.getResetPasswordToken();
+        String verifyURL = Constants.FE_URL + "/reset-password?token=" + customer.getResetPasswordToken();
 
         String content = "<p>Chào <strong>" + customer.getFullName() + "</strong>,</p>"
                 + "<p>Vui lòng nhấn vào liên kết sau để đặt lại mật khẩu của bạn:</p>"
