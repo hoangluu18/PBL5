@@ -457,20 +457,24 @@ const Checkout: React.FC = () => {
                     </Col>
 
                     <Col span={8}>
-                        <OrderSummary
-                            orderItems={checkoutInfo.cartProductDtoList.map(item => ({
-                                id: item.productId,
-                                name: item.productName,
-                                price: item.lastPrice,
-                                quantity: item.quantity,
-                                image: `/src/assets/product-images/${item.photo}`,
-                                shopId: item.shopId,
-                                shopName: item.shopName
-                            }))}
-                            subtotal={subtotal}
-                            shippingCost={shippingCost}
-                            total={total}
-                        />
+                    <OrderSummary
+    orderItems={checkoutInfo.cartProductDtoList.map(item => ({
+        id: item.productId,
+        name: item.productName,
+        price: item.lastPrice,
+        quantity: item.quantity,
+        image: item.photo
+            ? (item.photo.startsWith('http') 
+                ? item.photo 
+                : `http://localhost:5173/src/assets/product-images/${item.photo}`)
+            : 'http://localhost:5173/src/assets/product-images/default-image.jpg',
+        shopId: item.shopId,
+        shopName: item.shopName
+    }))}
+    subtotal={subtotal}
+    shippingCost={shippingCost}
+    total={total}
+/>
                     </Col>
                 </Row>
 
