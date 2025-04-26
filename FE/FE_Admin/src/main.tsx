@@ -5,7 +5,7 @@ import App from './App.tsx'
 import { Result, Button } from 'antd'
 import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom'
 import Hompage from './pages/homepage.tsx'
-
+import Customers from './pages/customers.tsx';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +21,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Hompage />,
+      },
+      {
+        path: "/customers",
+        element: <Customers />, // Thêm route mới để hiển thị danh sách khách hàng
       }
     ]
   }
