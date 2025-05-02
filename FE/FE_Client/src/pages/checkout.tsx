@@ -22,7 +22,6 @@ const Checkout: React.FC = () => {
     const navigate = useNavigate();
 
     // Định nghĩa tất cả state ở đầu component
-    const [deliveryType, setDeliveryType] = useState('standard');
     const [checkoutInfo, setCheckoutInfo] = useState<CheckoutInfoDto | null>(null);
     const [paymentMethod, setPaymentMethod] = useState('cash');
     const [loading, setLoading] = useState(true);

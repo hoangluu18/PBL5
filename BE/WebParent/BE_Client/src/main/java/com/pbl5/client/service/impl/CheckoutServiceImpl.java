@@ -103,13 +103,15 @@ public class CheckoutServiceImpl implements CheckoutService {
 
             // Calculate product cost (sum of all items' price × quantity)
             float productCost = 0f;
+            float subtotal = 0f;
             for (CartProductDto product : products) {
-                productCost += product.getLastPrice() * product.getQuantity();
+                productCost += product.getOriginalPrice() * product.getQuantity();
+                subtotal += product.getLastPrice() * product.getQuantity();
             }
 
             float shippingCost = shipping.getShippingCost();
-            float subtotal = productCost;
-            float total = productCost + shippingCost;
+
+            float total = subtotal + shippingCost;
 
             // Parse delivery time to calculate delivery date and days
             String deliveryTime = shipping.getEstimatedDeliveryTime();
@@ -232,13 +234,13 @@ public class CheckoutServiceImpl implements CheckoutService {
 
                             orderDetail.setProductVariantDetail(productDto.getAttributes());
                             orderDetail.setQuantity(productDto.getQuantity());
-                            orderDetail.setProductCost((float) (productDto.getLastPrice() * productDto.getQuantity()));
+                            orderDetail.setProductCost(product.getCost());
 
                             // Calculate proportional shipping cost
                             float shippingCost = order.getShippingCost() / products.size();
                             orderDetail.setShippingCost(shippingCost);
 
-                            orderDetail.setSubtotal(orderDetail.getProductCost() + orderDetail.getShippingCost());
+                            orderDetail.setSubtotal((float) (productDto.getLastPrice() * productDto.getQuantity()));
                             orderDetail.setUnitPrice((float) productDto.getLastPrice());
 
                             orderDetailService.save(orderDetail);
@@ -331,9 +333,9 @@ public class CheckoutServiceImpl implements CheckoutService {
         if(product == null){
             throw new ProductNotFoundException("Product not found with id: " + productId);
         }
-        double originalPrice = product.getPrice();
+        double originalPrice = product.getCost();
         double discountPercent = product.getDiscountPercent();
-        double lastPrice = originalPrice * (1 - discountPercent / 100);
+        double lastPrice = product.getPrice() * (1 - discountPercent / 100);
 
         CartProductDto cartProductDto = new CartProductDto(
                 null,
@@ -428,13 +430,13 @@ public class CheckoutServiceImpl implements CheckoutService {
 
                         orderDetail.setProductVariantDetail(productDto.getAttributes());
                         orderDetail.setQuantity(productDto.getQuantity());
-                        orderDetail.setProductCost((float) (productDto.getLastPrice() * productDto.getQuantity()));
+                        orderDetail.setProductCost(product.getCost());
 
                         // Tính toán chi phí vận chuyển tỷ lệ
                         float shippingCost = order.getShippingCost() / products.size();
                         orderDetail.setShippingCost(shippingCost);
 
-                        orderDetail.setSubtotal(orderDetail.getProductCost() + orderDetail.getShippingCost());
+                        orderDetail.setSubtotal((float) (productDto.getLastPrice()*productDto.getQuantity()));
                         orderDetail.setUnitPrice((float) productDto.getLastPrice());
 
                         orderDetailService.save(orderDetail);
