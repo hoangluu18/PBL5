@@ -6,8 +6,12 @@ import {
     UserOutlined,
     BarChartOutlined,
     FileTextOutlined,
+    DashboardOutlined,
+    TagOutlined,     // Thêm icon này
+    ShopOutlined,    // Hoặc thêm icon này
+    InboxOutlined 
 } from '@ant-design/icons';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router-dom';
 import { use, useContext } from 'react';
 import { AuthContext } from '../../utils/auth.context';
 
@@ -15,6 +19,34 @@ import { AuthContext } from '../../utils/auth.context';
 const { Header } = Layout;
 
 const NavBar = () => {
+    const location = useLocation();
+
+        // Xác định item nào đang active dựa vào URL hiện tại
+        const getSelectedKey = () => {
+            const path = location.pathname;
+            if (path === '/') return ['dashboard'];
+            if (path === '/products') return ['products'];
+            if (path === '/invoice') return ['invoice'];
+            return ['dashboard'];
+        };
+
+        const items = [
+            {
+                key: 'dashboard',
+                icon: <DashboardOutlined />,
+                label: <Link to="/">Tổng quan</Link>,
+            },
+            {
+                key: 'products',
+                icon: <ShoppingOutlined />,
+                label: <Link to="/products">Hàng hóa</Link>,
+            },
+            {
+                key: 'invoice',
+                icon: <FileTextOutlined />,
+                label: <Link to="/invoice">Hóa đơn</Link>,
+            }
+        ];
 
     const { user } = useContext(AuthContext);
 
@@ -37,8 +69,8 @@ const NavBar = () => {
                                     <Menu.Item key="products" icon={<ShoppingOutlined />}>
                                         <Link to="/invoice" className='text-decoration-none'>Hóa đơn</Link>
                                     </Menu.Item>
-                                    <Menu.Item key="transactions" icon={<SwapOutlined />}>
-                                        Giao dịch
+                                    <Menu.Item key="transactions" icon={<TagOutlined />}>
+                                        <Link to="/products" className='text-decoration-none'>Sản phẩm</Link>
                                     </Menu.Item>
                                     <Menu.Item key="customers" icon={<UserOutlined />}>
                                         Khách hàng

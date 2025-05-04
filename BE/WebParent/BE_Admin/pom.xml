@@ -32,7 +32,13 @@
 	
 	<dependencies>
 
-	</dependencies>
+        <dependency>
+            <groupId>com.pbl5</groupId>
+            <artifactId>BE_Client</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>
