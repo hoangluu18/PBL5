@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TodayStatisticDto {
 
-    private Integer invoiceCount;
-    private Integer totalRevenue;
+    private long invoiceCount;
+    private Float totalRevenue;
+    private long returnedOrderCount;
     private Float changeFromYesterday;
-    private Float changeFromLastWeek;
+    private Integer totalProductSoldToday;
 }

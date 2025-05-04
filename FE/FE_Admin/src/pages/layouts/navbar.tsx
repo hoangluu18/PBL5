@@ -15,40 +15,77 @@ import { Link, useLocation } from 'react-router-dom';
 import { use, useContext } from 'react';
 import { AuthContext } from '../../utils/auth.context';
 
-
 const { Header } = Layout;
 
 const NavBar = () => {
-    const location = useLocation();
+    const { user, setUser } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-        // Xác định item nào đang active dựa vào URL hiện tại
-        const getSelectedKey = () => {
-            const path = location.pathname;
-            if (path === '/') return ['dashboard'];
-            if (path === '/products') return ['products'];
-            if (path === '/invoice') return ['invoice'];
-            return ['dashboard'];
-        };
+    // Định nghĩa menuItems ngoài JSX
+    const menuItems = [
+        {
+            key: "overview",
+            icon: <AppstoreOutlined />,
+            label: <Link to="/" className='text-decoration-none'>Tổng quan</Link>
+        },
+        {
+            key: "products",
+            icon: <ShoppingOutlined />,
+            label: <Link to="/invoice" className='text-decoration-none'>Hóa đơn</Link>
+        },
+        {
+            key: "transactions",
+            icon: <ShoppingOutlined />,
+            label: <Link to="/products" className='text-decoration-none'>Sản phẩm</Link>
+        },
+        {
+            key: "customers",
+            icon: <UserOutlined />,
+            label: "Khách hàng"
+        },
+        {
+            key: "inventory",
+            icon: <BarChartOutlined />,
+            label: "Số quỹ"
+        },
+        {
+            key: "reports",
+            icon: <FileTextOutlined />,
+            label: "Báo cáo"
+        }
+    ];
 
-        const items = [
+    // Thêm các mục menu phụ thuộc vào trạng thái đăng nhập
+    if (user.id) {
+        menuItems.push(
             {
-                key: 'dashboard',
-                icon: <DashboardOutlined />,
-                label: <Link to="/">Tổng quan</Link>,
+                key: "user",
+                icon: <UserOutlined />,
+                label: user.name
             },
             {
-                key: 'products',
-                icon: <ShoppingOutlined />,
-                label: <Link to="/products">Hàng hóa</Link>,
-            },
-            {
-                key: 'invoice',
-                icon: <FileTextOutlined />,
-                label: <Link to="/invoice">Hóa đơn</Link>,
+                key: "logout",
+                icon: <LogoutOutlined />,
+                label: <span onClick={() => {
+                    setUser({
+                        id: 0,
+                        name: "",
+                        photo: "",
+                        roles: []
+                    });
+                    localStorage.removeItem("access_token");
+                    localStorage.removeItem("user");
+                    navigate("/login");
+                }}>Đăng xuất</span>
             }
-        ];
-
-    const { user } = useContext(AuthContext);
+        );
+    } else {
+        menuItems.push({
+            key: "login",
+            icon: <UserOutlined />,
+            label: <Link to="/login" className='text-decoration-none'>Đăng nhập</Link>
+        });
+    }
 
     return (
         <div className='container-fluid' style={{ padding: 0, background: '#0d6efd' }}>
@@ -62,38 +99,8 @@ const NavBar = () => {
                                     theme="dark"
                                     style={{ background: '#0d6efd', color: 'white', border: 'none', overflowX: 'auto', whiteSpace: 'nowrap' }}
                                     className="flex-grow-1 justify-content-end"
-                                >
-                                    <Menu.Item key="overview" icon={<AppstoreOutlined />}>
-                                        <Link to="/" className='text-decoration-none'>Tổng quan</Link>
-                                    </Menu.Item>
-                                    <Menu.Item key="products" icon={<ShoppingOutlined />}>
-                                        <Link to="/invoice" className='text-decoration-none'>Hóa đơn</Link>
-                                    </Menu.Item>
-                                    <Menu.Item key="transactions" icon={<TagOutlined />}>
-                                        <Link to="/products" className='text-decoration-none'>Sản phẩm</Link>
-                                    </Menu.Item>
-                                    <Menu.Item key="customers" icon={<UserOutlined />}>
-                                        Khách hàng
-                                    </Menu.Item>
-                                    <Menu.Item key="inventory" icon={<BarChartOutlined />}>
-                                        Số quỹ
-                                    </Menu.Item>
-                                    <Menu.Item key="reports" icon={<FileTextOutlined />}>
-                                        Báo cáo
-                                    </Menu.Item>
-                                    {user &&
-                                        <Menu.Item key="user" icon={<UserOutlined />}>
-                                            {user.name}
-                                        </Menu.Item>
-                                    }
-                                    {
-                                        !user &&
-                                        <Menu.Item key="login" icon={<UserOutlined />} className='text-decoration-none'>
-                                            <Link to="/login" className='text-decoration-none'>Đăng nhập</Link>
-                                        </Menu.Item>
-                                    }
-
-                                </Menu>
+                                    items={menuItems}
+                                />
                             </div>
                         </div>
                     </Header>

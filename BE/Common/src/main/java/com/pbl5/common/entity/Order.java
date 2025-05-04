@@ -1,5 +1,6 @@
 package com.pbl5.common.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -67,27 +68,37 @@ public class Order extends IdBaseEntity {
     @Column(name = "shop_id", nullable = false)
     private Integer shopId;
 
+    @Column(name = "note")
+    private String note;
     // Quan hệ Many-to-One với Customer (nếu cần)
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JsonIgnore
     private Customer customer;
 
     // Quan hệ Many-to-One với Shop (giả sử có entity Shop)
     @ManyToOne
     @JoinColumn(name = "shop_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JsonIgnore
     private Shop shop;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("updatedTime DESC")
+    @JsonIgnore
     private List<OrderTrack> orderTracks = new ArrayList<>();
 
     // Enum cho order_status
     public enum OrderStatus {
-        DELIVERED, NEW, PACKAGED, PAID, PICKED, PROCCESSING, REFUNDED, RETURNED, SHIPPING, RETURN_REQUESTED
+        DELIVERED, NEW, PACKAGED, PAID, PICKED, PROCESSING, REFUNDED, RETURNED, SHIPPING, RETURN_REQUESTED
     }
 
     // Enum cho payment_method
     public enum PaymentMethod {
         COD, CREDIT_CARD, PAYPAL
+    }
+
+    @Transient
+    public boolean isReturned() {
+        return orderStatus == OrderStatus.RETURNED;
     }
 }
