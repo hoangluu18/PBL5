@@ -6,10 +6,13 @@ import {
     UserOutlined,
     BarChartOutlined,
     FileTextOutlined,
-    LogoutOutlined,
+    DashboardOutlined,
+    TagOutlined,     // Thêm icon này
+    ShopOutlined,    // Hoặc thêm icon này
+    InboxOutlined 
 } from '@ant-design/icons';
-import { Link, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { use, useContext } from 'react';
 import { AuthContext } from '../../utils/auth.context';
 
 const { Header } = Layout;
@@ -32,8 +35,8 @@ const NavBar = () => {
         },
         {
             key: "transactions",
-            icon: <SwapOutlined />,
-            label: "Giao dịch"
+            icon: <ShoppingOutlined />,
+            label: <Link to="/products" className='text-decoration-none'>Sản phẩm</Link>
         },
         {
             key: "customers",

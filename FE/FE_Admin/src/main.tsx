@@ -7,6 +7,7 @@ import Dashboard from './pages/sales_person/overview/DashBoard.tsx'
 import InvoiceManagementPage from './pages/sales_person/invoice/InvoiceManagement.tsx'
 import LoginPage from './pages/layouts/login.tsx'
 import { AuthWrapper } from './utils/auth.context.tsx'
+import ProductManagement from './pages/sales_person/product_management/ProductManagement.tsx'
 
 
 const router = createBrowserRouter([
@@ -27,7 +28,11 @@ const router = createBrowserRouter([
       {
         path: "/invoice",
         element: <InvoiceManagementPage />
-      }
+      },
+      {
+        path: "/products",
+        element: <ProductManagement />
+      },
     ]
   },
   {
