@@ -1,113 +1,115 @@
-import { Card, Typography, Row, Col, Dropdown, Menu, Button } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { DatePicker, Typography } from 'antd';
+import { useContext, useEffect, useState } from 'react';
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    ResponsiveContainer,
+} from 'recharts';
+import { TopProductDto } from '../../../models/DashboardDto';
+import DashboardService from '../../../services/dashboard';
+import { AuthContext } from '../../../utils/auth.context';
+import dayjs, { Dayjs } from 'dayjs';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
-const TopProductsChart = () => {
-    // Sample data for the chart - we only see 2 products in the image
-    const productData = [
-        {
-            name: 'Ldn nắch boss gold to 50ml',
-            value: 17000000
-        },
-        {
-            name: 'Dây Pond hồng',
-            value: 2000000
-        },
-        // Placeholder entries to make it top 10 (these would be replaced with real data)
-        { name: 'Product 3', value: 0 },
-        { name: 'Product 4', value: 0 },
-        { name: 'Product 5', value: 0 },
-        { name: 'Product 6', value: 0 },
-        { name: 'Product 7', value: 0 },
-        { name: 'Product 8', value: 0 },
-        { name: 'Product 9', value: 0 },
-        { name: 'Product 10', value: 0 }
-    ];
+export default function TopProductsChart() {
 
-    const formatXAxis = (value: any) => {
-        if (value >= 1000000) {
-            return `${value / 1000000} tr`;
-        } else if (value >= 1000) {
-            return `${value / 1000} k`;
+    const [data, setData] = useState<TopProductDto[]>()
+    const { user } = useContext(AuthContext)
+    const [selectedMonth, setSelectedMonth] = useState<Dayjs>(dayjs()) // Ngày hiện tại;
+
+    useEffect(() => {
+        fetchData();
+    }, [selectedMonth]);
+
+    const fetchData = async () => {
+        try {
+            const dashboardService = new DashboardService();
+            const response = await dashboardService.getTopProduct(user?.id, selectedMonth.format('YYYY-MM'))
+            setData(response)
+        } catch (error) {
+            console.error("Error fetching top products data:", error);
         }
-        return value;
+    }
+
+
+    // Hàm xử lý khi chọn tháng/năm
+    const handleMonthChange = (date: Dayjs) => {
+        setSelectedMonth(date);
     };
 
-    const revenueMenu = (
-        <Menu>
-            <Menu.Item key="1">THEO DOANH THU THUẦN</Menu.Item>
-            <Menu.Item key="2">THEO SỐ LƯỢNG BÁN</Menu.Item>
-            <Menu.Item key="3">THEO LỢI NHUẬN</Menu.Item>
-        </Menu>
-    );
-
-    const timeMenu = (
-        <Menu>
-            <Menu.Item key="1">Tháng này</Menu.Item>
-            <Menu.Item key="2">Tháng trước</Menu.Item>
-            <Menu.Item key="3">3 tháng gần đây</Menu.Item>
-        </Menu>
-    );
+    // Hàm format số thành triệu VNĐ
+    const formatCurrency = (value: number) => {
+        return `${(value / 1_000_000).toFixed(1)} triệu`;
+    };
 
     return (
-        <Card style={{ borderRadius: '8px', boxShadow: '0 1px 4px rgba(0,0,0,0.1)' }}>
-            <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
-                <Col>
-                    <Title level={5} style={{ margin: 0 }}>TOP 10 HÀNG HÓA BÁN CHẠY THÁNG NÀY</Title>
-                </Col>
-                <Col>
-                    <Row align="middle">
-                        <Dropdown overlay={revenueMenu}>
-                            <Button type="primary" style={{ marginRight: 10 }}>
-                                THEO DOANH THU THUẦN <DownOutlined />
-                            </Button>
-                        </Dropdown>
-                        <Dropdown overlay={timeMenu}>
-                            <Button style={{ border: 'none', boxShadow: 'none' }}>
-                                <DownOutlined />
-                            </Button>
-                        </Dropdown>
-                    </Row>
-                </Col>
-            </Row>
-
-            <ResponsiveContainer width="100%" height={400}>
-                <BarChart
-                    data={productData}
-                    layout="vertical"
-                    margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
-                    <XAxis
-                        type="number"
-                        axisLine={false}
-                        tickLine={false}
-                        tickFormatter={formatXAxis}
-                        domain={[0, 'dataMax + 1000000']}
-                    />
-                    <YAxis
-                        type="category"
-                        dataKey="name"
-                        axisLine={false}
-                        tickLine={false}
-                        width={100}
-                    />
-                    <Bar
-                        dataKey="value"
-                        fill="#1890ff"
-                        barSize={20}
-                        radius={[0, 4, 4, 0]}
-                    />
-                </BarChart>
-            </ResponsiveContainer>
-
-            <div style={{ textAlign: 'right', marginTop: 8 }}>
-                <Text style={{ color: '#1890ff', cursor: 'pointer' }}>Tháng này</Text>
+        <div className="p-4 bg-white rounded-lg shadow-md w-full">
+            <Title level={4}>Top 10 Sản phẩm bán nhiều nhất</Title>
+            <DatePicker
+                picker="month"
+                value={selectedMonth}
+                onChange={handleMonthChange}
+                format="YYYY/MM"
+                style={{ marginBottom: '20px' }}
+            />
+            {/* Cực kỳ quan trọng: phải có height! */}
+            <div style={{ width: '100%', height: 600 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                        data={data}
+                        margin={{ top: 20, right: 30, left: 30, bottom: 70 }}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                            dataKey="productName"
+                            angle={-45}
+                            textAnchor="end"
+                            height={80}
+                            tick={{ fontSize: 12 }}
+                        />
+                        <YAxis
+                            yAxisId="left"
+                            orientation="left"
+                            stroke="#8884d8"
+                            label={{
+                                value: 'Số lượng bán ra',
+                                angle: -90,
+                                position: 'middleLeft',
+                                dx: -20
+                            }}
+                        />
+                        <YAxis
+                            yAxisId="right"
+                            orientation="right"
+                            stroke="#82ca9d"
+                            label={{
+                                value: 'Doanh thu (triệu VNĐ)',
+                                angle: 90,
+                                position: 'middleRight"',
+                                dx: 30
+                            }}
+                            tickFormatter={formatCurrency}
+                        />
+                        <Tooltip
+                            formatter={(value, name) => {
+                                if (name === 'Doanh thu') {
+                                    return [`${(Number(value) / 1_000_000).toFixed(1)} triệu VNĐ`, name];
+                                }
+                                return [value, name];
+                            }}
+                        />
+                        <Legend verticalAlign="top" height={36} />
+                        <Bar yAxisId="left" dataKey="totalAmount" name="Số lượng bán ra" fill="#8884d8" />
+                        <Bar yAxisId="right" dataKey="totalRevenue" name="Doanh thu" fill="#82ca9d" />
+                    </BarChart>
+                </ResponsiveContainer>
             </div>
-        </Card>
+        </div>
     );
-};
-
-export default TopProductsChart;
+}

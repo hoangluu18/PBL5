@@ -55,9 +55,9 @@ public class CartServiceImpl implements CartService {
         return cartItems.stream()
                 .filter(item -> productIdList.contains(item.getId())) // Only include items with matching product IDs
                 .map(item -> {
-                    double originalPrice = item.getProduct().getPrice();
+                    double originalPrice = item.getProduct().getCost();
                     double discountPercent = item.getProduct().getDiscountPercent();
-                    double lastPrice = originalPrice * (1 - discountPercent / 100);
+                    double lastPrice = item.getProduct().getPrice() * (1 - discountPercent / 100);
 
                     CartProductDto dto = new CartProductDto(
                             item.getProduct().getId().longValue(),

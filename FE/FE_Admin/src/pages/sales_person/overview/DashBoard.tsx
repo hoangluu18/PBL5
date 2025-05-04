@@ -1,13 +1,17 @@
 import { Col, Layout, Row } from "antd";
 import ActivityNotifications from "./ActivityNotification";
-import MonthlyRevenueChart from "./MonthLyRevenueChart";
 import SalesResults from "./SalesResult";
-import TopProductsChart from "./TopProductChart";
 import { Content } from "antd/es/layout/layout";
+import WeekdayChart from "./WeekDayChart";
+import ProfitRevenueChart from "./ProfitRevenueChart";
+import TopProductsChart from "./TopProductChart";
 
 
 
 const Dashboard = () => {
+
+    document.title = "Quản lý đơn hàng - Dashboard";
+
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Content style={{ padding: '24px', backgroundColor: '#f0f2f5' }}>
@@ -23,14 +27,15 @@ const Dashboard = () => {
                             {/* Left side - Charts */}
                             <Col xs={24} lg={16}>
                                 <Row gutter={[0, 24]}>
-                                    {/* Monthly Revenue Chart */}
-                                    <Col xs={24}>
-                                        <MonthlyRevenueChart />
-                                    </Col>
-
                                     {/* Top Products Chart */}
                                     <Col xs={24}>
                                         <TopProductsChart />
+                                    </Col>
+                                    <Col xs={24}>
+                                        <WeekdayChart />
+                                    </Col>
+                                    <Col xs={24}>
+                                        <ProfitRevenueChart />
                                     </Col>
                                 </Row>
                             </Col>
