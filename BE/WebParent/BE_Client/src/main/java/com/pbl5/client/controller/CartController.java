@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/cart")
@@ -40,5 +42,23 @@ public class CartController {
     public ResponseEntity<Integer> countProducts(@PathVariable("customerId") Integer customerId) {
         int count = cartService.countProductsByCustomerId(customerId);
         return ResponseEntity.ok(count);
+    }
+
+    @PutMapping("/update-quantity/{cartItemId}")
+    public ResponseEntity<String> updateCartItemQuantity(
+            @PathVariable Long cartItemId,
+            @RequestBody Map<String, Integer> payload) {
+
+        Integer newQuantity = payload.get("quantity");
+        if (newQuantity == null || newQuantity < 1) {
+            return ResponseEntity.badRequest().body("Invalid quantity");
+        }
+
+        boolean updated = cartService.updateCartItemQuantity(cartItemId, newQuantity);
+        if (updated) {
+            return ResponseEntity.ok("Cart item quantity updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart item not found");
+        }
     }
 }

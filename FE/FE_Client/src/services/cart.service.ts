@@ -79,6 +79,19 @@ class CartService {
             return 0;
         }
     }
+
+    async updateCartItemQuantity(cartItemId: number, quantity: number): Promise<boolean> {
+        try {
+            const response = await axios.put(
+                `/cart/update-quantity/${cartItemId}`,
+                { quantity }
+            );
+            return true;
+        } catch (error) {
+            console.error("Error updating cart item quantity:", error);
+            return false;
+        }
+    }
 }
 
 export default CartService;
