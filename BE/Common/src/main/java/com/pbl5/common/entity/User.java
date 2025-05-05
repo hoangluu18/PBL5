@@ -14,7 +14,7 @@ public class User extends IdBaseEntity {
     @Column(name = "email", nullable = false, length = 128, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 64)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
     @Column(name = "first_name", nullable = false, length = 45)
