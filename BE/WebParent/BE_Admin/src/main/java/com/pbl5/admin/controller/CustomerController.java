@@ -19,4 +19,9 @@ public class CustomerController {
     public List<CustomerDto> getAllCustomers() {
         return customerService.findAllCustomers();
     }
+
+    @GetMapping("/{id}")
+    public CustomerDto getCustomerById(@PathVariable Integer id) {
+        return customerService.findCustomerById(id);
+    }
 }

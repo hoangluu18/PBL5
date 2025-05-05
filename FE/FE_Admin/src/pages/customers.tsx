@@ -1,70 +1,70 @@
-import { useEffect, useState } from 'react';
-import axios from '../axios.customize'; // Import axios instance
-import { Table, Spin } from 'antd'; // Use Ant Design's Table and Spin components
+import { useEffect, useState } from 'react'
+import axios from '../axios.customize'
+import { Table, Spin } from 'antd'
+import { Link } from 'react-router-dom'
 
 const Customers = () => {
-    const [customers, setCustomers] = useState<any[]>([]); // Store the list of customers
-    const [loading, setLoading] = useState<boolean>(true); // Manage loading state
-    const [error, setError] = useState<string>(''); // Manage error state
+  const [customers, setCustomers] = useState<any[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string>('')
 
-    // Function to fetch customers via API
-    const fetchCustomers = async () => {
-        try {
-            const response = await axios.get('/saleperson/customers'); // Adjust endpoint as needed
-            setCustomers(response.data);
-        } catch (error) {
-            setError('Failed to fetch customers');
-            console.error('API Error:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const fetchCustomers = async () => {
+    try {
+      const response = await axios.get('/saleperson/customers')
+      setCustomers(response.data)
+    } catch (error) {
+      setError('Failed to fetch customers')
+    } finally {
+      setLoading(false)
+    }
+  }
 
-    // Use useEffect to fetch data when the component mounts
-    useEffect(() => {
-        fetchCustomers();
-    }, []); // Run once on mount
+  useEffect(() => {
+    fetchCustomers()
+  }, [])
 
-    // Define table columns based on the UI in the image
-    const columns = [
-        {
-            title: 'Mã khách hàng', // Customer ID
-            dataIndex: 'id',
-            key: 'id',
-        },
-        {
-            title: 'Tên khách hàng', // Customer Name
-            dataIndex: 'fullName',
-            key: 'fullName',
-        },
-        {
-            title: 'Điện thoại', // Phone
-            dataIndex: 'phone',
-            key: 'phone',
-        },
-        {
-            title: 'Tổng chi tiêu', // Total Spending
-            dataIndex: 'totalSpending',
-            key: 'totalSpending',
-            render: (value: number | null) => (value != null ? value.toLocaleString() : '0'), // Handle null/undefined
-        },
-    ];
+  const columns = [
+    {
+      title: 'Mã khách hàng',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
+      title: 'Tên khách hàng',
+      dataIndex: 'fullName',
+      key: 'fullName',
+      render: (text: string, record: any) => (
+        <Link to={`/customers/${record.id}`}>{text}</Link>
+      ),
+    },
+    {
+      title: 'Điện thoại',
+      dataIndex: 'phone',
+      key: 'phone',
+    },
+    {
+      title: 'Tổng chi tiêu',
+      dataIndex: 'totalSpending',
+      key: 'totalSpending',
+      render: (value: number | null) => (value != null ? value.toLocaleString() : '0'),
+    },
+  ]
 
-    if (loading) return <Spin size="large" />; // Show loading spinner while fetching data
-    if (error) return <div>{error}</div>; // Show error message if fetch fails
+  if (loading) return <Spin size="large" />
+  if (error) return <div>{error}</div>
 
-    return (
-        <div>
-            <h1>Danh sách khách hàng</h1> {/* Customer List */}
-            <Table
-                rowKey="id" // Unique key for each row
-                columns={columns} // Table columns defined above
-                dataSource={customers} // Data to display in the table
-                pagination={false} // Disable pagination for simplicity (optional)
-                rowSelection={{ type: 'checkbox' }} // Add checkbox column as seen in the image
-            />
-        </div>
-    );
-};
+  return (
+    <div>
+      <h1>Danh sách khách hàng</h1>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={customers}
+        pagination={false}
+        rowSelection={{ type: 'checkbox' }}
+      />
+    </div>
+  )
+}
 
-export default Customers;
+export default Customers

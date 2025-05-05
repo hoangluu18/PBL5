@@ -28,10 +28,27 @@ public class CustomerServiceImpl implements CustomerService {
         for (Customer customer : customers) {
             // Tính tổng chi tiêu của khách hàng từ bảng orders
             Double totalSpending = orderRepository.calculateTotalSpendingByCustomerId(customer.getId());
-            CustomerDto customerDto = new CustomerDto(customer.getId(), customer.getFullName(), customer.getPhoneNumber(), totalSpending);
+            CustomerDto customerDto = new CustomerDto(customer.getId(), customer.getFullName(), customer.getPhoneNumber(), totalSpending, customer.getEmail(), customer.getAvatar());
             customerDtos.add(customerDto);
         }
 
         return customerDtos;
+    }
+
+    @Override
+    public CustomerDto findCustomerById(Integer id) {
+        Customer customer = customerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy khách hàng với id: " + id));
+
+        Double totalSpending = orderRepository.calculateTotalSpendingByCustomerId(customer.getId());
+
+        return new CustomerDto(
+                customer.getId(),
+                customer.getFullName(),
+                customer.getPhoneNumber(),
+                totalSpending,
+                customer.getEmail(),
+                customer.getAvatar()
+        );
     }
 }

@@ -6,6 +6,7 @@ import { Result, Button } from 'antd'
 import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom'
 import Hompage from './pages/homepage.tsx'
 import Customers from './pages/customers.tsx';
+import CustomerDetail from './pages/customerDetail.tsx';
 
 const router = createBrowserRouter([
   {
@@ -24,7 +25,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/customers",
-        element: <Customers />, // Thêm route mới để hiển thị danh sách khách hàng
+        element: <Customers />,
+      },
+      {
+        path: "/customers/:id",
+        element: <CustomerDetail />,
       }
     ]
   }
