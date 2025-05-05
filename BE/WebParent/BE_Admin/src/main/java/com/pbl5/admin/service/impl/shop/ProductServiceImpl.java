@@ -96,7 +96,11 @@ public class ProductServiceImpl implements ProductService {
         existingProduct.setMainImage(productDetailDto.getMainImage());
         existingProduct.setFullDescription(productDetailDto.getFullDescription());
         existingProduct.setEnabled(productDetailDto.isEnabled());
-
+        existingProduct.setDiscountPercent(productDetailDto.getDiscountPercent());
+        existingProduct.setWeight(productDetailDto.getWeight());
+        existingProduct.setHeight(productDetailDto.getHeight());
+        existingProduct.setWidth(productDetailDto.getWidth());
+        existingProduct.setLength(productDetailDto.getLength());
         // Xử lý cập nhật thông số kỹ thuật
         if (productDetailDto.getSpecifications() != null) {
             // Xóa tất cả thông số kỹ thuật cũ
@@ -272,6 +276,11 @@ public class ProductServiceImpl implements ProductService {
         detailDto.setLastUpdated(product.getUpdatedAt());
         detailDto.setFullDescription(product.getFullDescription());
         detailDto.setEnabled(product.isEnabled());
+        detailDto.setDiscountPercent(product.getDiscountPercent());
+        detailDto.setWeight(product.getWeight());
+        detailDto.setHeight(product.getHeight());
+        detailDto.setWidth(product.getWidth());
+        detailDto.setLength(product.getLength());
 
         Map<String, ProductSpecificationDto> uniqueSpecs = new HashMap<>();
         product.getProductDetails().forEach(detail -> {

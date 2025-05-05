@@ -13,6 +13,12 @@ public class ProductDto {
     private float price;
     private float cost;
     private int quantity; // Tổng số lượng từ tất cả variants
+    private float discountPercent;
     private String mainImage;
     private Date lastUpdated;
+
+    private float weight;
+    private float height;
+    private float width;
+    private float length;
 }

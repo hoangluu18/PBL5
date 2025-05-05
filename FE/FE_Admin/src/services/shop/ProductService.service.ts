@@ -206,6 +206,42 @@ export class ProductService {
         }
     }
 
+    //Prodcut Images service
+    async getProductImages(productId: number): Promise<any[]> {
+        try {
+            const response = await axios.get(`${API_URL}/api/products/${productId}/images`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching product images:', error);
+            return [];
+        }
+    }
+    
+    async uploadProductExtraImage(productId: number, file: File): Promise<any> {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const response = await axios.post(`${API_URL}/api/products/${productId}/images`, formData);
+            return response.data;
+        } catch (error) {
+            console.error('Error uploading product image:', error);
+            throw error;
+        }
+    }
+    
+    async deleteProductImage(productId: number, imageId: number): Promise<void> {
+        try {
+            console.log(`Gọi API: DELETE ${API_URL}/api/products/${productId}/images/${imageId}`);
+            const response = await axios.delete(`${API_URL}/api/products/${productId}/images/${imageId}`);
+            console.log('Kết quả xóa ảnh:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error('Error deleting product image:', error);
+            throw error;
+        }
+    }
+
 
 
 }

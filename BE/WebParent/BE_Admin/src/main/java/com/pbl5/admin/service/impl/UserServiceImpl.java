@@ -5,6 +5,8 @@ import com.pbl5.admin.repository.UserRepository;
 import com.pbl5.admin.service.UserService;
 import com.pbl5.common.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,5 +22,12 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("Could not find any user with email: " + email);
         }
         return user;
+    }
+
+    public static void main(String[] args) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String pass = "12345678";
+        String hashedPassword = bCryptPasswordEncoder.encode(pass);
+        System.out.println("Hashed password: " + hashedPassword);
     }
 }

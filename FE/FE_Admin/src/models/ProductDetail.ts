@@ -29,13 +29,17 @@ export interface ProductDetail {
     cost: number;
     quantity: number;
     mainImage: string;
+    discountPercent: number;
     lastUpdated: string;
     fullDescription?: string;
     enabled: boolean;
     specifications: ProductSpecification[];
     variantGroups: ProductVariantGroup[];
     reviews?: Review[];
-    
+    weight: number;
+    width: number;
+    height: number;
+    length: number;
     brandId?: number;
     brandName?: string;
     categoryId?: number;

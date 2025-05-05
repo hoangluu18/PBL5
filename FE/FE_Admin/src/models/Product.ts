@@ -6,7 +6,12 @@ export interface Product {
     cost: number;
     quantity: number;
     mainImage: string;
+    discountPercent: number;
     lastUpdated: string;
+    weight: number;
+    width: number;
+    height: number;
+    length: number;
 }
 
 export interface ProductsResponse {
