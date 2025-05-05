@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -13,5 +15,7 @@ public class AuthResponse {
 
     private String accessToken;
     private Integer id;
-    private String email;
+    private String name;
+    private String photo;
+    private List<String> roles = new ArrayList<>();
 }

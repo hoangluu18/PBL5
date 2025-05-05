@@ -1,12 +1,18 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
 import App from './App.tsx'
+import 'antd/dist/reset.css'
 import { Result, Button } from 'antd'
 import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom'
+
 import Hompage from './pages/homepage.tsx'
 import Customers from './pages/customers.tsx';
 import CustomerDetail from './pages/customerDetail.tsx';
+import Dashboard from './pages/sales_person/overview/DashBoard.tsx'
+import InvoiceManagementPage from './pages/sales_person/invoice/InvoiceManagement.tsx'
+import LoginPage from './pages/layouts/login.tsx'
+import { AuthWrapper } from './utils/auth.context.tsx'
+import ProductManagement from './pages/sales_person/product_management/ProductManagement.tsx'
+
 
 const router = createBrowserRouter([
   {
@@ -30,14 +36,31 @@ const router = createBrowserRouter([
       {
         path: "/customers/:id",
         element: <CustomerDetail />,
-      }
+      },
+      {
+        path: "/",
+        element: <Dashboard />,
+      },
+      {
+        path: "/invoice",
+        element: <InvoiceManagementPage />
+      },
+      {
+        path: "/products",
+        element: <ProductManagement />
+      },
     ]
+  },
+  {
+    path: "/login",
+    element: <LoginPage />
   }
 ]);
 
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+
+  <AuthWrapper>
     <RouterProvider router={router} />
-  </StrictMode>,
+  </AuthWrapper>
 )

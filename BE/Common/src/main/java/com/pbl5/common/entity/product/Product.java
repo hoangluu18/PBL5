@@ -112,4 +112,13 @@ public class Product extends IdBaseEntity {
                 ", brand name=" + brand.getName() +
                 '}';
     }
+
+    @PrePersist
+    protected void onCreate(){
+        this.updatedAt = new Date();
+    }
+    @PreUpdate
+    protected void onUpdate(){
+        this.updatedAt = new Date();
+    }
 }

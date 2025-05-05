@@ -16,7 +16,7 @@ public class ProductVariant extends IdBaseEntity {
     @Column(length = 50)
     private String value;
     private Integer quantity;
-    @Column(length = 64)
+    @Column(length = 255)
     private String photo;
 
     @Column(name = "parent_id")
@@ -34,5 +34,13 @@ public class ProductVariant extends IdBaseEntity {
                 ", quantity=" + quantity +
                 ", photo='" + photo + '\'' +
                 '}';
+    }
+
+    public boolean isParentVariant() {
+        return parentId == null;
+    }
+
+    public boolean isChildVariant() {
+        return parentId != null;
     }
 }
