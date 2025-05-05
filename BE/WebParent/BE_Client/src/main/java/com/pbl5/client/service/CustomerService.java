@@ -4,6 +4,7 @@ package com.pbl5.client.service;
 import com.pbl5.client.exception.CustomerNotFoundException;
 import com.pbl5.common.entity.Customer;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CustomerService {
@@ -26,4 +27,5 @@ public interface CustomerService {
     Customer updateResetPasswordToken(String email) throws CustomerNotFoundException;
 
     void updatePassword(String token, String newPassword) throws CustomerNotFoundException;
+
 }
