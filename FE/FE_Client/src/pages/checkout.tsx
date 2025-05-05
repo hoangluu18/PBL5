@@ -462,7 +462,7 @@ const Checkout: React.FC = () => {
                                 name: item.productName,
                                 price: item.lastPrice,
                                 quantity: item.quantity,
-                                image: `/src/assets/product-images/${item.photo}`,
+                                image: item.photo || '', // Provide empty string as fallback when photo is null
                                 shopId: item.shopId,
                                 shopName: item.shopName
                             }))}

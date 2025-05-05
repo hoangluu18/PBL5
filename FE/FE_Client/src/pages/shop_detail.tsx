@@ -212,7 +212,7 @@ const ShopDetail: React.FC = () => {
                 <Row align="middle" gutter={16}>
                     <Col>
                         <AntImage
-                            src={'http://localhost:5173/src/assets/shop-images/' + shopInfo.photo || "https://via.placeholder.com/80"}
+                            src={shopInfo.photo || "https://via.placeholder.com/80"}
                             alt="Shop logo"
                             preview={false}
                             width={80}
@@ -370,7 +370,7 @@ const ShopDetail: React.FC = () => {
                                 style={{ height: '100%' }}
                             >
                                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                                    <Avatar size={100} src={`http://localhost:5173/src/assets/shop-images/` +shopInfo.photo } />
+                                    <Avatar size={100} src={shopInfo.photo } />
                                     <Title level={4} style={{ marginTop: '16px', marginBottom: '8px' }}>{shopInfo.name}</Title>
                                     <Button 
                                         type={isFollowing ? "default" : "primary"}

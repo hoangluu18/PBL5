@@ -99,7 +99,7 @@ const mapApiDataToShopList = (apiData: IFollowingShopDto[]) => {
     return apiData.map(shop => ({
         id: shop.shopId,
         name: String(shop.shopName),
-        image: `http://localhost:5173/src/assets/shop-images/${shop.photo}` || 'https://via.placeholder.com/150',
+        image: shop.photo || 'https://via.placeholder.com/150',
         rating: Number(shop.rating) || 0,
         followers: Number(shop.peopleTracking) || 0
     }));

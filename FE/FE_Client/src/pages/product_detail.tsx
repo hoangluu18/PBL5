@@ -62,7 +62,7 @@ const ProductDetailPage: React.FC = () => {
             if (alias) {
                 const data = await productService.getProductByAlias(alias);
                 setProduct(data);
-                setSelectedMainImage(`http://localhost:5173/src/assets/product-images/${data.mainImage}`);
+                setSelectedMainImage(data.mainImage);
             } else {
                 console.error("Alias is undefined");
             }
@@ -211,7 +211,7 @@ const ProductDetailPage: React.FC = () => {
 
     const handleVariantHover = (img: string) => {
         if (img) {
-            setSelectedMainImage(`http://localhost:5173/src/assets/product-variants-images/${img}`);
+            setSelectedMainImage(img);
         }
     };
 
@@ -219,14 +219,14 @@ const ProductDetailPage: React.FC = () => {
         if (photo && selectedVariant[key]) {
             setSelectedMainImage(selectedVariantImage);
         } else if (photo && !selectedVariant[key]) {
-            setSelectedMainImage(`http://localhost:5173/src/assets/product-images/${product.mainImage}`);
+            setSelectedMainImage(product.mainImage);
         }
     }
 
 
     const handleSelectVariant = (key: string, val: string, photo: string) => {
         if (photo) {
-            setSelectedVariantImage(`http://localhost:5173/src/assets/product-variants-images/${photo}`);
+            setSelectedVariantImage(photo);
         }
         setSelectedVariant((prev) => {
             const updatedVariant = {
@@ -276,7 +276,7 @@ const ProductDetailPage: React.FC = () => {
                                     style={{ width: '60px', height: '60px', cursor: 'pointer', borderRadius: '4px', overflow: 'hidden' }}
                                 >
                                     <img
-                                        src={`http://localhost:5173/src/assets/product-extra-images/${image}`}
+                                        src={image}
                                         onMouseEnter={handleHoverAndClickImage}
                                         alt={`Product thumbnail ${index + 1}`}
                                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -368,7 +368,7 @@ const ProductDetailPage: React.FC = () => {
                                     >
                                         {val.photo && (
                                             <img
-                                                src={`http://localhost:5173/src/assets/product-extra-images/${val.photo}`}
+                                                src={val.photo}
                                                 alt={`${key} - ${val.value}`}
                                                 style={{ height: '24px', marginRight: '8px' }}
                                             />

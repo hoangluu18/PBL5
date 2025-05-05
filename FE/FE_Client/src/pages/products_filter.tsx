@@ -291,7 +291,7 @@ const ProductFilterPage: React.FC = () => {
                                     </Checkbox>
                                     {brand.logo && (
                                         <Avatar
-                                            src={`http://localhost:5173/src/assets/brand-images/${brand.logo}`}
+                                            src={brand.logo}
                                             size="small"
                                             className="ms-2"
                                             style={{ border: "1px solid #f0f0f0" }}
