@@ -118,6 +118,7 @@ public class OrderController {
             response.setStatusCode(200);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            e.printStackTrace(); // hoặc log.error("Error:", e);
             response.setMessage("Failed to get recent orders");
             response.setStatusCode(500);
             return ResponseEntity.status(500).body(response);

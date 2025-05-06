@@ -4,7 +4,7 @@ import 'antd/dist/reset.css'
 import { Result, Button } from 'antd'
 import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom'
 
-import Hompage from './pages/homepage.tsx'
+//import Hompage from './pages/homepage.tsx'
 import Customers from './pages/customers.tsx';
 import CustomerDetail from './pages/customerDetail.tsx';
 import Dashboard from './pages/sales_person/overview/DashBoard.tsx'
@@ -25,10 +25,6 @@ const router = createBrowserRouter([
       extra={<Button type="primary"><Link to={"/"}>Back Home</Link></Button>}
     />,
     children: [
-      {
-        index: true,
-        element: <Hompage />,
-      },
       {
         path: "/customers",
         element: <Customers />,

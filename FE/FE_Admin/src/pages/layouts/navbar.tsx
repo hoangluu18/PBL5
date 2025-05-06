@@ -9,9 +9,10 @@ import {
     DashboardOutlined,
     TagOutlined,     // Thêm icon này
     ShopOutlined,    // Hoặc thêm icon này
-    InboxOutlined 
+    InboxOutlined, 
+    LogoutOutlined
 } from '@ant-design/icons';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { use, useContext } from 'react';
 import { AuthContext } from '../../utils/auth.context';
 
@@ -41,7 +42,7 @@ const NavBar = () => {
         {
             key: "customers",
             icon: <UserOutlined />,
-            label: "Khách hàng"
+            label: <Link to="/customers" className='text-decoration-none'>Khách hàng</Link>
         },
         {
             key: "inventory",

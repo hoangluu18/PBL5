@@ -7,6 +7,7 @@ export interface TodayStatisticDto {
 }
 
 export interface ReportDto {
+    map(arg0: (item: ReportDto) => { netRevenue: number; day: string; orders: number; grossRevenue: number; identifier: string; totalOrder: number; netProfit: number; }): unknown;
     identifier: string;
     grossRevenue: number;
     totalOrder: number;
