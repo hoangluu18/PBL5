@@ -12,6 +12,7 @@ import InvoiceManagementPage from './pages/sales_person/invoice/InvoiceManagemen
 import LoginPage from './pages/layouts/login.tsx'
 import { AuthWrapper } from './utils/auth.context.tsx'
 import ProductManagement from './pages/sales_person/product_management/ProductManagement.tsx'
+import ShopProfilePage from './pages/shop_profile/ShopProfile.tsx'
 
 
 const router = createBrowserRouter([
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
       {
         path: "/products",
         element: <ProductManagement />
+      },
+      {
+        path: "/profile",
+        element: <ShopProfilePage />,
       },
     ]
   },

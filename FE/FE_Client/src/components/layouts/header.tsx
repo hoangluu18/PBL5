@@ -156,14 +156,14 @@ const App = () => {
                                     />
                                 </Tooltip>
 
-                                <Tooltip title="Thông báo">
+                                {/* <Tooltip title="Thông báo">
                                     <Badge dot color="#52c41a">
                                         <BellOutlined
                                             style={{ fontSize: "24px", cursor: "pointer", color: "#555" }}
                                             onClick={() => navigate('/notifications')}
                                         />
                                     </Badge>
-                                </Tooltip>
+                                </Tooltip> */}
 
                                 <Dropdown overlay={userMenu} trigger={['hover']} placement="bottomRight" arrow>
                                     <div style={{ display: "inline-block", cursor: "pointer" }}>

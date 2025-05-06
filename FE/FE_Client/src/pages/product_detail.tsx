@@ -257,13 +257,20 @@ const ProductDetailPage: React.FC = () => {
                 <Col xs={24} md={8}>
                     <div>
                         {/* Ảnh chính */}
-                        <div className="mb-3">
+                        <div className="mb-3" style={{ height: '600px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <Image
                                 src={selectedMainImage}
                                 alt={product.name}
                                 className="rounded"
-                                width={'100%'}
-                                style={{ width: '100%', objectFit: 'contain', maxHeight: '600px' }}
+                                style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '100%',
+                                    objectFit: 'contain'
+                                }}
+                                preview={{
+                                    mask: false,
+                                    toolbarRender: () => null
+                                }}
                             />
                         </div>
 
