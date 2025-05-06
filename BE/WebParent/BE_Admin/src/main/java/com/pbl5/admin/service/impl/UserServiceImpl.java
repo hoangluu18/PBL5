@@ -24,10 +24,4 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    public static void main(String[] args) {
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String pass = "12345678";
-        String hashedPassword = bCryptPasswordEncoder.encode(pass);
-        System.out.println("Hashed password: " + hashedPassword);
-    }
 }

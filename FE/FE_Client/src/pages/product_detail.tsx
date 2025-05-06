@@ -56,7 +56,7 @@ const ProductDetailPage: React.FC = () => {
 
     const fetchProduct = async () => {
         setLoading(true);
-
+    
         try {
             const productService = new ProductService();
             if (alias) {
@@ -204,11 +204,12 @@ const ProductDetailPage: React.FC = () => {
     ];
 
     const handleHoverAndClickImage = (e: any) => {
-        const image = e.target.currentSrc;
+        const image = e.target.src; // Use src directly which already has the full path
         setSelectedMainImage(image);
         setSelectedExtraImage(image);
     };
-
+    
+    // Update the handleVariantHover function - already correct but improve clarity
     const handleVariantHover = (img: string) => {
         if (img) {
             setSelectedMainImage(img);
@@ -221,7 +222,7 @@ const ProductDetailPage: React.FC = () => {
         } else if (photo && !selectedVariant[key]) {
             setSelectedMainImage(product.mainImage);
         }
-    }
+    };
 
 
     const handleSelectVariant = (key: string, val: string, photo: string) => {
@@ -235,8 +236,7 @@ const ProductDetailPage: React.FC = () => {
             };
             return updatedVariant;
         });
-
-    }
+    };
 
 
     return (

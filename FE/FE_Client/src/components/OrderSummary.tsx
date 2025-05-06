@@ -75,7 +75,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                             marginRight: '10px',
                           }}
                         >
-                          <Avatar shape="square" size={60} src={item.image} />
+                          <Avatar 
+  shape="square" 
+  size={60} 
+  src={item.image.startsWith('http') ? item.image : `http://localhost:5173/src/assets/product-images/${item.image}`} 
+/>
                         </div>
                       }
                       title={

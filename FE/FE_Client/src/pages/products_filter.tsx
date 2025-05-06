@@ -425,9 +425,9 @@ const ProductFilterPage: React.FC = () => {
                         </div>
                     ) : products.length > 0 ? (
                         <>
-                            <Row gutter={[24, 24]} className="ms-2">
+                            <Row gutter={[24, 24]}  className="ms-2">
                                 {products.map((product) => (
-                                    <Col key={product.id || product.name}>
+                                    <Col span={6} key={product.id || product.name} >
                                         <ProductCard {...product} />
                                     </Col>
                                 ))}
