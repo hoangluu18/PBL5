@@ -8,7 +8,8 @@ import {
 import {
     EditOutlined, StopOutlined, PlusOutlined,
     ArrowLeftOutlined, CheckCircleOutlined, CloseCircleOutlined, SaveOutlined, DeleteOutlined, UploadOutlined,
-    LikeOutlined
+    LikeOutlined,
+    LoadingOutlined
 } from '@ant-design/icons';
 import { ProductDetail, ProductVariant, ProductVariantGroup } from '../../../models/ProductDetail';
 import { ProductService } from '../../../services/shop/ProductService.service';
@@ -67,6 +68,13 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     const [loadingCategories, setLoadingCategories] = useState<boolean>(false);
     //state cho ảnh biến thể tạm thời
     const [tempVariantImages, setTempVariantImages] = useState<{ [key: string]: File }>({});
+    //state cho product images
+    const [productImages, setProductImages] = useState<any[]>([]);
+    const [loadingImages, setLoadingImages] = useState<boolean>(false);
+    const [uploadingImage, setUploadingImage] = useState<boolean>(false);
+    const [pendingImages, setPendingImages] = useState<File[]>([]);
+    const [confirmDeleteModalVisible, setConfirmDeleteModalVisible] = useState(false);
+    const [imageToDelete, setImageToDelete] = useState<number | null>(null);
     useEffect(() => {
         if (visible) {
             if (isCreateMode) {
@@ -109,6 +117,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     useEffect(() => {
         if (productDetail) {
             fetchReviews();
+            fetchProductImages(productDetail.id);
         }
     }, [productDetail]);
 
@@ -147,10 +156,15 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             name: '',
             price: 0,
             cost: 0,
+            discountPercent: 0,
             enabled: true,
             fullDescription: '',
             brandId: undefined,
             categoryId: undefined,
+            weight: 0,
+            height: 0,
+            width: 0,
+            length: 0,
         });
 
         // Khởi tạo các state khác
@@ -238,10 +252,15 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             name: productDetail.name,
             price: productDetail.price,
             cost: productDetail.cost,
+            discountPercent: productDetail.discountPercent || 0,
             enabled: productDetail.enabled,
             fullDescription: productDetail.fullDescription || '',
             brandId: productDetail.brandId,
             categoryId: productDetail.categoryId,
+            weight: productDetail.weight || 0,
+            height: productDetail.height || 0,
+            width: productDetail.width || 0,
+            length: productDetail.length || 0,
         });
 
         // Khởi tạo specs để có thể thêm/sửa/xóa
@@ -307,6 +326,10 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             const values = await form.validateFields();
             setLoading(true);
 
+            const discountPercentValue = values.discountPercent !== undefined && values.discountPercent !== null
+            ? Number(values.discountPercent)
+            : 0;
+
             // Khởi tạo biến để lưu trữ file ảnh tạm thời
             let tempImageFile = imageFile;
 
@@ -318,6 +341,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 alias: isCreating ? '' : productDetail?.alias,
                 price: values.price,
                 cost: values.cost,
+                discountPercent: discountPercentValue,
                 enabled: values.enabled,
                 quantity: isCreating ? 0 : productDetail?.quantity,
                 fullDescription: editorContent,
@@ -327,6 +351,10 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 lastUpdated: isCreating ? null : productDetail?.lastUpdated,
                 brandId: values.brandId,
                 categoryId: values.categoryId,
+                weight: values.weight || 0,
+                height: values.height || 0,
+                width: values.width || 0,
+                length: values.length || 0,
                 specifications: specs.filter(spec => spec.name && spec.value).map(spec => ({
                     id: spec.id > 0 ? spec.id : null,
                     name: spec.name,
@@ -424,6 +452,19 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     createdOrUpdatedProduct = await productService.getProductDetail(createdOrUpdatedProduct.id);
                 }
 
+                if (pendingImages.length > 0) {
+                    try {
+                        for (const imageFile of pendingImages) {
+                            await productService.uploadProductExtraImage(createdOrUpdatedProduct.id, imageFile);
+                        }
+                        message.success(`${pendingImages.length} hình ảnh đã được tải lên`);
+                        setPendingImages([]);
+                    } catch (error) {
+                        console.error('Error uploading pending images:', error);
+                        message.warning('Một số hình ảnh có thể không được tải lên thành công');
+                    }
+                }
+
                 message.success('Tạo sản phẩm mới thành công');
                 if (onProductCreated) {
                     onProductCreated(createdOrUpdatedProduct);
@@ -435,7 +476,12 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             }
 
             // Cập nhật state và đóng modal
-            setProductDetail(createdOrUpdatedProduct);
+            if (createdOrUpdatedProduct) {
+                setProductDetail({
+                    ...createdOrUpdatedProduct,
+                    discountPercent: discountPercentValue // Đảm bảo state được cập nhật đúng
+                });
+            }
             setEditMode(false);
             setIsCreating(false);
 
@@ -515,7 +561,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     const handleAddVariant = (groupIndex: number) => {
         const updatedGroups = [...editingVariantGroups];
         const newVariant: ProductVariant = {
-            id: Date.now(), // ID tạm thời
+            id: -Math.floor(Math.random() * 1000), // ID tạm thời
             key: updatedGroups[groupIndex].name, // Key là tên của nhóm biến thể
             value: '',
             quantity: 0,
@@ -709,6 +755,91 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         });
     };
 
+    //const cho product images
+    const fetchProductImages = async (productId: number) => {
+        if (!productId) return;
+        
+        setLoadingImages(true);
+        try {
+            const images = await productService.getProductImages(productId);
+            setProductImages(images);
+        } catch (error) {
+            console.error('Error loading product images:', error);
+        } finally {
+            setLoadingImages(false);
+        }
+    };
+
+    const handleUploadProductImage = async (info: any) => {
+        if (!info.file) return;
+        
+        // Check file size and type
+        if (info.file.size > 5 * 1024 * 1024) {
+            message.error('Kích thước ảnh không được vượt quá 5MB');
+            return;
+        }
+    
+        const isImage = info.file.type.startsWith('image/');
+        if (!isImage) {
+            message.error('Chỉ chấp nhận file ảnh');
+            return;
+        }
+    
+        if (isCreating) {
+            // Store the file for later upload after product creation
+            setPendingImages([...pendingImages, info.file]);
+            
+            // Add a preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const newImage = {
+                    id: Date.now(), // Temporary ID
+                    url: e.target?.result as string,
+                    file: info.file,
+                    isPending: true
+                };
+                setProductImages([...productImages, newImage]);
+            };
+            reader.readAsDataURL(info.file);
+            
+            return;
+        }
+        
+        // Normal upload for existing products
+        setUploadingImage(true);
+        try {
+            const response = await productService.uploadProductExtraImage(productDetail!.id, info.file);
+            setProductImages([...productImages, response]);
+            message.success('Tải lên hình ảnh thành công');
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            message.error('Không thể tải lên hình ảnh');
+        } finally {
+            setUploadingImage(false);
+        }
+    };
+
+
+    const handleDeleteProductImage = (imageId: number) => {
+        setImageToDelete(imageId);
+        setConfirmDeleteModalVisible(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!imageToDelete || !productDetail) return;
+        
+        try {
+            await productService.deleteProductImage(productDetail.id, imageToDelete);
+            setProductImages(productImages.filter(img => img.id !== imageToDelete));
+            message.success('Xóa hình ảnh thành công');
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            message.error('Không thể xóa hình ảnh');
+        } finally {
+            setConfirmDeleteModalVisible(false);
+        }
+    };
+
 
     // Render biến thể sản phẩm
     const renderProductVariants = (variantGroups: ProductVariantGroup[]) => {
@@ -836,6 +967,19 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                                     parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
                                 />
                             </Form.Item>
+                            <Form.Item
+                                name="discountPercent"
+                                label="Giảm giá (%)"
+                            >
+                                <InputNumber
+                                    style={{ width: '100%' }}
+                                    min={0}
+                                    max={100}
+                                    precision={2} // Thêm dòng này để giới hạn số thập phân
+                                    formatter={value => `${value}%`}
+                                    parser={value => value!.replace('%', '')}
+                                />
+                            </Form.Item>
                             <Form.Item label="Tồn kho">
                                 <InputNumber style={{ width: '100%' }} value={productDetail?.quantity} disabled />
                             </Form.Item>
@@ -850,6 +994,7 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
 
                                 />
                             </Form.Item>
+
                             <Form.Item
                                 name="brandId"
                                 label="Thương hiệu"
@@ -951,7 +1096,150 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                         )}
                     </Form.Item>
                 </TabPane>
+                <TabPane tab="Hình ảnh sản phẩm" key="images">
+                    {loadingImages ? (
+                        <div style={{ textAlign: 'center', padding: '30px' }}>
+                            <Spin size="large" />
+                        </div>
+                    ) : productImages.length > 0 ? (
+                        <div>
+                            <Row gutter={[16, 16]}>
+                                {productImages.map(image => (
+                                    <Col span={6} key={image.id}>
+                                        <Card
+                                            hoverable
+                                            cover={
+                                                <Image
+                                                    src={image.url}
+                                                    alt="Product image"
+                                                    style={{ height: 200, objectFit: 'cover' }}
+                                                    fallback="https://placehold.co/300x200/eee/ccc?text=No+Image"
+                                                />
+                                            }
+                                            actions={editMode ? [
+                                                <DeleteOutlined
+                                                    key="delete"
+                                                    onClick={() => handleDeleteProductImage(image.id)}
+                                                    style={{ color: '#ff4d4f' }}
+                                                />
+                                            ] : []}
+                                        >
+                                            <Typography.Paragraph ellipsis={{ rows: 1 }} copyable>
+                                                {image.url}
+                                            </Typography.Paragraph>
+                                        </Card>
+                                    </Col>
+                                ))}
 
+                                {editMode && (
+                                    <Col span={6}>
+                                        <Upload
+                                            listType="picture-card"
+                                            showUploadList={false}
+                                            beforeUpload={() => false}
+                                            onChange={handleUploadProductImage}
+                                            accept="image/*"
+                                        >
+                                            {uploadingImage ? <LoadingOutlined /> : (
+                                                <div>
+                                                    <PlusOutlined />
+                                                    <div style={{ marginTop: 8 }}>Thêm ảnh</div>
+                                                </div>
+                                            )}
+                                        </Upload>
+                                    </Col>
+                                )}
+                            </Row>
+                        </div>
+                    ) : (
+                        <Empty
+                            description={
+                                <>
+                                    <div>Chưa có hình ảnh nào</div>
+                                    {editMode && (
+                                        <Upload
+                                            listType="picture-card"
+                                            showUploadList={false}
+                                            beforeUpload={() => false}
+                                            onChange={handleUploadProductImage}
+                                            accept="image/*"
+                                            style={{ marginTop: 16 }}
+                                        >
+                                            {uploadingImage ? <LoadingOutlined /> : (
+                                                <div>
+                                                    <PlusOutlined />
+                                                    <div style={{ marginTop: 8 }}>Thêm ảnh</div>
+                                                </div>
+                                            )}
+                                        </Upload>
+                                    )}
+                                </>
+                            }
+                        />
+                    )}
+                </TabPane>               
+                <TabPane tab="Kích thước sản phẩm" key="dimensions">
+                    <Card title="Thông tin kích thước và trọng lượng">
+                        <Row gutter={[16, 16]}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="weight"
+                                    label="Trọng lượng (kg)"
+                                >
+                                    <InputNumber
+                                        style={{ width: '100%' }}
+                                        min={0}
+                                        step={0.01}
+                                        precision={2}
+                                        placeholder="Nhập trọng lượng (kg)"
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="height"
+                                    label="Chiều cao (cm)"
+                                >
+                                    <InputNumber
+                                        style={{ width: '100%' }}
+                                        min={0}
+                                        step={0.1}
+                                        precision={1}
+                                        placeholder="Nhập chiều cao (cm)"
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="width"
+                                    label="Chiều rộng (cm)"
+                                >
+                                    <InputNumber
+                                        style={{ width: '100%' }}
+                                        min={0}
+                                        step={0.1}
+                                        precision={1}
+                                        placeholder="Nhập chiều rộng (cm)"
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="length"
+                                    label="Chiều dài (cm)"
+                                >
+                                    <InputNumber
+                                        style={{ width: '100%' }}
+                                        min={0}
+                                        step={0.1}
+                                        precision={1}
+                                        placeholder="Nhập chiều dài (cm)"
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                    </Card>
+                </TabPane>
                 <TabPane tab="Thông số kỹ thuật" key="specifications">
                     <div style={{ marginBottom: 16 }}>
                         <Button
@@ -1444,6 +1732,9 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                                             <Descriptions.Item label="Mã sản phẩm">{productDetail.id}</Descriptions.Item>
                                             <Descriptions.Item label="Tên sản phẩm">{productDetail.name}</Descriptions.Item>
                                             <Descriptions.Item label="Giá bán">{productDetail.price.toLocaleString('vi-VN')} đ</Descriptions.Item>
+                                            <Descriptions.Item label="Giảm giá">
+                                                {productDetail.discountPercent ? `${productDetail.discountPercent}%` : 'Không giảm giá'}
+                                            </Descriptions.Item>
                                             <Descriptions.Item label="Giá vốn">{productDetail.cost.toLocaleString('vi-VN')} đ</Descriptions.Item>
                                             <Descriptions.Item label="Tổng tồn kho">
                                                 <Tag color={productDetail.quantity > 10 ? 'green' : productDetail.quantity > 0 ? 'gold' : 'red'}>
@@ -1473,29 +1764,128 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                                         <div dangerouslySetInnerHTML={{ __html: productDetail.fullDescription }} />
                                     </Card>
                                 )}
-                            </TabPane>
+                                    </TabPane>
+                                    <TabPane tab="Hình ảnh sản phẩm" key="images">
+                                        {loadingImages ? (
+                                            <div style={{ textAlign: 'center', padding: '30px' }}>
+                                                <Spin size="large" />
+                                            </div>
+                                        ) : productImages.length > 0 ? (
+                                            <div>
+                                                <Row gutter={[16, 16]}>
+                                                    {productImages.map(image => (
+                                                        <Col span={6} key={image.id}>
+                                                            <Card
+                                                                hoverable
+                                                                cover={
+                                                                    <Image
+                                                                        src={image.url}
+                                                                        alt="Product image"
+                                                                        style={{ height: 200, objectFit: 'cover' }}
+                                                                        fallback="https://placehold.co/300x200/eee/ccc?text=No+Image"
+                                                                    />
+                                                                }
+                                                                actions={editMode ? [
+                                                                    <DeleteOutlined
+                                                                        key="delete"
+                                                                        onClick={() => handleDeleteProductImage(image.id)}
+                                                                        style={{ color: '#ff4d4f' }}
+                                                                    />
+                                                                ] : []}
+                                                            >
+                                                                <Typography.Paragraph ellipsis={{ rows: 1 }} copyable>
+                                                                    {image.url}
+                                                                </Typography.Paragraph>
+                                                            </Card>
+                                                        </Col>
+                                                    ))}
 
-                            <TabPane tab="Thông số kỹ thuật" key="specifications">
-                                {productDetail.specifications && productDetail.specifications.length > 0 ? (
-                                    <Table
-                                        dataSource={productDetail.specifications}
-                                        columns={specificationColumns}
-                                        pagination={false}
-                                        rowKey="id"
-                                        bordered
-                                    />
-                                ) : (
-                                    <Empty description="Chưa có thông số kỹ thuật" />
-                                )}
-                            </TabPane>
+                                                    {editMode && (
+                                                        <Col span={6}>
+                                                            <Upload
+                                                                listType="picture-card"
+                                                                showUploadList={false}
+                                                                beforeUpload={() => false}
+                                                                onChange={handleUploadProductImage}
+                                                                accept="image/*"
+                                                            >
+                                                                {uploadingImage ? <LoadingOutlined /> : (
+                                                                    <div>
+                                                                        <PlusOutlined />
+                                                                        <div style={{ marginTop: 8 }}>Thêm ảnh</div>
+                                                                    </div>
+                                                                )}
+                                                            </Upload>
+                                                        </Col>
+                                                    )}
+                                                </Row>
+                                            </div>
+                                        ) : (
+                                            <Empty
+                                                description={
+                                                    <>
+                                                        <div>Chưa có hình ảnh nào</div>
+                                                        {editMode && (
+                                                            <Upload
+                                                                listType="picture-card"
+                                                                showUploadList={false}
+                                                                beforeUpload={() => false}
+                                                                onChange={handleUploadProductImage}
+                                                                accept="image/*"
+                                                                style={{ marginTop: 16 }}
+                                                            >
+                                                                {uploadingImage ? <LoadingOutlined /> : (
+                                                                    <div>
+                                                                        <PlusOutlined />
+                                                                        <div style={{ marginTop: 8 }}>Thêm ảnh</div>
+                                                                    </div>
+                                                                )}
+                                                            </Upload>
+                                                        )}
+                                                    </>
+                                                }
+                                            />
+                                        )}
+                                    </TabPane>
+                                    <TabPane tab="Kích thước sản phẩm" key="dimensions">
+                                        <Card bordered={false}>
+                                            <Descriptions bordered column={2} size="small">
+                                                <Descriptions.Item label="Trọng lượng">
+                                                    {productDetail.weight ? `${productDetail.weight} kg` : 'Chưa cập nhật'}
+                                                </Descriptions.Item>
+                                                <Descriptions.Item label="Chiều cao">
+                                                    {productDetail.height ? `${productDetail.height} cm` : 'Chưa cập nhật'}
+                                                </Descriptions.Item>
+                                                <Descriptions.Item label="Chiều rộng">
+                                                    {productDetail.width ? `${productDetail.width} cm` : 'Chưa cập nhật'}
+                                                </Descriptions.Item>
+                                                <Descriptions.Item label="Chiều dài">
+                                                    {productDetail.length ? `${productDetail.length} cm` : 'Chưa cập nhật'}
+                                                </Descriptions.Item>
+                                            </Descriptions>
+                                        </Card>
+                                    </TabPane>
+                                    <TabPane tab="Thông số kỹ thuật" key="specifications">
+                                        {productDetail.specifications && productDetail.specifications.length > 0 ? (
+                                            <Table
+                                                dataSource={productDetail.specifications}
+                                                columns={specificationColumns}
+                                                pagination={false}
+                                                rowKey="id"
+                                                bordered
+                                            />
+                                        ) : (
+                                            <Empty description="Chưa có thông số kỹ thuật" />
+                                        )}
+                                    </TabPane>
 
-                            <TabPane tab="Biến thể sản phẩm" key="variants">
-                                {productDetail.variantGroups && productDetail.variantGroups.length > 0 ? (
-                                    renderProductVariants(productDetail.variantGroups)
-                                ) : (
-                                    <Empty description="Sản phẩm không có biến thể" />
-                                )}
-                            </TabPane>
+                                    <TabPane tab="Biến thể sản phẩm" key="variants">
+                                        {productDetail.variantGroups && productDetail.variantGroups.length > 0 ? (
+                                            renderProductVariants(productDetail.variantGroups)
+                                        ) : (
+                                            <Empty description="Sản phẩm không có biến thể" />
+                                        )}
+                                    </TabPane>
 
 
                             <TabPane tab="Đánh giá sản phẩm" key="reviews">
@@ -1550,6 +1940,17 @@ const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                             </Form.Item>
                         </div>
                     )}
+                </Modal>
+                <Modal
+                    title="Xác nhận xóa"
+                    open={confirmDeleteModalVisible}
+                    onOk={confirmDelete}
+                    onCancel={() => setConfirmDeleteModalVisible(false)}
+                    okText="Xóa"
+                    cancelText="Hủy"
+                    okButtonProps={{ danger: true }}
+                >
+                    Bạn có chắc chắn muốn xóa hình ảnh này không?
                 </Modal>
             </Modal>
             {VariantEditModal()}

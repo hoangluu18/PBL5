@@ -5,6 +5,8 @@ import com.pbl5.admin.repository.UserRepository;
 import com.pbl5.admin.service.UserService;
 import com.pbl5.common.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service

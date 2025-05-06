@@ -78,7 +78,7 @@ const renderStars = (rating: any) => {
                         <Link to={`/shop/${record.shopId}`} style={{ textDecoration: "none", color: "inherit" }}>
                         
                         <Avatar
-                            src={record.photo ? `http://localhost:5173/src/assets/shop-images/shop2.png` : "https://via.placeholder.com/40"}
+                            src={record.photo ? record.photo : "https://via.placeholder.com/40"}
                             alt={text}
                             size={50}
                             style={{ marginRight: 12 }}

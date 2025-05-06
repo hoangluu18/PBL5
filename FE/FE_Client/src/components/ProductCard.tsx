@@ -47,8 +47,8 @@ const ProductCard = (product: IProduct) => {
                         <div className="position-relative w-100 h-100">
                             <div style={{ height: "170px" }}>
                                 <img
-                                    src={imageSrc}
-                                    alt={product.name}
+                                    src={product.mainImage}
+                                    alt={product.mainImage}
                                     className="h-100 w-100 product-image"
                                     style={{ borderRadius: "10px 10px 0 0", objectFit: "cover" }}
                                 />

@@ -36,7 +36,7 @@ const ShopInfo = (shop: IShopDto) => {
         <div style={{ backgroundColor: "white", width: "100%" }} className="p-3">
             <div className="d-flex justify-content-between">
                 <div className="d-flex">
-                    <Link to={`/shop/${shop.id}`}><Avatar size={64} src={`http://localhost:5173/src/assets/shop-images/${shop.photo}`} /></Link>
+                    <Link to={`/shop/${shop.id}`}><Avatar size={64} src={shop.photo} /></Link>
                     <div style={{ marginLeft: 16, flex: 1 }}>
                         <Text strong style={{ fontSize: 16 }}>{shop.name}</Text>
                         <Text type="secondary" style={{ display: "block" }}>Online 10 Phút Trước</Text>

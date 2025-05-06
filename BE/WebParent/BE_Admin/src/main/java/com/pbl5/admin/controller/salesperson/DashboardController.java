@@ -19,7 +19,7 @@ public class DashboardController {
     private OrderService orderService;
 
     @RequestMapping("/today-statistic")
-    public ResponseEntity<ResponseDto> getRevenueChange(int shopId) {
+    public ResponseEntity<ResponseDto> getRevenueChange(@RequestParam int shopId) {
         ResponseDto response = new ResponseDto();
         try {
             response.setData(orderService.getTodayStatistic(shopId));

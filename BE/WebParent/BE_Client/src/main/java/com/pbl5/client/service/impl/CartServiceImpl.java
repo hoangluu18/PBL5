@@ -137,4 +137,20 @@ public class CartServiceImpl implements CartService {
 
         return cartItemRepository.countProductsByCustomerId(customerId);
     }
+
+    @Override
+    public boolean updateCartItemQuantity(Long cartItemId, Integer newQuantity) {
+        if (newQuantity < 1) {
+            return false;
+        }
+
+        Optional<CartItems> itemOpt = cartItemRepository.findById(cartItemId);
+        if (itemOpt.isPresent()) {
+            CartItems item = itemOpt.get();
+            item.setQuantity(newQuantity);
+            cartItemRepository.save(item);
+            return true;
+        }
+        return false;
+    }
 }

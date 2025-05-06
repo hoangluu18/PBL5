@@ -328,7 +328,7 @@ const OrderDetail: React.FC = () => {
                 <tr key={index}>
                   <td>
                     <div className="product-info">
-                      <img src={item.photo ? `/src/assets/product-images/${item.photo}` : '/src/assets/product-images/default-image.jpg'}
+                      <img src={item.photo ? item.photo : '/src/assets/product-images/default-image.jpg'}
                         alt={item.productName} />
                       <div className="details">
 

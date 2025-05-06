@@ -4,6 +4,7 @@ import com.pbl5.admin.service.aws.S3StorageService;
 import com.pbl5.admin.service.shop.ProductService;
 import com.pbl5.admin.service.shop.ProductVariantService;
 import com.pbl5.common.entity.product.Product;
+import com.pbl5.common.entity.product.ProductImage;
 import com.pbl5.common.entity.product.ProductVariant;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
@@ -157,5 +156,96 @@ public ResponseEntity<Map<String, String>> uploadVariantImage(
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }
+    // Endpoint để lấy danh sách ảnh của sản phẩm (product images)
+    @GetMapping("/{productId}/images")
+    public ResponseEntity<List<Map<String, Object>>> getProductImages(@PathVariable Long productId) {
+        try {
+            Product product = productService.findById(productId)
+                    .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + productId));
+
+            List<Map<String, Object>> imagesList = product.getImages().stream()
+                    .map(image -> {
+                        Map<String, Object> imageMap = new HashMap<>();
+                        imageMap.put("id", image.getId());
+                        imageMap.put("url", image.getPhoto());
+                        return imageMap;
+                    }).collect(Collectors.toList());
+
+            return ResponseEntity.ok(imagesList);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    //endpoint để luu ảnh sản phẩm (product images)
+    @PostMapping("/{productId}/images")
+    public ResponseEntity<Map<String, Object>> addProductImage(
+            @PathVariable Long productId,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            Product product = productService.findById(productId)
+                    .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + productId));
+
+            // Upload to S3 with product_image prefix
+            String imageUrl = s3StorageService.uploadFile(file, "products/product_image");
+
+            // Create new ProductImage entity
+            ProductImage productImage = new ProductImage();
+            productImage.setPhoto(imageUrl);
+            productImage.setProduct(product);
+            // Add to product's image collection
+            product.getImages().add(productImage);
+            productService.save(product);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", productImage.getId());
+            response.put("url", imageUrl);
+
+            return ResponseEntity.ok(response);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    // Endpoint để xóa ảnh sản phẩm (product images)
+    @DeleteMapping("/{productId}/images/{imageId}")
+    public ResponseEntity<Void> deleteProductImage(
+            @PathVariable Long productId,
+            @PathVariable Long imageId) {
+        try {
+            System.out.println("Deleting image with ID: " + imageId + " for product with ID: " + productId);
+            Product product = productService.findById(productId)
+                    .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + productId));
+
+            Optional<ProductImage> imageOptional = product.getImages().stream()
+                    .filter(img -> img.getId().longValue() == imageId)
+                    .findFirst();
+
+            if (imageOptional.isPresent()) {
+                ProductImage image = imageOptional.get();
+
+                // Delete from S3
+                s3StorageService.deleteFile(image.getPhoto());
+
+                // Remove from product's image collection
+                product.getImages().remove(image);
+                productService.save(product);
+
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 }

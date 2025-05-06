@@ -9,9 +9,10 @@ import {
     DashboardOutlined,
     TagOutlined,     // Thêm icon này
     ShopOutlined,    // Hoặc thêm icon này
-    InboxOutlined 
+    InboxOutlined, 
+    LogoutOutlined
 } from '@ant-design/icons';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { use, useContext } from 'react';
 import { AuthContext } from '../../utils/auth.context';
 
@@ -35,7 +36,7 @@ const NavBar = () => {
         },
         {
             key: "transactions",
-            icon: <ShoppingOutlined />,
+            icon: <TagOutlined />,
             label: <Link to="/products" className='text-decoration-none'>Sản phẩm</Link>
         },
         {
@@ -43,16 +44,16 @@ const NavBar = () => {
             icon: <UserOutlined />,
             label: "Khách hàng"
         },
-        {
-            key: "inventory",
-            icon: <BarChartOutlined />,
-            label: "Số quỹ"
-        },
-        {
-            key: "reports",
-            icon: <FileTextOutlined />,
-            label: "Báo cáo"
-        }
+        // {
+        //     key: "inventory",
+        //     icon: <BarChartOutlined />,
+        //     label: "Số quỹ"
+        // },
+        // {
+        //     key: "reports",
+        //     icon: <FileTextOutlined />,
+        //     label: "Báo cáo"
+        // }
     ];
 
     // Thêm các mục menu phụ thuộc vào trạng thái đăng nhập

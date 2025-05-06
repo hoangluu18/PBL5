@@ -62,13 +62,7 @@ const ProductDetailPage: React.FC = () => {
             if (alias) {
                 const data = await productService.getProductByAlias(alias);
                 setProduct(data);
-                
-                // Check if the image URL is already a complete URL
-                if (data.mainImage.startsWith("http")) {
-                    setSelectedMainImage(data.mainImage);
-                } else {
-                    setSelectedMainImage(`http://localhost:5173/src/assets/product-images/${data.mainImage}`);
-                }
+                setSelectedMainImage(data.mainImage);
             } else {
                 console.error("Alias is undefined");
             }
@@ -217,29 +211,23 @@ const ProductDetailPage: React.FC = () => {
     
     // Update the handleVariantHover function - already correct but improve clarity
     const handleVariantHover = (img: string) => {
-        if (img.startsWith("http")) {
+        if (img) {
             setSelectedMainImage(img);
-        } else {
-            setSelectedMainImage(`http://localhost:5173/src/assets/product-variants-images/${img}`);
         }
     };
 
     const handleVariantLeave = (key: string, photo: string) => {
-        if (product.mainImage.startsWith("http")) {
+        if (photo && selectedVariant[key]) {
+            setSelectedMainImage(selectedVariantImage);
+        } else if (photo && !selectedVariant[key]) {
             setSelectedMainImage(product.mainImage);
-        } else {
-            setSelectedMainImage(`http://localhost:5173/src/assets/product-images/${product.mainImage}`);
         }
     };
 
 
     const handleSelectVariant = (key: string, val: string, photo: string) => {
         if (photo) {
-            if (photo.startsWith("http")) {
-                setSelectedVariantImage(photo);
-            } else {
-                setSelectedVariantImage(`http://localhost:5173/src/assets/product-variants-images/${photo}`);
-            }
+            setSelectedVariantImage(photo);
         }
         setSelectedVariant((prev) => {
             const updatedVariant = {
@@ -280,23 +268,22 @@ const ProductDetailPage: React.FC = () => {
                         </div>
 
                         {/* Hình ảnh phụ */}
-                        {/* Hình ảnh phụ */}
-<div className="thumbnail-gallery d-flex flex-wrap justify-content-start gap-2">
-    {product.images && product.images.map((image, index) => (
-        <div
-            key={index}
-            className={`${selectedExtraImage.includes(image) ? "border-danger" : "border-secondary"} border rounded`}
-            style={{ width: '60px', height: '60px', cursor: 'pointer', borderRadius: '4px', overflow: 'hidden' }}
-        >
-            <img
-                src={image.startsWith("http") ? image : `http://localhost:5173/src/assets/product-extra-images/${image}`}
-                onMouseEnter={handleHoverAndClickImage}
-                alt={`Product thumbnail ${index + 1}`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-        </div>
-    ))}
-</div>
+                        <div className="thumbnail-gallery d-flex flex-wrap justify-content-start gap-2">
+                            {product.images && product.images.map((image, index) => (
+                                <div
+                                    key={index}
+                                    className={`${selectedExtraImage.includes(image) ? "border-danger" : "border-secondary"} border rounded`}
+                                    style={{ width: '60px', height: '60px', cursor: 'pointer', borderRadius: '4px', overflow: 'hidden' }}
+                                >
+                                    <img
+                                        src={image}
+                                        onMouseEnter={handleHoverAndClickImage}
+                                        alt={`Product thumbnail ${index + 1}`}
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    />
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </Col>
 
@@ -379,17 +366,13 @@ const ProductDetailPage: React.FC = () => {
                                         onMouseLeave={() => handleVariantLeave(key, val.photo)}
                                         onClick={() => handleSelectVariant(key, val.value, val.photo)}
                                     >
-{val.photo && (
-    <img
-        src={
-            val.photo.startsWith('http')
-                ? val.photo
-                : `http://localhost:5173/src/assets/product-extra-images/${val.photo}`
-        }
-        alt={`${key} - ${val.value}`}
-        style={{ height: '24px', marginRight: '8px' }}
-    />
-)}
+                                        {val.photo && (
+                                            <img
+                                                src={val.photo}
+                                                alt={`${key} - ${val.value}`}
+                                                style={{ height: '24px', marginRight: '8px' }}
+                                            />
+                                        )}
                                         <Text>{val.value}</Text>
                                     </div>
                                 ))}

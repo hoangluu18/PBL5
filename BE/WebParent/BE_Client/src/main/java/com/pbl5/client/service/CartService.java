@@ -17,4 +17,5 @@ public interface CartService {
     boolean deleteCartItemByCustomerIdAndCartId(Integer customerId, List<Integer> cartIds);
 
     int countProductsByCustomerId(Integer customerId);
+    boolean updateCartItemQuantity(Long cartItemId, Integer newQuantity);
 }

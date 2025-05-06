@@ -43,15 +43,40 @@ const CartPage: React.FC = () => {
     fetchCart();
   }, [customerId]);
 
-  const updateQuantity = (productId: number, change: number) => {
+  const updateQuantity = async (cartItemId: number, productId: number, change: number) => {
+    // Tìm item trong state hiện tại
+    const item = cartItems.find(item => item.productId === productId);
+    if (!item) return;
+    
+    // Tính toán số lượng mới
+    const newQuantity = Math.max(1, item.quantity + change);
+    
+    // Cập nhật UI trước (optimistic update)
     setCartItems(currentItems =>
-      currentItems.map(item =>
-        item.productId === productId
-          ? { ...item, quantity: Math.max(1, item.quantity + change) }
-          : item
-      )
+        currentItems.map(item =>
+            item.productId === productId
+                ? { ...item, quantity: newQuantity }
+                : item
+        )
     );
-  };
+    
+    try {
+        // Sau đó cập nhật trong database
+        await cartService.updateCartItemQuantity(cartItemId, newQuantity);
+    } catch (error) {
+        console.error("Error updating quantity:", error);
+        // Khôi phục UI nếu có lỗi
+        setCartItems(currentItems =>
+            currentItems.map(item =>
+                item.productId === productId
+                    ? { ...item, quantity: item.quantity - change }
+                    : item
+            )
+        );
+        // Hiển thị thông báo lỗi
+        alert("Cập nhật số lượng thất bại. Vui lòng thử lại.");
+    }
+};
 
   const handleDeleteItem = async (cartItemId: number) => {
     const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?");
@@ -178,16 +203,14 @@ const CartPage: React.FC = () => {
                 />
               </div>
               <div className="cart-item-image">
-  {item.photo && (
-    <img
-      src={item.photo.startsWith('http') 
-        ? item.photo 
-        : `http://localhost:5173/src/assets/product-images/${item.photo}`}
-      alt={item.productName}
-      className="product-image"
-    />
-  )}
-</div>
+                {item.photo && (
+                  <img
+                    src={item.photo}
+                    alt={item.productName}
+                    className="product-image"
+                  />
+                )}
+              </div>
               <div className="cart-item-details">
                 <div className="cart-item-info">
                   <span className="shop-name">{item.shopName}</span>
@@ -201,9 +224,9 @@ const CartPage: React.FC = () => {
                   <span className="discounted-price">{formatPrice(item.lastPrice)}</span>
                 </div>
                 <div className="cart-item-quantity">
-                  <button onClick={() => updateQuantity(item.productId, -1)}>-</button>
+                  <button onClick={() => updateQuantity(item.id, item.productId, -1)}>-</button>
                   <span>{item.quantity}</span>
-                  <button onClick={() => updateQuantity(item.productId, 1)}>+</button>
+                  <button onClick={() => updateQuantity(item.id, item.productId, 1)}>+</button>
                 </div>
                 <div className="cart-item-total">
                   {formatPrice(item.lastPrice * item.quantity)}
@@ -218,28 +241,26 @@ const CartPage: React.FC = () => {
       </div>
 
       <div className="summary">
-      <OrderSummary
-  orderItems={cartItems
-    .filter(item => selectedItems.includes(getItemKey(item)))
-    .map(item => ({
-      id: item.productId,
-      image: item.photo
-        ? (item.photo.startsWith('http') 
-            ? item.photo 
-            : `http://localhost:5173/src/assets/product-images/${item.photo}`)
-        : 'http://localhost:5173/src/assets/product-images/default-image.jpg',
-      shopId: item.shopId,
-      shopName: item.shopName,
-      name: item.productName,
-      quantity: item.quantity,
-      originalPrice: item.originalPrice,
-      price: item.lastPrice,
-    }))
-  }
-  subtotal={selectedSubtotal}
-  shippingCost={shippingCost}
-  total={selectedTotal}
-/>
+        <OrderSummary
+          orderItems={cartItems
+            .filter(item => selectedItems.includes(getItemKey(item)))
+            .map(item => ({
+              id: item.productId,
+              image: item.photo
+                ? item.photo
+                : '/src/assets/product-images/default-image.jpg',
+              shopId: item.shopId,
+              shopName: item.shopName,
+              name: item.productName,
+              quantity: item.quantity,
+              originalPrice: item.originalPrice,
+              price: item.lastPrice,
+            }))
+          }
+          subtotal={selectedSubtotal}
+          shippingCost={shippingCost}
+          total={selectedTotal}
+        />
         <button
           onClick={handleCheckout}
           className="checkout-button"

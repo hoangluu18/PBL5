@@ -16,7 +16,7 @@ public class Brand extends IdBaseEntity {
     @Column(name = "name", length = 45, nullable = false, unique = true)
     private String name;
 
-    @Column(name = "logo", length = 45, unique = true)
+    @Column(name = "logo", length = 255, unique = true)
     private String logo;
 
     @ManyToMany(fetch = FetchType.LAZY)

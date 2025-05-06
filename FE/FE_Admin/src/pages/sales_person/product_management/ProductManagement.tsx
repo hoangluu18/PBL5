@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     Layout, Table, Card, Input, Button, Space, Tag, Tooltip, Row, Col,
     Pagination, Modal, Form, InputNumber, message, Typography, Checkbox,
@@ -13,14 +13,16 @@ import { Product, ProductsResponse } from '../../../models/Product';
 import { ProductService } from '../../../services/shop/ProductService.service';
 import ProductDetailModal from './ProductDetailModal';
 import { ProductDetail } from '../../../models/ProductDetail';
+import { AuthContext } from '../../../utils/auth.context';
 
 const { Content, Sider } = Layout;
 const { Title, Text } = Typography;
 const { confirm } = Modal;
 
 const ProductManagement: React.FC = () => {
+    const { user } = useContext(AuthContext);
     // Constants
-    const SHOP_ID = 1; // Thay đổi theo logic lấy thông tin shop của bạn
+    const SHOP_ID = user.id || 1; 
     const productService = new ProductService();
     // States
     const [products, setProducts] = useState<Product[]>([]);
@@ -244,6 +246,13 @@ const ProductManagement: React.FC = () => {
             key: 'price',
             render: (price: number) => price.toLocaleString('vi-VN') + ' đ',
             sorter: (a, b) => a.price - b.price,
+        },
+        {
+            title: 'Giảm giá',
+            dataIndex: 'discountPercent',
+            key: 'discountPercent',
+            render: (discountPercent: number) => discountPercent ? `${discountPercent}%` : '-',
+            sorter: (a, b) => (a.discountPercent || 0) - (b.discountPercent || 0),
         },
         {
             title: 'Giá vốn',

@@ -24,12 +24,15 @@ public class ProductDetailDto {
     private Date lastUpdated;
     private String fullDescription;
     private boolean enabled;
-
+    private float discountPercent;
     private Long brandId;
     private String brandName;
     private Long categoryId;
     private String categoryName;
-
+    private float weight;
+    private float height;
+    private float width;
+    private float length;
     // Thông tin chi tiết sản phẩm
     private List<ProductSpecificationDto> specifications;
 
