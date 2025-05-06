@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { LikeOutlined, StarFilled, MessageOutlined, LikeFilled } from "@ant-design/icons";
-import { Avatar, Button, Rate, Badge, Progress, Tooltip } from "antd";
+import { LikeOutlined, StarFilled, LikeFilled } from "@ant-design/icons";
+import { Avatar, Button, Rate, Badge, Progress, Tooltip, Typography } from "antd";
 import { IReviewDto } from "../../models/dto/ReviewDto";
 import ReviewService from "../../services/review.service";
 import { extractDate } from "../../utils/DateUtil";
@@ -245,22 +245,14 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id, fetchProducts })
                                     </div>
 
                                     <p className="mt-3">{review.content}</p>
-
-                                    {/* {review.hasImage && (
-                                        <div className="d-flex mt-2 mb-3">
-                                            {[1, 2, 3].map((img) => (
-                                                <div key={img} className="me-2 position-relative" style={{ width: "80px", height: "80px" }}>
-                                                    <img
-                                                        src={`/src/assets/shop-images/product-image-${img}.jpg`}
-                                                        className="rounded img-fluid object-fit-cover"
-                                                        style={{ width: "100%", height: "100%" }}
-                                                        alt="Product review"
-                                                    />
-                                                </div>
-                                            ))}
+                                    {review.feedback && (
+                                        <div style={{ marginTop: 16, background: '#f5f5f5', padding: 12, borderRadius: 4 }}>
+                                            <Typography.Text type="secondary" strong>Phản hồi từ cửa hàng:</Typography.Text>
+                                            <Typography.Paragraph style={{ margin: 0, marginTop: 4 }}>
+                                                {review.feedback}
+                                            </Typography.Paragraph>
                                         </div>
-                                    )} */}
-
+                                    )}
                                     <div className="mt-3 d-flex">
                                         <Tooltip title="Đánh giá hữu ích">
                                             <Button
@@ -280,15 +272,7 @@ const ProductReviews: React.FC<ProductReviewsTabProps> = ({ id, fetchProducts })
                                             </Button>
                                         </Tooltip>
 
-                                        {/* <Tooltip title="Bình luận">
-                                            <Button
-                                                type="text"
-                                                className="d-flex align-items-center text-muted p-1"
-                                                icon={<MessageOutlined className="me-1" />}
-                                            >
-                                                <span>Bình luận</span>
-                                            </Button>
-                                        </Tooltip> */}
+
                                     </div>
                                 </div>
                             </div>
