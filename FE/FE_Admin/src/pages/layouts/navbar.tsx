@@ -42,7 +42,7 @@ const NavBar = () => {
         {
             key: "customers",
             icon: <UserOutlined />,
-            label: "Khách hàng"
+            label: <Link to="/customers" className='text-decoration-none'>Khách hàng</Link>
         },
         // {
         //     key: "inventory",

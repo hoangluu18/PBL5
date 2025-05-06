@@ -26,14 +26,16 @@ export default function ProfitRevenueChart() {
     }, [timeRange]);
 
     useEffect(() => {
-        fetchReportDataByDateRange();
+        if (startDate && endDate) {
+            fetchReportDataByDateRange();
+        }
     }, [startDate, endDate]);
 
     // Hàm gọi API để lấy dữ liệu
     const fetchReportData = async () => {
         try {
             const dashBoardService = new DashboardService();
-            const response = await dashBoardService.getStatisticByXDaysOrXMonths(user?.id, timeRange);
+            const response = await dashBoardService.getStatisticByXDaysOrXMonths(user?.id, timeRange) as unknown as ReportDto[];
 
             // Xử lý dữ liệu để thêm netRevenue (lợi nhuận)
             const processedData = response.map((item: ReportDto) => ({
@@ -57,7 +59,7 @@ export default function ProfitRevenueChart() {
                 console.error("Start date or end date is null");
                 return;
             }
-            const response = await dashBoardService.getStatisticByDateRange(user?.id, startDate, endDate);
+            const response = await dashBoardService.getStatisticByDateRange(user?.id, startDate, endDate) as unknown as ReportDto[];
             // Xử lý dữ liệu để thêm netRevenue (lợi nhuận)
             const processedData = response.map((item: ReportDto) => ({
                 ...item,
