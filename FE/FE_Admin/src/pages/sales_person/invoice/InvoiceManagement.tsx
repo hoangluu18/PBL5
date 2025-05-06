@@ -34,6 +34,7 @@ import { AuthContext } from "../../../utils/auth.context";
 import OrderService from "../../../services/order.service";
 import InvoiceDetailComponent from "./InvoiceDetail";
 import { OrderOverviewDto, SearchOrderDto } from "../../../models/OrderDto";
+import axios from "axios";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -44,7 +45,8 @@ const ORDER_STATUS = {
     PROCESSING: "PROCCESSING",
     DELIVERED: "DELIVERED",
     RETURNED: "RETURNED",
-    SHIPPING: "SHIPPING"
+    SHIPPING: "SHIPPING",
+    NEW: "NEW",
 };
 
 const ORDER_STATUS_COLORS = {
@@ -55,26 +57,18 @@ const ORDER_STATUS_COLORS = {
 };
 
 const ORDER_STATUS_LABELS = {
+    [ORDER_STATUS.NEW]: "Tạo mới",
     [ORDER_STATUS.PROCESSING]: "Đang xử lý",
+    [ORDER_STATUS.SHIPPING]: "Đang giao",
     [ORDER_STATUS.DELIVERED]: "Hoàn thành",
     [ORDER_STATUS.RETURNED]: "Trả hàng",
-    [ORDER_STATUS.SHIPPING]: "Đang giao hàng"
 };
 
 const PAYMENT_METHODS = {
     COD: "COD",
-    MOMO: "MOMO",
-    BANKING: "BANKING"
+    PAYPAL: "PAYPAL",
+    CREDIT_CARD: "CREDIT_CARD"
 };
-
-const PROVINCES = [
-    { value: "Thành phố Hà Nội", label: "Hà Nội" },
-    { value: "hochiminh", label: "Hồ Chí Minh" },
-    { value: "danang", label: "Đà Nẵng" },
-    { value: "cantho", label: "Cần Thơ" },
-    { value: "haiphong", label: "Hải Phòng" },
-    { value: "Tỉnh Hà Giang", label: "Tỉnh Hà Giang" }
-];
 
 const InvoiceManagementPage: React.FC = () => {
     // State management
@@ -104,10 +98,33 @@ const InvoiceManagementPage: React.FC = () => {
         keyword: '', // Thêm trường keyword cho tìm kiếm
     });
 
+    const [provinces, setProvinces] = useState<{ value: string, label: string }[]>([]);
+
     // Fetch data on searchParams change
     useEffect(() => {
         fetchData();
+        fetchProvinces()
     }, [searchParams]);
+
+    const fetchProvinces = async () => {
+        try {
+            const response = await axios.get('https://pmshoanghot-apitinhthanhdocker.hf.space/api/list');
+            if (response.data) {
+                // Transform the API data to match our Select component format
+                const formattedProvinces = response.data.map((province: any) => ({
+                    value: province.name,
+                    label: province.name
+                }));
+                setProvinces(formattedProvinces);
+            }
+        } catch (error) {
+            console.error('Error fetching provinces:', error);
+            // Fallback to static data if API fails
+            setProvinces([
+
+            ]);
+        }
+    };
 
     const fetchData = async () => {
         setLoading(true);
@@ -357,8 +374,8 @@ const InvoiceManagementPage: React.FC = () => {
             render: (method: string) => {
                 const methodColors = {
                     [PAYMENT_METHODS.COD]: 'volcano',
-                    [PAYMENT_METHODS.MOMO]: 'purple',
-                    [PAYMENT_METHODS.BANKING]: 'geekblue',
+                    [PAYMENT_METHODS.CREDIT_CARD]: 'purple',
+                    [PAYMENT_METHODS.PAYPAL]: 'geekblue',
                 };
 
                 return <Tag color={methodColors[method as keyof typeof methodColors] || 'default'}>{method}</Tag>;
@@ -539,7 +556,7 @@ const InvoiceManagementPage: React.FC = () => {
                                     onChange={handleLocationChange}
                                     allowClear
                                 >
-                                    {PROVINCES.map(province => (
+                                    {provinces.map(province => (
                                         <Option key={province.value} value={province.value}>{province.label}</Option>
                                     ))}
                                 </Select>
