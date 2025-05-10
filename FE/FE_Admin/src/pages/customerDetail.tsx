@@ -1,16 +1,16 @@
 import { useParams, Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { 
-  Card, Descriptions, Spin, Alert, Button, Modal, Badge, List, Typography, 
+import {
+  Card, Spin, Alert, Button, Modal, Badge, List, Typography,
   Space, Row, Col, Statistic, Avatar, Breadcrumb, Divider, Tag
 } from 'antd'
-import { 
-  HomeOutlined, CheckCircleFilled, PhoneOutlined, UserOutlined,
+import {
+  HomeOutlined, PhoneOutlined, UserOutlined,
   MailOutlined, DollarOutlined, EnvironmentOutlined, ArrowLeftOutlined
 } from '@ant-design/icons'
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 
 interface Customer {
   id: number
@@ -141,7 +141,7 @@ export default function CustomerDetail() {
       setLoading(false)
       return
     }
-    
+
     axios.get(`http://localhost:8080/api/saleperson/customers/${customerId}`)
       .then(res => {
         setCustomer(res.data)
@@ -210,7 +210,7 @@ export default function CustomerDetail() {
           { title: customer?.fullName || `Khách hàng #${customerId}` },
         ]}
       />
-      
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <Title level={2} style={{ margin: 0 }}>
           <UserOutlined /> Thông tin khách hàng
@@ -219,22 +219,22 @@ export default function CustomerDetail() {
           <Link to="/customers" style={{ color: 'white' }}>Quay lại danh sách</Link>
         </Button>
       </div>
-      
+
       <Row gutter={[24, 24]}>
         {/* Left column - Avatar and summary */}
         <Col xs={24} md={8}>
           <Card className="customer-profile-card" bordered={false}>
             <div className="customer-avatar-container">
               {customer?.avatar ? (
-                <img 
-                  src={getImageUrl(customer.avatar)} 
-                  alt={customer.fullName} 
+                <img
+                  src={getImageUrl(customer.avatar)}
+                  alt={customer.fullName}
                   className="customer-avatar"
                 />
               ) : (
-                <Avatar 
-                  size={120} 
-                  icon={<UserOutlined />} 
+                <Avatar
+                  size={120}
+                  icon={<UserOutlined />}
                   style={{ backgroundColor: '#1890ff' }}
                 />
               )}
@@ -243,9 +243,9 @@ export default function CustomerDetail() {
               </Title>
               <Tag color="blue">Mã KH: {customer?.id}</Tag>
             </div>
-            
+
             <Divider />
-            
+
             <div className="customer-stats">
               <Statistic
                 title={<span style={{ fontSize: 16 }}><DollarOutlined /> Tổng chi tiêu</span>}
@@ -255,11 +255,11 @@ export default function CustomerDetail() {
                 valueStyle={{ color: '#3f8600', fontWeight: 'bold' }}
               />
             </div>
-            
+
             <Divider />
-            
-            <Button 
-              type="primary" 
+
+            <Button
+              type="primary"
               icon={<HomeOutlined />}
               onClick={fetchAddresses}
               block
@@ -270,7 +270,7 @@ export default function CustomerDetail() {
             </Button>
           </Card>
         </Col>
-        
+
         {/* Right column - Detailed information */}
         <Col xs={24} md={16}>
           <Card className="customer-info-card" bordered={false} title="Thông tin chi tiết">
@@ -282,7 +282,7 @@ export default function CustomerDetail() {
                   <div style={{ fontSize: 16, fontWeight: 500 }}>{customer?.fullName}</div>
                 </div>
               </div>
-              
+
               <div className="info-item">
                 <MailOutlined className="info-icon" />
                 <div>
@@ -290,7 +290,7 @@ export default function CustomerDetail() {
                   <div style={{ fontSize: 16 }}>{customer?.email || 'Chưa cập nhật'}</div>
                 </div>
               </div>
-              
+
               <div className="info-item">
                 <PhoneOutlined className="info-icon" />
                 <div>
@@ -298,7 +298,7 @@ export default function CustomerDetail() {
                   <div style={{ fontSize: 16 }}>{customer?.phone || 'Chưa cập nhật'}</div>
                 </div>
               </div>
-              
+
               <div className="info-item">
                 <DollarOutlined className="info-icon" />
                 <div>
@@ -310,7 +310,7 @@ export default function CustomerDetail() {
               </div>
             </div>
           </Card>
-          
+
         </Col>
       </Row>
 
@@ -340,12 +340,12 @@ export default function CustomerDetail() {
                       <UserOutlined style={{ marginRight: '8px' }} />
                       <Text strong>{item.fullName}</Text>
                     </div>
-                    
+
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
                       <PhoneOutlined style={{ marginRight: '8px' }} />
                       <Text>{item.phoneNumber}</Text>
                     </div>
-                    
+
                     <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '8px' }}>
                       <EnvironmentOutlined style={{ marginRight: '8px', marginTop: '4px' }} />
                       <div>
@@ -358,7 +358,7 @@ export default function CustomerDetail() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {item.default && (
                     <Badge.Ribbon text="Mặc định" color="green">
                       <div style={{ width: 20, height: 20 }}></div>

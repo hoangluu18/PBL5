@@ -49,14 +49,74 @@ const ProductDetailPage: React.FC = () => {
     }, [reloadHeader]);
 
     useEffect(() => {
-        //console.log("Selected variant updated:", selectedVariant);
+        const variantStock = getAvailableVariants().currentVariantQuantity;
+        if (variantStock !== null && quantity > variantStock) {
+            setQuantity(Math.max(1, variantStock));
+        }
     }, [selectedVariant]);
+
+    const getAvailableVariants = () => {
+        // If no color is selected, show unique sizes (removing duplicates)
+        if (!selectedVariant["Color"]) {
+            if (!product.variantMap?.Size) {
+                return {
+                    availableSizes: [],
+                    currentVariantQuantity: null
+                };
+            }
+
+            // Get unique sizes by value
+            const uniqueSizes: { [key: string]: any } = {};
+            product.variantMap.Size.forEach(size => {
+                // Only keep one instance of each size value
+                if (!uniqueSizes[size.value]) {
+                    uniqueSizes[size.value] = size;
+                }
+            });
+
+            return {
+                availableSizes: Object.values(uniqueSizes),
+                currentVariantQuantity: null
+            };
+        }
+
+        // The rest of your existing function remains unchanged
+        const selectedColorVariant = product.variantMap?.Color.find(
+            color => color.value === selectedVariant["Color"]
+        );
+
+        if (!selectedColorVariant) {
+            return {
+                availableSizes: [],
+                currentVariantQuantity: null
+            };
+        }
+
+        // Filter sizes that have the selected color's ID as their parentId
+        const availableSizes = product.variantMap?.Size.filter(
+            size => size.parentId === selectedColorVariant.id
+        ) || [];
+
+        // Get quantity for the specific color+size combination
+        let currentVariantQuantity = null;
+        if (selectedVariant["Size"]) {
+            const matchingSize = availableSizes.find(
+                size => size.value === selectedVariant["Size"]
+            );
+            currentVariantQuantity = matchingSize?.quantity || 0;
+        }
+
+        return {
+            availableSizes,
+            currentVariantQuantity
+        };
+    };
 
     document.title = product.name || "Chi tiết sản phẩm";
 
     const fetchProduct = async () => {
         setLoading(true);
-    
+
         try {
             const productService = new ProductService();
             if (alias) {
@@ -208,7 +268,7 @@ const ProductDetailPage: React.FC = () => {
         setSelectedMainImage(image);
         setSelectedExtraImage(image);
     };
-    
+
     // Update the handleVariantHover function - already correct but improve clarity
     const handleVariantHover = (img: string) => {
         if (img) {
@@ -229,15 +289,68 @@ const ProductDetailPage: React.FC = () => {
         if (photo) {
             setSelectedVariantImage(photo);
         }
+
         setSelectedVariant((prev) => {
             const updatedVariant = {
                 ...prev,
                 [key]: val,
             };
+
+            // If we're changing color, reset the size selection
+            // since sizes are dependent on colors
+            if (key === "Color" && prev["Size"]) {
+                // Check if current size is available for new color
+                const selectedColorVariant = product.variantMap?.Color.find(
+                    color => color.value === val
+                );
+
+                if (selectedColorVariant) {
+                    // Check if the currently selected size is available for this color
+                    const isSizeAvailable = product.variantMap?.Size.some(
+                        size => size.value === prev["Size"] && size.parentId === selectedColorVariant.id
+                    );
+
+                    // If size isn't available for this color, reset size selection
+                    if (!isSizeAvailable) {
+                        delete updatedVariant["Size"];
+                    }
+                }
+            }
+
+            // After updating the variant, check if we need to adjust the quantity
+            setTimeout(() => {
+                const newStock = getAvailableVariants().currentVariantQuantity;
+                if (newStock !== null && quantity > newStock) {
+                    setQuantity(Math.max(1, newStock));
+                }
+            }, 0);
+
             return updatedVariant;
         });
     };
 
+    const isVariantAvailable = (variantType: string, variantValue: string) => {
+        // For color variants, all are always available
+        if (variantType === "Color") {
+            return true;
+        }
+
+        // For size variants, we need to check if they match the selected color
+        if (variantType === "Size" && selectedVariant["Color"]) {
+            const selectedColorVariant = product.variantMap?.Color.find(
+                color => color.value === selectedVariant["Color"]
+            );
+
+            if (!selectedColorVariant) return false;
+
+            // Check if this size is available for the selected color
+            return product.variantMap?.Size.some(
+                size => size.value === variantValue && size.parentId === selectedColorVariant.id
+            ) || false;
+        }
+
+        return true;
+    };
 
     return (
         <div className="container my-4">
@@ -349,11 +462,11 @@ const ProductDetailPage: React.FC = () => {
                     <Divider style={{ margin: '16px 0' }} />
 
                     {/* Phần variant */}
-                    {product.variantMap && Object.entries(product.variantMap).map(([key, value]) => (
-                        <div key={key} className="variant-section mb-3">
-                            <Text strong className="d-block mb-2">{key}:</Text>
+                    {product.variantMap?.Color && (
+                        <div className="variant-section mb-3">
+                            <Text strong className="d-block mb-2">Màu sắc:</Text>
                             <div className="d-flex flex-wrap gap-2">
-                                {value.map((val, index) => (
+                                {product.variantMap.Color.map((val, index) => (
                                     <div
                                         key={index}
                                         style={{
@@ -361,15 +474,15 @@ const ProductDetailPage: React.FC = () => {
                                             padding: '8px 12px',
                                             transition: 'all 0.2s'
                                         }}
-                                        className={`${selectedVariant[key]?.includes(val.value) ? 'border-danger' : 'border-secondary'}  img-hover border`}
+                                        className={`${selectedVariant["Color"] === val.value ? 'border-danger' : 'border-secondary'} img-hover border`}
                                         onMouseEnter={() => handleVariantHover(val.photo)}
-                                        onMouseLeave={() => handleVariantLeave(key, val.photo)}
-                                        onClick={() => handleSelectVariant(key, val.value, val.photo)}
+                                        onMouseLeave={() => handleVariantLeave("Color", val.photo)}
+                                        onClick={() => handleSelectVariant("Color", val.value, val.photo)}
                                     >
                                         {val.photo && (
                                             <img
                                                 src={val.photo}
-                                                alt={`${key} - ${val.value}`}
+                                                alt={`Color - ${val.value}`}
                                                 style={{ height: '24px', marginRight: '8px' }}
                                             />
                                         )}
@@ -378,7 +491,53 @@ const ProductDetailPage: React.FC = () => {
                                 ))}
                             </div>
                         </div>
-                    ))}
+                    )}
+
+                    {/* Size variants */}
+                    {product.variantMap?.Size && (
+                        <div className="variant-section mb-3">
+                            <Text strong className="d-block mb-2">Kích thước:</Text>
+                            <div className="d-flex flex-wrap gap-2">
+                                {/* Get available sizes based on selected color */}
+                                {getAvailableVariants().availableSizes.map((val, index) => {
+                                    const available = isVariantAvailable("Size", val.value);
+                                    return (
+                                        <div
+                                            key={index}
+                                            style={{
+                                                cursor: available ? 'pointer' : 'not-allowed',
+                                                padding: '8px 12px',
+                                                transition: 'all 0.2s',
+                                                opacity: available ? 1 : 0.5
+                                            }}
+                                            className={`${selectedVariant["Size"] === val.value ? 'border-danger' : 'border-secondary'} img-hover border`}
+                                            onClick={() => available && handleSelectVariant("Size", val.value, val.photo)}
+                                        >
+                                            <Text>{val.value}</Text>
+                                        </div>
+
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
+                    {getAvailableVariants().currentVariantQuantity !== null && (
+                        <div className="mb-3">
+                            <Text strong className="d-flex align-items-center">
+                                {getAvailableVariants().currentVariantQuantity !== null && getAvailableVariants().currentVariantQuantity > 0 ? (
+                                    <>
+                                        <span className="text-success me-1">●</span>
+                                        Còn {getAvailableVariants().currentVariantQuantity} sản phẩm
+                                    </>
+                                ) : (
+                                    <span className="text-danger d-flex align-items-center">
+                                        <span className="me-1">●</span>
+                                        Hết hàng
+                                    </span>
+                                )}
+                            </Text>
+                        </div>
+                    )}
 
                     <Divider style={{ margin: '16px 0' }} />
 
@@ -391,16 +550,31 @@ const ProductDetailPage: React.FC = () => {
                                     icon={<MinusOutlined />}
                                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                                     className="rounded"
-                                    disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length || quantity <= 1}
+                                    disabled={
+                                        !product.inStock ||
+                                        Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length
+                                    }
                                 />
                                 <div className="mx-2 px-3 py-1 border text-center" style={{ minWidth: '50px' }}>
-                                    <Text disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length}>{quantity}</Text>
+                                    <Text disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length}>
+                                        {quantity}
+                                    </Text>
                                 </div>
                                 <Button
                                     icon={<PlusOutlined />}
-                                    onClick={() => setQuantity((q) => q + 1)}
+                                    onClick={() => {
+                                        const variantStock = getAvailableVariants().currentVariantQuantity;
+                                        if (variantStock !== null && quantity < variantStock) {
+                                            setQuantity((q) => q + 1);
+                                        }
+                                    }}
                                     className="rounded"
-                                    disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length}
+                                    disabled={
+                                        !product.inStock ||
+                                        Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length ||
+                                        (getAvailableVariants().currentVariantQuantity !== null &&
+                                            getAvailableVariants().currentVariantQuantity !== null && quantity >= getAvailableVariants().currentVariantQuantity)
+                                    }
                                 />
                             </div>
                         </div>
@@ -414,7 +588,11 @@ const ProductDetailPage: React.FC = () => {
                             icon={<ShoppingCartOutlined />}
                             className="px-4 d-flex align-items-center"
                             onClick={() => handleAddToCart()}
-                            disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length}
+                            disabled={
+                                !product.inStock ||
+                                Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length ||
+                                (getAvailableVariants().currentVariantQuantity !== null && getAvailableVariants().currentVariantQuantity <= 0)
+                            }
                         >
                             Thêm vào giỏ hàng
                         </Button>
