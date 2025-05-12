@@ -62,7 +62,7 @@ const NavBar = () => {
             {
                 key: "user",
                 icon: <UserOutlined />,
-                label: user.name
+                label: <span>{user.name}</span>
             },
             {
                 key: "logout",
