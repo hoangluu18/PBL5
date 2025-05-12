@@ -41,7 +41,7 @@ const ShopInfo = (shop: IShopDto) => {
                         <Text strong style={{ fontSize: 16 }}>{shop.name}</Text>
                         <Text type="secondary" style={{ display: "block" }}>Online 10 Phút Trước</Text>
                         <Space style={{ marginTop: 8 }}>
-                            <Button type="default" icon={<MessageOutlined />} style={{ borderColor: "#f5222d", color: "#f5222d" }}>Chat Ngay</Button>
+                            {/* <Button type="default" icon={<MessageOutlined />} style={{ borderColor: "#f5222d", color: "#f5222d" }}>Chat Ngay</Button> */}
                             <Button icon={<ShopOutlined />}> <Link to={`/shop/${shop.id}`}>Xem Shop</Link></Button>
                         </Space>
                     </div>

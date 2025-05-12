@@ -89,12 +89,12 @@ public class Order extends IdBaseEntity {
 
     // Enum cho order_status
     public enum OrderStatus {
-        DELIVERED, NEW, PACKAGED, PAID, PICKED, PROCESSING, REFUNDED, RETURNED, SHIPPING, RETURN_REQUESTED
+        DELIVERED, NEW,  PICKED, PROCESSING, REFUNDED, RETURNED, SHIPPING, RETURN_REQUESTED
     }
 
     // Enum cho payment_method
     public enum PaymentMethod {
-        COD, CREDIT_CARD, PAYPAL
+        COD, CREDIT_CARD, BANK_TRANSFER, PAYPAL
     }
 
     @Transient
