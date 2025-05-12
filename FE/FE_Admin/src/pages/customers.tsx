@@ -80,21 +80,28 @@ const Customers = () => {
   const fetchCustomers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/saleperson/customers');
+  
+      const userData = localStorage.getItem('user');
+      const shopId = userData ? JSON.parse(userData).id : null;
+  
+      if (!shopId) {
+        throw new Error('Không tìm thấy shopId');
+      }
+  
+      const response = await axios.get(`/saleperson/customers?shopId=${shopId}`);
       const data = response.data;
       setCustomers(data);
       setFilteredCustomers(data);
-      
-      // Calculate statistics
-      const totalSpending = data.reduce((sum: number, customer: Customer) => 
+  
+      const totalSpending = data.reduce((sum: number, customer: Customer) =>
         sum + (customer.totalSpending || 0), 0);
-      
+  
       setStatistics({
         totalCustomers: data.length,
         activeCustomers: data.filter((c: Customer) => c.totalSpending > 0).length,
         totalSpending: totalSpending
       });
-      
+  
       message.success('Đã tải dữ liệu khách hàng thành công');
     } catch (error) {
       console.error('Error fetching customers:', error);

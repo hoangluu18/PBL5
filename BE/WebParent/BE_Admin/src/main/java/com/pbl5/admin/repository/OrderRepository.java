@@ -83,4 +83,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
     List<TopProductReportDto> findTopProductsByMonth(@Param("month") String month, @Param("shopId") int shopId);
      @Query("SELECT SUM(o.total) FROM Order o WHERE o.customerId = :customerId AND o.orderStatus = 'DELIVERED'")
     Double calculateTotalSpendingByCustomerId(@Param("customerId") Integer customerId);
+
+    List<Order> findByCustomerId(Integer customerId);
 }

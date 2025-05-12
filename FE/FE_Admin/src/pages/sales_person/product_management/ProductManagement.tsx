@@ -142,7 +142,7 @@ const ProductManagement: React.FC = () => {
             setCurrentPage(1);
             fetchProducts();
         } else {
-            message.warn("Vui lòng nhập đầy đủ khoảng giá");
+            message.warning("Vui lòng nhập đầy đủ khoảng giá");
         }
     };
 
@@ -211,7 +211,7 @@ const ProductManagement: React.FC = () => {
             title: 'Mã hàng',
             dataIndex: 'id',
             key: 'id',
-            sorter: (a, b) => a.id - b.id,
+            sorter: (a: { id: number; }, b: { id: number; }) => a.id - b.id,
         },
         {
             title: 'Hình ảnh',
@@ -237,7 +237,7 @@ const ProductManagement: React.FC = () => {
         {
             title: 'Tên hàng',
             dataIndex: 'name',
-            sorter: (a, b) => a.price - b.price,
+            sorter: (a: { price: number; }, b: { price: number; }) => a.price - b.price,
             key: 'name',
         },
         {
@@ -245,21 +245,21 @@ const ProductManagement: React.FC = () => {
             dataIndex: 'price',
             key: 'price',
             render: (price: number) => price.toLocaleString('vi-VN') + ' đ',
-            sorter: (a, b) => a.price - b.price,
+            sorter: (a: { price: number; }, b: { price: number; }) => a.price - b.price,
         },
         {
             title: 'Giảm giá',
             dataIndex: 'discountPercent',
             key: 'discountPercent',
             render: (discountPercent: number) => discountPercent ? `${discountPercent}%` : '-',
-            sorter: (a, b) => (a.discountPercent || 0) - (b.discountPercent || 0),
+            sorter: (a: { discountPercent: any; }, b: { discountPercent: any; }) => (a.discountPercent || 0) - (b.discountPercent || 0),
         },
         {
             title: 'Giá vốn',
             dataIndex: 'cost',
             key: 'cost',
             render: (cost: number) => cost.toLocaleString('vi-VN') + ' đ',
-            sorter: (a, b) => a.cost - b.cost,
+            sorter: (a: { cost: number; }, b: { cost: number; }) => a.cost - b.cost,
         },
         {
             title: 'Tồn kho',
@@ -270,14 +270,14 @@ const ProductManagement: React.FC = () => {
                     {quantity}
                 </Tag>
             ),
-            sorter: (a, b) => a.quantity - b.quantity,
+            sorter: (a: { quantity: number; }, b: { quantity: number; }) => a.quantity - b.quantity,
         },
         {
             title: 'Thời gian update',
             dataIndex: 'lastUpdated',
             key: 'lastUpdated',
             render: (lastUpdated: string) => formatDate(lastUpdated),
-            sorter: (a, b) => new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime(),
+            sorter: (a: { lastUpdated: string | number | Date; }, b: { lastUpdated: string | number | Date; }) => new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime(),
         },
         {
             title: 'Thao tác',
@@ -340,7 +340,7 @@ const ProductManagement: React.FC = () => {
                             value={minPrice}
                             onChange={(value) => setMinPrice(value)}
                             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+                            parser={(value) => Number(value!.replace(/\$\s?|(,*)/g, ''))}
                         />
 
                         <Text>Đến:</Text>
@@ -350,7 +350,7 @@ const ProductManagement: React.FC = () => {
                             value={maxPrice}
                             onChange={(value) => setMaxPrice(value)}
                             formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+                            parser={(value) => Number(value!.replace(/\$\s?|(,*)/g, ''))}
                         />
 
                         <Button

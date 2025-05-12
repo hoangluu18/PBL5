@@ -8,4 +8,6 @@ public interface CustomerService {
     List<CustomerDto> findAllCustomers();
 
     CustomerDto findCustomerById(Integer id);
+
+    public List<CustomerDto> findCustomersByShopId(Integer shopId);
 }
