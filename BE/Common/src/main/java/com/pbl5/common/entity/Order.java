@@ -89,16 +89,20 @@ public class Order extends IdBaseEntity {
 
     // Enum cho order_status
     public enum OrderStatus {
-        DELIVERED, NEW,  PICKED, PROCESSING, REFUNDED, RETURNED, SHIPPING, RETURN_REQUESTED
+        DELIVERED, NEW,  PICKED, PROCESSING, REFUNDED, RETURNED, SHIPPING, RETURN_REQUESTED, PAID
     }
 
     // Enum cho payment_method
     public enum PaymentMethod {
-        COD, CREDIT_CARD, BANK_TRANSFER, PAYPAL
+        COD, CREDIT_CARD, BANK_TRANSFER, PAYPAL, WALLET
     }
 
     @Transient
     public boolean isReturned() {
         return orderStatus == OrderStatus.RETURNED;
     }
+
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Escrow escrow;
 }

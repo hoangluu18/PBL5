@@ -3,33 +3,42 @@ package com.pbl5.client.service.impl;
 import com.pbl5.client.dto.OrderInfoDto;
 import com.pbl5.client.exception.OrderNotFoundException;
 import com.pbl5.client.repository.OrderRepository;
+import com.pbl5.client.repository.OrderTrackRepository;
+import com.pbl5.client.repository.payment.EscrowRepository;
 import com.pbl5.client.service.OrderService;
+import com.pbl5.client.service.payment.EscrowService;
 import com.pbl5.common.entity.Order;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.pbl5.common.entity.OrderTrack;
+import com.pbl5.common.entity.Escrow;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import com.pbl5.client.dto.OrderDto;
-import com.pbl5.client.repository.OrderRepository;
-import com.pbl5.client.service.OrderService;
-import com.pbl5.common.entity.Order;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-    @Autowired
-    private OrderRepository repository;
+
+    private final OrderRepository repository;
+    private final OrderTrackRepository orderTrackRepository;
+    private final EscrowRepository escrowRepository;
+    private final EscrowService escrowService;
+
+
+    public OrderServiceImpl(OrderRepository repository, OrderTrackRepository orderTrackRepository, EscrowRepository escrowRepository, EscrowService escrowService) {
+        this.repository = repository;
+        this.orderTrackRepository = orderTrackRepository;
+        this.escrowRepository = escrowRepository;
+        this.escrowService = escrowService;
+    }
+
 
 
     @Override
@@ -100,6 +109,44 @@ public class OrderServiceImpl implements OrderService {
         } catch (Exception e){
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @Transactional
+    public void updateOrderStatus(Order order, Order.OrderStatus newStatus) {
+        // Cập nhật trạng thái đơn hàng
+        order.setOrderStatus(newStatus);
+        repository.save(order);
+
+        // Tạo order track
+        OrderTrack orderTrack = new OrderTrack();
+        orderTrack.setOrder(order);
+        orderTrack.setStatus(OrderTrack.OrderStatus.valueOf(newStatus.name()));
+        orderTrack.setUpdatedTime(new Date());
+        orderTrack.setNotes("Trạng thái đơn hàng cập nhật thành: " + newStatus);
+        orderTrackRepository.save(orderTrack);
+
+        // Nếu đơn hàng đã giao thành công và phương thức thanh toán là ví điện tử
+        // thì giải phóng tiền từ escrow sang ví shop
+        if (newStatus == Order.OrderStatus.DELIVERED &&
+                order.getPaymentMethod() == Order.PaymentMethod.WALLET) {
+
+            try {
+                // Tìm escrow cho đơn hàng
+                Escrow escrowOpt = escrowRepository.findEscrowById(order.getId());
+                if (escrowOpt != null) {
+                    Escrow escrow = escrowOpt;
+                    // Nếu escrow đang ở trạng thái giữ tiền thì giải phóng
+                    if (escrow.getStatus() == Escrow.EscrowStatus.HOLDING) {
+                        escrowService.releaseEscrow(escrow);
+
+                        System.out.println("Đã giải phóng tiền từ escrow cho đơn hàng " + order.getId());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Lỗi khi giải phóng tiền từ escrow cho đơn hàng " + order.getId());
+            }
         }
     }
 

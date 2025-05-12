@@ -25,6 +25,8 @@ import { AuthWrapper } from './components/context/auth.context.tsx';
 import 'antd/dist/reset.css';
 import OAuth2RedirectHandler from './pages/oauth2-redirect.tsx';
 import ChangePasswordPage from './pages/change_password_page.tsx';
+import WalletPage from './components/WalletPage.tsx';
+import WalletDepositPage from './components/WalletDepositPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -91,6 +93,14 @@ const router = createBrowserRouter([
       {
         path: '/orders',
         element: <OrderTracking />,
+      },
+      {
+        path: '/wallet',
+        element: <WalletPage />,
+      },
+      {
+        path: '/wallet/deposit',
+        element: <WalletDepositPage />,
       }
 
     ]

@@ -4,7 +4,7 @@ import {
 import {
     SearchOutlined, ShoppingCartOutlined, BellOutlined,
     UserOutlined, HeartOutlined, LogoutOutlined,
-    LoginOutlined
+    LoginOutlined, WalletOutlined
 } from "@ant-design/icons";
 import "antd/dist/reset.css";
 import logo from '../../assets/logo.jpg';
@@ -48,48 +48,54 @@ const App = () => {
     };
 
     const userMenu = (
-        <Menu
-            items={[
-                {
-                    key: '1',
-                    label: 'Hồ sơ cá nhân',
-                    icon: <UserOutlined />,
-                    onClick: () => navigate('/profile')
-                },
-                {
-                    key: '2',
-                    label: 'Cửa hàng yêu thích',
-                    icon: <HeartOutlined />,
-                    onClick: () => navigate('/followed-shops')
-                },
-                {
-                    key: '3',
-                    label: 'Đơn hàng của tôi',
-                    icon: <ShoppingCartOutlined />,
-                    onClick: () => navigate('/orders')
-                },
-                {
-                    type: 'divider'
-                },
-                {
-                    key: '4',
-                    label: 'Đăng xuất',
-                    icon: <LogoutOutlined />,
-                    onClick: () => {
-                        localStorage.removeItem("access_token");
-                        localStorage.removeItem("customer");
-                        setCustomer({
-                            id: 0,
-                            username: "",
-                            email: "",
-                            phoneNumber: "",
-                            avatar: ""
-                        });
-                        navigate('/login');
-                    }
+         <Menu
+        items={[
+            {
+                key: '1',
+                label: 'Hồ sơ cá nhân',
+                icon: <UserOutlined />,
+                onClick: () => navigate('/profile')
+            },
+            {
+                key: '2',
+                label: 'Cửa hàng yêu thích',
+                icon: <HeartOutlined />,
+                onClick: () => navigate('/followed-shops')
+            },
+            {
+                key: '3',
+                label: 'Ví của tôi',
+                icon: <WalletOutlined />,
+                onClick: () => navigate('/wallet')
+            },
+            {
+                key: '4',
+                label: 'Đơn hàng của tôi',
+                icon: <ShoppingCartOutlined />,
+                onClick: () => navigate('/orders')
+            },
+            {
+                type: 'divider'
+            },
+            {
+                key: '5',
+                label: 'Đăng xuất',
+                icon: <LogoutOutlined />,
+                onClick: () => {
+                    localStorage.removeItem("access_token");
+                    localStorage.removeItem("customer");
+                    setCustomer({
+                        id: 0,
+                        username: "",
+                        email: "",
+                        phoneNumber: "",
+                        avatar: ""
+                    });
+                    navigate('/login');
                 }
-            ]}
-        />
+            }
+        ]}
+    />
     );
 
     return (

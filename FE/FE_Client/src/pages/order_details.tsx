@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import { Layout, Skeleton, Row, Col, Card } from 'antd';
+import { Layout, Skeleton, Row, Col, Card, message, Button, Modal } from 'antd';
 import { getOrderDetails } from '../services/order_detail.service';
 import { OrderDetailsResponse } from '../models/order_detail/OrderDetailResponse';
 import { AuthContext } from "../components/context/auth.context";
+import axios from 'axios';
+import TextArea from 'antd/es/input/TextArea';
 
 const { Content } = Layout;
 
@@ -18,25 +20,116 @@ const OrderDetail: React.FC = () => {
   const [orderDetails, setOrderDetails] = useState<OrderDetailsResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  //hoan tien
+  const [isEligibleForRefund, setIsEligibleForRefund] = useState<boolean>(false);
+  const [isRefundModalVisible, setIsRefundModalVisible] = useState<boolean>(false);
+  const [refundReason, setRefundReason] = useState<string>("");
+  const [isRefunding, setIsRefunding] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchOrderDetails = async () => {
-      if (!id) return;
 
-      try {
-        setLoading(true);
-        console.log('Fetching order details for ID:', id, 'Customer ID:', customerId);
-        const data = await getOrderDetails(parseInt(id), customerId);
-        setOrderDetails(data);
-      } catch (error) {
-        console.error('Lỗi khi lấy thông tin đơn hàng:', error);
-      } finally {
-        setLoading(false);
+const checkRefundEligibility = async (orderId: number) => {
+  try {
+    // Lấy token từ localStorage
+    const token = localStorage.getItem('access_token');
+    
+    // Debug logs
+    console.log("Token:", token);
+    console.log("Request to:", `http://localhost:8081/api/payment/status/${orderId}`);
+    
+    const response = await axios.get(`http://localhost:8081/api/payment/status/${orderId}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
-    };
+    });
 
-    fetchOrderDetails();
-  }, [id]);
+    console.log('Kết quả kiểm tra escrow:', response.data);
+
+    // Backend chỉ trả về {"escrowStatus":"HOLDING"}
+    // Kiểm tra nếu escrowStatus là HOLDING
+    if (response.data.escrowStatus === 'HOLDING') {
+      setIsEligibleForRefund(true);
+    }
+  } catch (error) {
+    console.error('Lỗi kiểm tra điều kiện hoàn tiền:', error);
+    
+    // Xử lý lỗi cụ thể hơn
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      console.error("Lỗi xác thực. Token có thể đã hết hạn hoặc không hợp lệ");
+      message.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
+    }
+  }
+};
+
+const handleRefund = async () => {
+  if (!refundReason.trim()) {
+    message.error('Vui lòng nhập lý do hoàn tiền');
+    return;
+  }
+
+  setIsRefunding(true);
+  try {
+    // Lấy token từ localStorage - chú ý sửa từ 'accessToken' thành 'access_token'
+    const token = localStorage.getItem('access_token');
+    
+    // Debug logs
+    console.log("Token hoàn tiền:", token);
+    console.log("Request to:", `http://localhost:8081/api/payment/refund/${id}`);
+    
+    await axios.post(
+      `http://localhost:8081/api/payment/refund/${id}`,
+      { reason: refundReason },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      }
+    );
+
+    message.success('Hoàn tiền thành công!');
+    setIsRefundModalVisible(false);
+    
+    // Tải lại thông tin đơn hàng
+    const data = await getOrderDetails(parseInt(id!), customerId);
+    setOrderDetails(data);
+    setIsEligibleForRefund(false);
+  } catch (error) {
+    console.error('Lỗi khi xử lý hoàn tiền:', error);
+    
+    // Xử lý lỗi chi tiết hơn
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      message.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
+    } else {
+      message.error('Có lỗi xảy ra khi hoàn tiền. Vui lòng thử lại sau.');
+    }
+  } finally {
+    setIsRefunding(false);
+  }
+};
+
+ useEffect(() => {
+  const fetchOrderDetails = async () => {
+    if (!id) return;
+
+    try {
+      setLoading(true);
+      console.log('Đang tải thông tin đơn hàng ID:', id, 'Khách hàng ID:', customerId);
+      const data = await getOrderDetails(parseInt(id), customerId);
+      setOrderDetails(data);
+      
+      // Kiểm tra điều kiện hoàn tiền chỉ khi đơn hàng đã giao và thanh toán bằng ví
+      if (data.orderDto.orderStatus === 'DELIVERED' && 
+          data.orderDto.paymentMethod === 'WALLET') {
+        await checkRefundEligibility(parseInt(id));
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy thông tin đơn hàng:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchOrderDetails();
+}, [id, customerId]);
 
   if (loading) {
     return (
@@ -280,6 +373,20 @@ const OrderDetail: React.FC = () => {
     .footer .track-button:hover {
       background-color: #e6b800;
     }
+
+    .refund-button {
+    background-color: #f5222d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .refund-button:hover {
+    background-color: #cf1322;
+  }
   `;
 
   return (
@@ -384,6 +491,36 @@ const OrderDetail: React.FC = () => {
             <span>{'<'}</span> Quay lại đơn hàng của tôi
           </a>
         </div>
+
+        {isEligibleForRefund && (
+            <Button 
+              type="primary" 
+              danger
+              onClick={() => setIsRefundModalVisible(true)}
+              className="refund-button"
+            >
+              Yêu cầu hoàn tiền
+            </Button>
+          )}
+
+                  {/* Modal hoàn tiền */}
+        <Modal
+          title="Yêu cầu hoàn tiền"
+          open={isRefundModalVisible}
+          onOk={handleRefund}
+          onCancel={() => setIsRefundModalVisible(false)}
+          okText="Xác nhận hoàn tiền"
+          cancelText="Hủy"
+          confirmLoading={isRefunding}
+        >
+          <p>Vui lòng nhập lý do hoàn tiền:</p>
+          <TextArea
+            rows={4}
+            value={refundReason}
+            onChange={(e) => setRefundReason(e.target.value)}
+            placeholder="Nhập lý do hoàn tiền..."
+          />
+        </Modal>
       </div>
     </>
   );

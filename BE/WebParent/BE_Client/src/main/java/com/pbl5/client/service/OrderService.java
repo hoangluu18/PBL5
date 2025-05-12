@@ -20,4 +20,5 @@ public interface OrderService {
     boolean saveAll(List<Order> order);
     Order findById(Integer id);
 
+    void updateOrderStatus(Order order, Order.OrderStatus orderStatus);
 }

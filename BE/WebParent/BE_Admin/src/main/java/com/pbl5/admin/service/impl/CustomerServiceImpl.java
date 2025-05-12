@@ -17,11 +17,15 @@ import java.util.stream.Collectors;
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    @Autowired
-    private CustomerRepository customerRepository;
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final CustomerRepository customerRepository;
+
+    private final OrderRepository orderRepository;
+
+    public CustomerServiceImpl(CustomerRepository customerRepository, OrderRepository orderRepository) {
+        this.customerRepository = customerRepository;
+        this.orderRepository = orderRepository;
+    }
 
     @Override
     public List<CustomerDto> findAllCustomers() {

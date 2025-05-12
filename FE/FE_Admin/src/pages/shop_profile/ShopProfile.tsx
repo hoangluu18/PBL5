@@ -29,7 +29,7 @@ import type { UploadFile, UploadProps } from 'antd/es/upload/interface';
 import { ShopProfileService, ShopProfile } from '../../../src/services/shop/ShopProfileService.service';
 import { AuthContext } from '../../../src/utils/auth.context';
 import { VietnamGeoService } from '../../services/geographic_api/VietnamGeoService.service';
-
+import UserInfo from './../../components/shop/UserInfo';
 const { Title, Paragraph, Text } = Typography;
 const { TextArea } = Input;
 const { Option } = Select;
@@ -297,6 +297,7 @@ const ShopProfilePage: React.FC = () => {
 
     return (
         <div className="shop-profile-container" style={{ padding: '24px' }}>
+            <UserInfo />
             <Card bordered={false}>
                 <Title level={2}>
                     <ShopOutlined /> Hồ sơ cửa hàng
