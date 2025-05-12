@@ -13,6 +13,8 @@ import com.pbl5.common.entity.Order;
 import com.pbl5.common.entity.OrderDetail;
 import com.pbl5.common.entity.OrderTrack;
 import com.pbl5.common.entity.product.Product;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,11 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final OrderService orderService;
     private final CustomerService customerService;
     private final ProductVariantService productVariantService;
+
+    @Getter
+    @Setter
+    private String paymentMethod;
+
     @Autowired
     public CheckoutServiceImpl(AddressInfoService addressInfoService, CartService cartService, ShippingRequestService shippingRequestService, OrderDetailService orderDetailService, OrderTrackService orderTrackService, ProductService productService, OrderService orderService, CustomerService customerService, ProductVariantService productVariantService) {
         this.addressInfoService = addressInfoService;
@@ -145,7 +152,11 @@ public class CheckoutServiceImpl implements CheckoutService {
 
             // Set default values
             order.setOrderStatus(Order.OrderStatus.NEW);
-            order.setPaymentMethod(Order.PaymentMethod.COD);
+            if (checkoutInfoDto.getPaymentMethod() != null && checkoutInfoDto.getPaymentMethod().equals("wallet")) {
+                order.setPaymentMethod(Order.PaymentMethod.WALLET);
+            } else {
+                order.setPaymentMethod(Order.PaymentMethod.COD);
+            }
 
             // Set customer and shop IDs
             order.setCustomerId(customerDto.getId());
@@ -167,7 +178,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
 
     @Override
-    public CheckoutInfoDto saveCheckoutInfo(int customerId,List<Integer> cartIds) throws ProductNotFoundException {
+    public CheckoutInfoDto saveCheckoutInfo(int customerId,List<Integer> cartIds,String paymentMethod) throws ProductNotFoundException {
         // Find data for the specific customer
         System.out.println("hehe " + customerId);
         AddressInfoDto addressInfoDto = addressInfoService.fineByAddressDefault(customerId);
@@ -244,6 +255,12 @@ public class CheckoutServiceImpl implements CheckoutService {
                             orderDetail.setSubtotal((float) (productDto.getLastPrice() * productDto.getQuantity()));
                             orderDetail.setUnitPrice((float) productDto.getLastPrice());
 
+                            if ("wallet".equals(paymentMethod)) {
+                                order.setPaymentMethod(Order.PaymentMethod.WALLET);
+                            } else {
+                                order.setPaymentMethod(Order.PaymentMethod.COD);
+                            }
+
                             orderDetailService.save(orderDetail);
                         }
 
@@ -279,6 +296,8 @@ public class CheckoutServiceImpl implements CheckoutService {
                         }
                     }
                 }
+
+                checkoutInfoDto.setOrderId(orders.get(0).getId());
                 return checkoutInfoDto;
             } else {
                 System.out.println("Failed to save orders");
@@ -376,12 +395,12 @@ public class CheckoutServiceImpl implements CheckoutService {
     }
 
     @Override
-    public boolean saveCheckoutInfoBuyNow(int customerId, CheckoutInfoDto checkoutInfoDto) {
+    public Map<String, Object> saveCheckoutInfoBuyNow(int customerId, CheckoutInfoDto checkoutInfoDto,String paymentMethod) {
         try {
             // Get customer information
             Customer customer = customerService.fineByCustomerId(customerId);
             if (customer == null) {
-                return false;
+                return null; // Hoặc xử lý lỗi nếu không tìm thấy khách hàng
             }
 
             CustomerDto customerDto = new CustomerDto();
@@ -394,26 +413,30 @@ public class CheckoutServiceImpl implements CheckoutService {
 
             // Kiểm tra thông tin checkout
             if (checkoutInfoDto == null) {
-                return false;
+                return null; // Hoặc xử lý lỗi nếu thông tin checkout không hợp lệ
             }
 
             // Các bước xử lý giống như đối với saveCheckoutInfo thông thường
             // Tạo đơn hàng từ thông tin checkout
             List<Order> orders = getOrderList(checkoutInfoDto, customerDto);
             if (orders.isEmpty()) {
-                return false;
+                return null; // Hoặc xử lý lỗi nếu không tạo được đơn hàng
             }
 
             // Lưu đơn hàng
             boolean ordersSaved = orderService.saveAll(orders);
             if (!ordersSaved) {
-                return false;
+                return null; // Hoặc xử lý lỗi nếu không lưu được đơn hàng
             }
 
             // Xử lý chi tiết đơn hàng và theo dõi đơn hàng
             for (Order order : orders) {
                 int shopId = order.getShopId();
-
+                if ("wallet".equals(paymentMethod)) {
+                    order.setPaymentMethod(Order.PaymentMethod.WALLET);
+                } else {
+                    order.setPaymentMethod(Order.PaymentMethod.COD);
+                }
                 // Tìm danh sách sản phẩm cho shop này
                 List<CartProductDto> products = checkoutInfoDto.getCartProductDtoList().stream()
                         .filter(p -> p.getShopId() == shopId)
@@ -476,10 +499,13 @@ public class CheckoutServiceImpl implements CheckoutService {
                 }
             }
 
-            return true;
+            Map<String, Object> result = new HashMap<>();
+            result.put("orderId", orders.get(0).getId()); // Lấy ID đơn hàng đầu tiên
+            result.put("message", "Buy now order saved successfully");
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 

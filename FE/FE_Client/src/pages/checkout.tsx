@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Layout, Row, Col, Space, Button, Typography, Card, Skeleton, Result } from 'antd';
+import { Layout, Row, Col, Space, Button, Typography, Card, Skeleton, Result, Modal, message } from 'antd';
 import { RightOutlined, ShoppingCartOutlined, HomeOutlined } from '@ant-design/icons';
 import ShippingInfo from '../components/ShippingInfo';
 import PaymentMethod from '../components/PaymentMethod';
@@ -12,7 +12,8 @@ import { AuthContext } from "../components/context/auth.context";
 
 import { clearBuyNowData } from '../services/checkout.service';
 import CartService from '../services/cart.service';
-
+import WalletService from '../services/wallet.service';
+import PaymentService from '../services/payment.service'
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
@@ -28,6 +29,7 @@ const Checkout: React.FC = () => {
     const [isNotFound, setIsNotFound] = useState(false);
     const [selectedCartIds, setSelectedCartIds] = useState<number[]>([]);
     const [noAddressFound, setNoAddressFound] = useState(false);
+    const [processingPayment, setProcessingPayment] = useState<boolean>(false);
     // Hook để xóa dữ liệu khi rời khỏi trang
     useEffect(() => {
         return () => {
@@ -142,7 +144,7 @@ const Checkout: React.FC = () => {
     };
 
     // Cập nhật hàm handlePurchase để xử lý trường hợp "Mua ngay"
-    const handlePurchase = () => {
+    const handlePurchase = async () => {
         // Kiểm tra nếu không có customerId
         if (!customerId) {
             alert('Vui lòng đăng nhập để tiếp tục');
@@ -150,52 +152,112 @@ const Checkout: React.FC = () => {
             return;
         }
 
-        // Kiểm tra nếu phương thức thanh toán không phải là COD
-        if (paymentMethod !== 'cash') {
-            alert('Phương thức thanh toán này chưa được hỗ trợ. Mong bạn thông cảm!');
-            return;
-        }
+        if (paymentMethod === 'wallet') {
+            try {
+                setProcessingPayment(true);
+                // Kiểm tra số dư
+                const balanceCheck = await WalletService.checkBalance(customerId, total);
 
-        // Nếu là COD, tiếp tục như bình thường
+                if (!balanceCheck.hasEnoughBalance) {
+                    Modal.confirm({
+                        title: 'Số dư không đủ',
+                        content: (
+                            <div>
+                                <p>Số dư hiện tại: {new Intl.NumberFormat('vi-VN').format(balanceCheck.currentBalance)} VNĐ</p>
+                                <p>Số tiền cần thanh toán: {new Intl.NumberFormat('vi-VN').format(balanceCheck.requiredAmount)} VNĐ</p>
+                                <p>Bạn cần nạp thêm {new Intl.NumberFormat('vi-VN').format(balanceCheck.requiredAmount - balanceCheck.currentBalance)} VNĐ</p>
+                            </div>
+                        ),
+                        okText: 'Nạp tiền ngay',
+                        cancelText: 'Hủy',
+                        onOk: () => {
+                            navigate('/wallet/deposit');
+                        }
+                    });
+                    setProcessingPayment(false);
+                    return;
+                }
+            } catch (error) {
+                console.error('Lỗi kiểm tra số dư:', error);
+                message.error('Không thể kiểm tra số dư. Vui lòng thử lại sau.');
+                setProcessingPayment(false);
+                return;
+            }
+        }
         if (window.confirm('Bạn có chắc chắn muốn mua hàng không?')) {
             setLoading(true);
 
             // Kiểm tra xem có phải là "Mua ngay" không
             const isBuyNow = localStorage.getItem('isBuyNow') === 'true';
 
-            if (isBuyNow && validateBuyNowData()) {
-                saveCheckoutBuyNow(customerId)
-                    .then(() => {
-                        alert('Đặt hàng thành công!');
-                        clearBuyNowData(); // Xóa dữ liệu sau khi đặt hàng thành công
-                        updateCartCount(); // Cập nhật số lượng sản phẩm trong giỏ hàng
-                        navigate('/');
+            try {
+                let response;
+                let orderId;
 
-                    })
-                    .catch((error: any) => {
-                        console.error('Lỗi khi đặt hàng:', error);
-                        alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại sau.');
-                    })
-                    .finally(() => {
+                // Lưu đơn hàng trước
+                if (isBuyNow && validateBuyNowData()) {
+                    response = await saveCheckoutBuyNow(customerId, paymentMethod);
+                    orderId = response.orderId;
+                } else {
+                    response = await saveCheckout(customerId, selectedCartIds, paymentMethod);
+                    orderId = response.orderId;
+                }
+
+                // Nếu thanh toán qua ví, tiến hành xử lý thanh toán
+// Trong hàm handlePurchase
+                if (paymentMethod === 'wallet' && orderId) {
+                    try {
+                        const paymentResult = await PaymentService.payWithWallet(customerId, orderId, total);
+                        message.success('Thanh toán thành công qua ví!');
+
+                        // Xử lý bước tiếp theo chỉ khi thanh toán thành công
+                        if (isBuyNow) {
+                            clearBuyNowData();
+                        } else {
+                            localStorage.removeItem('selectedCartIds');
+                        }
+
+                        updateCartCount();
+                        // Chuyển đến trang đơn hàng
+                        navigate('/orders');
+                        return; // Dừng xử lý ở đây
+                    } catch (error: any) {
+                        console.error('Lỗi thanh toán:', error);
+                        if (error.response?.data?.message === 'Số dư không đủ') {
+                            Modal.confirm({
+                                title: 'Thanh toán thất bại',
+                                content: 'Số dư trong ví của bạn không đủ. Bạn có muốn nạp thêm tiền không?',
+                                okText: 'Nạp tiền',
+                                cancelText: 'Hủy',
+                                onOk: () => {
+                                    navigate('/wallet/deposit');
+                                }
+                            });
+                        } else {
+                            message.error('Có lỗi xảy ra khi thanh toán. Vui lòng thử lại sau.');
+                        }
                         setLoading(false);
-                    });
-            } else {
-                // Xử lý trường hợp thông thường từ giỏ hàng
-                saveCheckout(customerId, selectedCartIds)
-                    .then(() => {
-                        alert('Đặt hàng thành công!');
-                        // Xóa localStorage sau khi đặt hàng thành công
-                        localStorage.removeItem('selectedCartIds');
-                        updateCartCount(); // Cập nhật số lượng sản phẩm trong giỏ hàng
-                        navigate('/'); // Chuyển về trang chủ
-                    })
-                    .catch((error: any) => {
-                        console.error('Lỗi khi đặt hàng:', error);
-                        alert('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại sau.');
-                    })
-                    .finally(() => {
-                        setLoading(false);
-                    });
+                        setProcessingPayment(false);
+                        return; // Thêm return để dừng luồng khi có lỗi
+                    }
+                }
+
+                // Xử lý các bước sau khi đặt hàng thành công
+                if (isBuyNow) {
+                    clearBuyNowData();
+                } else {
+                    localStorage.removeItem('selectedCartIds');
+                }
+
+                updateCartCount();
+                message.success('Đặt hàng thành công!');
+                navigate('/orders');  // Chuyển về trang đơn hàng thay vì trang chủ
+            } catch (error) {
+                console.error('Lỗi khi đặt hàng:', error);
+                message.error('Có lỗi xảy ra khi đặt hàng. Vui lòng thử lại sau.');
+            } finally {
+                setLoading(false);
+                setProcessingPayment(false);
             }
         }
     };
@@ -452,6 +514,7 @@ const Checkout: React.FC = () => {
                                 shopName: shipping.shippingCompany,
                                 shippingCost: shipping.shippingCost
                             }))}
+                            totalAmount={total}
                         />
                     </Col>
 

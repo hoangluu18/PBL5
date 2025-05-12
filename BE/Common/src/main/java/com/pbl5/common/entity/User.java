@@ -23,7 +23,7 @@ public class User extends IdBaseEntity {
     @Column(name = "last_name", nullable = false, length = 45)
     private String lastName;
 
-    @Column(name = "photos", length = 64)
+    @Column(name = "photos", length = 255)
     private String photos;
 
     @Column(name = "enabled")
