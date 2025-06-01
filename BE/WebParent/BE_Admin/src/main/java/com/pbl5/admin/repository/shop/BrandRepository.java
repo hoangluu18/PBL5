@@ -6,5 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BrandRepository extends JpaRepository<Brand, Integer> {
-    // Các phương thức truy vấn đặc biệt (nếu cần)
 }
