@@ -1,5 +1,6 @@
 package com.pbl5.common.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ public class User extends IdBaseEntity {
     private String email;
 
     @Column(name = "password", nullable = false, length = 255)
+    @JsonIgnore
     private String password;
 
     @Column(name = "first_name", nullable = false, length = 45)
@@ -23,18 +25,20 @@ public class User extends IdBaseEntity {
     @Column(name = "last_name", nullable = false, length = 45)
     private String lastName;
 
-    @Column(name = "photos", length = 64)
-    private String photos;
+    @Column(name = "photo", length = 64)
+    private String photo;
 
     @Column(name = "enabled")
     private boolean enabled;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
     @OneToOne(mappedBy = "user")
+    @JsonIgnore
     private Shop shop;
 }

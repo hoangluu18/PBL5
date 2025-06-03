@@ -45,6 +45,8 @@ const LoginPage = () => {
                         navigate('/shop/dashboard');
                     } else if (roles.indexOf("Admin") !== -1) {
                         navigate('/admin/dashboard');
+                    } else if (roles.indexOf("Logistic") !== -1) {
+                        navigate('/logistic/orderManagement');
                     }
                     else {
                         navigate('/login');

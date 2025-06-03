@@ -6,9 +6,6 @@ import {
     UserOutlined,
     LogoutOutlined,
     DownOutlined,
-    SettingOutlined,
-    BranchesOutlined,
-    CaretRightOutlined
 } from '@ant-design/icons';
 import { AuthContext } from '../../utils/auth.context';
 
@@ -17,38 +14,14 @@ const { Header, Content } = Layout;
 const LogisticsNav: React.FC = () => {
     const navigate = useNavigate();
     const { user, logout } = useContext(AuthContext);
-    document.title = 'Admin Panel'
+    document.title = 'Logistic Panel'
     const menuItems = [
         {
             key: 'dashboard',
             icon: <DashboardOutlined />,
-            label: 'Dashboard',
-            onClick: () => navigate('/admin/dashboard')
-        },
-        {
-            key: 'shops',
-            icon: <UserOutlined />,
-            label: 'shops',
-            onClick: () => navigate('/admin/shops')
-        },
-        {
-            key: 'brands',
-            icon: <BranchesOutlined />,
-            label: 'brands',
-            onClick: () => navigate('/admin/brands')
-        },
-        {
-            key: 'categories',
-            icon: <CaretRightOutlined />,
-            label: 'categories',
-            onClick: () => navigate('/admin/categories')
-        },
-        {
-            key: 'settings',
-            icon: <SettingOutlined />,
-            label: 'settings',
-            onClick: () => navigate('/admin/settings')
-        },
+            label: 'Quản lý đơn hàng',
+            onClick: () => navigate('/logistic/orderManagement')
+        }
     ];
 
     const userMenuItems = [
@@ -56,6 +29,7 @@ const LogisticsNav: React.FC = () => {
             key: '1',
             label: 'Profile',
             icon: <UserOutlined />,
+            onClick: () => navigate('/logistic/profile')
         },
         {
             key: '2',
@@ -83,7 +57,7 @@ const LogisticsNav: React.FC = () => {
                     fontWeight: 'bold',
                     padding: '0 24px'
                 }}>
-                    Admin Panel
+                    Logistic Panel
                 </div>
 
                 {/* Main navigation menu */}

@@ -13,10 +13,12 @@ import com.pbl5.common.entity.OrderDetail;
 import com.pbl5.common.entity.product.Product;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -174,6 +176,44 @@ public class OrderServiceImpl implements OrderService {
 
 
         return orderDetailDto;
+    }
+
+    @Override
+    public List<OrderDetailDto> getAllOrderDetails() {
+        List<Order> orders = orderRepository.findAll(Sort.by("orderTime").descending());
+        List<OrderDetailDto> orderDetailDtos = new ArrayList<>();
+        orders.forEach(order -> {
+            OrderDetailDto orderDetailDto = new OrderDetailDto();
+            orderDetailDto.setOrderId(order.getId());
+            orderDetailDto.setCustomerName(order.getFirstName() + " " + order.getLastName());
+            orderDetailDto.setPhoneNumber(order.getPhoneNumber());
+            orderDetailDto.setAddress(order.getAddressLine());
+            orderDetailDto.setOrderTime(order.getOrderTime().toString());
+            orderDetailDto.setDeliveryDate(order.getDeliverDate().toString());
+            orderDetailDto.setOrderStatus(order.getOrderStatus().toString());
+            orderDetailDto.setPaymentMethod(order.getPaymentMethod().name());
+            orderDetailDto.setNote(order.getNote());
+            orderDetailDto.setShippingFee(order.getShippingCost());
+            orderDetailDto.setSubtotal(order.getSubtotal());
+
+            List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(order.getId());
+            List<OrderProductsDto> orderProductsDtos = getOrderProductsDtos(orderDetails);
+            orderDetailDto.setOrderProducts(orderProductsDtos);
+            orderDetailDto.setTotalQuantity(orderProductsDtos.stream().mapToInt(OrderProductsDto::getQuantity).sum());
+            orderDetailDto.setTotal(order.getTotal());
+
+            orderDetailDtos.add(orderDetailDto);
+        });
+
+        return orderDetailDtos;
+    }
+
+    @Override
+    public void updateOrderStatus(int orderId, String status) {
+        orderRepository.findById(orderId).ifPresent(order -> {
+            order.setOrderStatus(Order.OrderStatus.valueOf(status));
+            orderRepository.save(order);
+        });
     }
 
     @NotNull

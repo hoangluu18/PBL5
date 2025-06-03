@@ -73,3 +73,19 @@ export interface RecentOrdersDto {
     total: number;
 }
 
+export interface Order {
+    orderId: number;
+    customerName: string;
+    phoneNumber: string;
+    address: string;
+    orderTime: string;
+    deliveryDate: string | null;
+    orderStatus: string; // 'NEW' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'RETURN_REQUESTED' | 'RETURNED'
+    paymentMethod: string;
+    note: string;
+    orderProducts: OrderProductsDto[];
+    shippingFee: number;
+    subtotal: number;
+    totalQuantity: number;
+    total: number;
+}

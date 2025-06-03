@@ -21,6 +21,8 @@ import SettingPage from './pages/admin/SettingPage.tsx';
 import BrandPage from './pages/admin/BrandManagerPage.tsx';
 import CategoriesManagement from './pages/admin/CategoryManagerPage.tsx';
 import LogisticsNav from './pages/layouts/logistic.layout.tsx';
+import OrderManagement from './pages/logistics/orderManagement.tsx';
+import ProfilePage from './pages/logistics/profile.tsx';
 
 const router = createBrowserRouter([
   // ADMIN ROUTES
@@ -61,37 +63,25 @@ const router = createBrowserRouter([
 
   // Logistics ROUTES
   {
-    path: "/Logistics",
+    path: "/logistic",
     element: (
-      <ProtectedRoute allowedRoles={["Logistics"]}>
+      <ProtectedRoute allowedRoles={["Logistic"]}>
         <LogisticsNav />
       </ProtectedRoute>
     ),
     children: [
       {
         index: true,
-        element: <DashBoardAdmin />
+        element: <OrderManagement />
       },
       {
-        path: "dashboard",
-        element: <DashBoardAdmin />
+        path: "orderManagement",
+        element: <OrderManagement />
       },
       {
-        path: "brands",
-        element: <BrandPage />
-      },
-      {
-        path: "shops",
-        element: <ShopManagement />
-      },
-      {
-        path: "categories",
-        element: <CategoriesManagement />
-      },
-      {
-        path: "settings",
-        element: <SettingPage />
-      },
+        path: "profile",
+        element: <ProfilePage />
+      }
     ]
   },
   // SALESPERSON ROUTES

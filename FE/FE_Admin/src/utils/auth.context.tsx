@@ -44,8 +44,10 @@ export const AuthWrapper = (props: React.PropsWithChildren<{}>) => {
 
 
     const logout = () => {
+        console.log("Logging out...");
         localStorage.removeItem('access_token');
         localStorage.removeItem('user');
+        console.log("User logged out successfully.");
         setUser({
             id: 0,
             name: "",
