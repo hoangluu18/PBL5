@@ -16,5 +16,6 @@ public class CheckoutInfoDto {
     private List<CartProductDto> cartProductDtoList;
     private List<ShippingRequestDto> shippingRequestDtoList;
     private List<ShippingRespondDto> shippingRespondDtoList;
-
+    private Integer orderId;
+    private String paymentMethod;
 }

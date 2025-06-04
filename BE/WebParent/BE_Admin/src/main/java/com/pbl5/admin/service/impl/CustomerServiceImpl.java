@@ -1,24 +1,31 @@
 package com.pbl5.admin.service.impl;
 
 import com.pbl5.admin.dto.CustomerDto;
+import com.pbl5.admin.dto.orders.OrderDto;
 import com.pbl5.admin.repository.CustomerRepository;
 import com.pbl5.admin.repository.OrderRepository;
 import com.pbl5.admin.service.CustomerService;
 import com.pbl5.common.entity.Customer;
+import com.pbl5.common.entity.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    @Autowired
-    private CustomerRepository customerRepository;
 
-    @Autowired
-    private OrderRepository orderRepository;
+    private final CustomerRepository customerRepository;
+
+    private final OrderRepository orderRepository;
+
+    public CustomerServiceImpl(CustomerRepository customerRepository, OrderRepository orderRepository) {
+        this.customerRepository = customerRepository;
+        this.orderRepository = orderRepository;
+    }
 
     @Override
     public List<CustomerDto> findAllCustomers() {
@@ -42,6 +49,36 @@ public class CustomerServiceImpl implements CustomerService {
 
         Double totalSpending = orderRepository.calculateTotalSpendingByCustomerId(customer.getId());
 
+        List<Order> orders = orderRepository.findByCustomerId(customer.getId());
+        List<OrderDto> orderDtos = orders.stream()
+                .map(order -> new OrderDto(
+                        order.getId(),
+                        order.getOrderTime(),
+                        order.getTotal(),
+                        order.getOrderStatus().name()
+                )).collect(Collectors.toList());
+
+        return new CustomerDto(
+                customer.getId(),
+                customer.getFullName(),
+                customer.getPhoneNumber(),
+                totalSpending,
+                customer.getEmail(),
+                customer.getAvatar(),
+                orderDtos
+        );
+    }
+
+    @Override
+    public List<CustomerDto> findCustomersByShopId(Integer shopId) {
+        List<Customer> customers = customerRepository.findDistinctByOrdersShopId(shopId);
+        return customers.stream()
+                .map(this::convertToDto)  // Dùng convertToDto để chuyển Customer thành CustomerDto
+                .collect(Collectors.toList());
+    }
+
+    private CustomerDto convertToDto(Customer customer) {
+        Double totalSpending = orderRepository.calculateTotalSpendingByCustomerId(customer.getId());
         return new CustomerDto(
                 customer.getId(),
                 customer.getFullName(),

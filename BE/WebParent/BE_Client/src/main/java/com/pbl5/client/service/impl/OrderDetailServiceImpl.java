@@ -2,9 +2,7 @@ package com.pbl5.client.service.impl;
 
 import com.pbl5.client.dto.CartProductDto;
 import com.pbl5.client.dto.OrderDto;
-import com.pbl5.client.dto.checkout.AddressInfoDto;
 import com.pbl5.client.dto.order_detail.OrderDetailDto;
-import com.pbl5.client.exception.ReviewNotFoundException;
 import com.pbl5.client.repository.OrderDetailRepository;
 import com.pbl5.client.service.OrderDetailService;
 import com.pbl5.client.service.OrderService;
@@ -21,14 +19,18 @@ import java.util.stream.Collectors;
 @Service
 public class OrderDetailServiceImpl implements OrderDetailService {
 
-    @Autowired
-    private OrderDetailRepository orderDetailRepository;
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderDetailRepository orderDetailRepository;
 
-    @Autowired
-    private ReviewService reviewService;
+    private final OrderService orderService;
+
+    private final ReviewService reviewService;
+
+    public OrderDetailServiceImpl(OrderDetailRepository orderDetailRepository, OrderService orderService, ReviewService reviewService) {
+        this.orderDetailRepository = orderDetailRepository;
+        this.orderService = orderService;
+        this.reviewService = reviewService;
+    }
 
     @Override
     public List<OrderDetail> findAll() {

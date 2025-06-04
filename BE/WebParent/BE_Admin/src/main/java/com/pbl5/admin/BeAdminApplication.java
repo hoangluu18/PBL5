@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @SpringBootApplication
-@EntityScan(basePackages = "com.pbl5.common.entity")
+@EntityScan(basePackages = "com.pbl5.common.entity", basePackageClasses = {com.pbl5.common.entity.Order.class, com.pbl5.common.entity.OrderDetail.class})
 public class BeAdminApplication {
 
 	public static void main(String[] args) {

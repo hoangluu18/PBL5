@@ -86,6 +86,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
      @Query("SELECT SUM(o.total) FROM Order o WHERE o.customerId = :customerId AND o.orderStatus = 'DELIVERED'")
     Double calculateTotalSpendingByCustomerId(@Param("customerId") Integer customerId);
 
+
      @Query(nativeQuery = true,
      value = "SELECT s.name shopName, COALESCE(SUM(o.total),0) revenue FROM orders o\n" +
              "JOIN shops s ON s.id = o.shop_id\n" +
@@ -122,4 +123,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
                     "        o.shop_id, s.name\n" +
                     ") AS sub;")
     List<ShopStatisticProjection> findStatisticOrderByDate(@Param("date") String date);
+
+    List<Order> findByCustomerId(Integer customerId);
+
 }

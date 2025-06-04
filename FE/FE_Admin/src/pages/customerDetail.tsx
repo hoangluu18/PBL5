@@ -1,16 +1,28 @@
 import { useParams, Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+
 import {
   Card, Spin, Alert, Button, Modal, Badge, List, Typography,
-  Space, Row, Col, Statistic, Avatar, Breadcrumb, Divider, Tag
+  Space, Row, Col, Statistic, Avatar, Breadcrumb, Divider, Tag,
+  Table, Tabs, Empty, Descriptions
 } from 'antd'
 import {
-  HomeOutlined, PhoneOutlined, UserOutlined,
-  MailOutlined, DollarOutlined, EnvironmentOutlined, ArrowLeftOutlined
+  HomeOutlined, PhoneOutlined, UserOutlined, ClockCircleOutlined,
+  MailOutlined, DollarOutlined, EnvironmentOutlined, ArrowLeftOutlined,
+  ShoppingOutlined, CheckCircleOutlined, FileTextOutlined, SyncOutlined, GiftOutlined, CarOutlined, ExclamationCircleOutlined, SwapOutlined, RollbackOutlined
 } from '@ant-design/icons'
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
+const { TabPane } = Tabs;
+
+interface Order {
+  id: number;
+  orderTime: string;
+  total: number;
+  orderStatus: string;
+}
+
 
 interface Customer {
   id: number
@@ -19,6 +31,7 @@ interface Customer {
   totalSpending: number
   email: string
   avatar: string
+  orders: Order[]
 }
 
 interface Address {
@@ -31,7 +44,7 @@ interface Address {
   default: boolean
 }
 
-// Add styles for full-width layout and better design
+// Enhanced styles for better space utilization
 const styles = `
   body, html, #root, .ant-layout, .ant-layout-content {
     width: 100%;
@@ -79,6 +92,7 @@ const styles = `
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
   }
   
   .info-item {
@@ -113,6 +127,52 @@ const styles = `
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     transform: translateY(-2px);
   }
+  
+  .divider-with-text {
+    display: flex;
+    align-items: center;
+    margin: 16px 0;
+    color: rgba(0, 0, 0, 0.45);
+  }
+  
+  .divider-with-text:before,
+  .divider-with-text:after {
+    content: '';
+    flex: 1;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+  }
+  
+  .divider-with-text:before {
+    margin-right: 16px;
+  }
+  
+  .divider-with-text:after {
+    margin-left: 16px;
+  }
+  
+  .stats-card {
+    background-color: #f9f9ff;
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  
+  .stats-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1890ff;
+    margin: 8px 0;
+  }
+  
+  .stats-label {
+    color: #888;
+    font-size: 14px;
+  }
+  
+  .ant-tabs-nav {
+    margin-bottom: 16px !important;
+  }
 `;
 
 export default function CustomerDetail() {
@@ -123,6 +183,9 @@ export default function CustomerDetail() {
   const [error, setError] = useState<string | null>(null)
   const [addresses, setAddresses] = useState<Address[]>([])
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const [activeTab, setActiveTab] = useState('1')
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [orderModalVisible, setOrderModalVisible] = useState(false)
 
   // Add styles to document
   useEffect(() => {
@@ -135,6 +198,7 @@ export default function CustomerDetail() {
     };
   }, []);
 
+  // Fetch customer data
   useEffect(() => {
     if (isNaN(customerId)) {
       setError("ID khách hàng không hợp lệ.")
@@ -146,6 +210,7 @@ export default function CustomerDetail() {
       .then(res => {
         setCustomer(res.data)
         setLoading(false)
+        fetchAddresses(false)
       })
       .catch(() => {
         setError("Không thể tải dữ liệu khách hàng.")
@@ -153,16 +218,20 @@ export default function CustomerDetail() {
       })
   }, [customerId])
 
-  const fetchAddresses = () => {
+  const fetchAddresses = (showModal = true) => {
     axios.get(`http://localhost:8080/api/addresses/customer/${customerId}`)
       .then(res => {
         setAddresses(res.data)
-        setIsModalVisible(true)
+        if (showModal) {
+          setIsModalVisible(true)
+        }
       })
       .catch(error => {
         console.error("Error fetching addresses:", error);
         setAddresses([])
-        setIsModalVisible(true)
+        if (showModal) {
+          setIsModalVisible(true)
+        }
       })
   }
 
@@ -170,6 +239,166 @@ export default function CustomerDetail() {
     if (!avatarPath) return undefined;
     return avatarPath.startsWith('http') ? avatarPath : `http://localhost:8080/images/avatars/${avatarPath}`;
   };
+
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    return new Date(dateString).toLocaleDateString('vi-VN', options);
+  };
+
+  const getStatusTag = (status: string) => {
+    let color = '';
+    let text = '';
+    let icon = null;
+
+    switch (status) {
+      case 'NEW':
+        color = 'blue';
+        text = 'Mới';
+        icon = <ClockCircleOutlined />;
+        break;
+      case 'PAID':
+        color = 'cyan';
+        text = 'Đã thanh toán';
+        icon = <DollarOutlined />;
+        break;
+      case 'PROCCESSING':
+        color = 'purple';
+        text = 'Đang xử lý';
+        icon = <SyncOutlined spin />;
+        break;
+      case 'PACKAGED':
+        color = 'geekblue';
+        text = 'Đã đóng gói';
+        icon = <GiftOutlined />;
+        break;
+      case 'PICKED':
+        color = 'blue';
+        text = 'Đã lấy hàng';
+        icon = <CheckCircleOutlined />;
+        break;
+      case 'SHIPPING':
+        color = 'orange';
+        text = 'Đang giao hàng';
+        icon = <CarOutlined />;
+        break;
+      case 'DELIVERED':
+        color = 'green';
+        text = 'Đã giao hàng';
+        icon = <CheckCircleOutlined />;
+        break;
+      case 'RETURN_REQUESTED':
+        color = 'volcano';
+        text = 'Yêu cầu trả hàng';
+        icon = <ExclamationCircleOutlined />;
+        break;
+      case 'RETURNED':
+        color = 'red';
+        text = 'Đã trả hàng';
+        icon = <SwapOutlined />;
+        break;
+      case 'REFUNDED':
+        color = 'magenta';
+        text = 'Đã hoàn tiền';
+        icon = <RollbackOutlined />;
+        break;
+      default:
+        color = 'default';
+        text = status;
+    }
+
+    return <Tag color={color} icon={icon}>{text}</Tag>;
+  };
+
+  const showOrderDetail = (order: Order) => {
+    setSelectedOrder(order);
+    setOrderModalVisible(true);
+  };
+
+  const orderColumns = [
+    {
+      title: 'Mã đơn hàng',
+      dataIndex: 'id',
+      key: 'id',
+      render: (id: number) => {
+        const order = customer?.orders.find(o => o.id === id);
+        return order ? <a onClick={() => showOrderDetail(order)}>{`#${id}`}</a> : null;
+      },
+    },
+    {
+      title: 'Ngày đặt',
+      dataIndex: 'orderTime',
+      key: 'orderTime',
+      render: (date: string) => formatDate(date),
+      sorter: (a: Order, b: Order) =>
+        new Date(b.orderTime).getTime() - new Date(a.orderTime).getTime(),
+      defaultSortOrder: 'descend' as const
+    },
+    {
+      title: 'Tổng tiền',
+      dataIndex: 'total',
+      key: 'total',
+      render: (total: number) => <Text strong>{total.toLocaleString()}₫</Text>,
+      sorter: (a: Order, b: Order) => a.total - b.total,
+    },
+    {
+      title: 'Trạng thái',
+      dataIndex: 'orderStatus',
+      key: 'orderStatus',
+      render: (status: string) => getStatusTag(status),
+      filters: [
+        { text: 'Mới', value: 'NEW' },
+        { text: 'Đã thanh toán', value: 'PAID' },
+        { text: 'Đang xử lý', value: 'PROCCESSING' },
+        { text: 'Đã đóng gói', value: 'PACKAGED' },
+        { text: 'Đã lấy hàng', value: 'PICKED' },
+        { text: 'Đang giao hàng', value: 'SHIPPING' },
+        { text: 'Đã giao hàng', value: 'DELIVERED' },
+        { text: 'Yêu cầu trả hàng', value: 'RETURN_REQUESTED' },
+        { text: 'Đã trả hàng', value: 'RETURNED' },
+        { text: 'Đã hoàn tiền', value: 'REFUNDED' }
+      ],
+      onFilter: (value: unknown, record: Order) => record.orderStatus === value,
+    },
+  ];
+
+  // Calculate order statistics
+  const getOrderStats = () => {
+    if (!customer?.orders) return {
+      total: 0,
+      new: 0,
+      paid: 0,
+      processing: 0,
+      packaged: 0,
+      picked: 0,
+      shipping: 0,
+      delivered: 0,
+      returnRequested: 0,
+      returned: 0,
+      refunded: 0
+    };
+
+    return {
+      total: customer.orders.length,
+      new: customer.orders.filter(o => o.orderStatus === 'NEW').length,
+      paid: customer.orders.filter(o => o.orderStatus === 'PAID').length,
+      processing: customer.orders.filter(o => o.orderStatus === 'PROCCESSING').length,
+      packaged: customer.orders.filter(o => o.orderStatus === 'PACKAGED').length,
+      picked: customer.orders.filter(o => o.orderStatus === 'PICKED').length,
+      shipping: customer.orders.filter(o => o.orderStatus === 'SHIPPING').length,
+      delivered: customer.orders.filter(o => o.orderStatus === 'DELIVERED').length,
+      returnRequested: customer.orders.filter(o => o.orderStatus === 'RETURN_REQUESTED').length,
+      returned: customer.orders.filter(o => o.orderStatus === 'RETURNED').length,
+      refunded: customer.orders.filter(o => o.orderStatus === 'REFUNDED').length
+    };
+  };
+
+  const orderStats = getOrderStats();
 
   if (loading) {
     return (
@@ -213,7 +442,7 @@ export default function CustomerDetail() {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <Title level={2} style={{ margin: 0 }}>
-          <UserOutlined /> Thông tin khách hàng
+          <UserOutlined /> {customer?.fullName}
         </Title>
         <Button type="primary" icon={<ArrowLeftOutlined />}>
           <Link to="/customers" style={{ color: 'white' }}>Quay lại danh sách</Link>
@@ -221,8 +450,8 @@ export default function CustomerDetail() {
       </div>
 
       <Row gutter={[24, 24]}>
-        {/* Left column - Avatar and summary */}
-        <Col xs={24} md={8}>
+        {/* Left column - Customer profile */}
+        <Col xs={24} lg={7}>
           <Card className="customer-profile-card" bordered={false}>
             <div className="customer-avatar-container">
               {customer?.avatar ? (
@@ -248,7 +477,7 @@ export default function CustomerDetail() {
 
             <div className="customer-stats">
               <Statistic
-                title={<span style={{ fontSize: 16 }}><DollarOutlined /> Tổng chi tiêu</span>}
+                title={<span style={{ fontSize: 15 }}><DollarOutlined /> Tổng chi tiêu</span>}
                 value={customer?.totalSpending || 0}
                 precision={0}
                 formatter={(value) => `${value?.toLocaleString()}₫`}
@@ -306,77 +535,139 @@ export default function CustomerDetail() {
                   <div style={{ fontSize: 16, fontWeight: 500, color: '#3f8600' }}>
                     {customer?.totalSpending?.toLocaleString()}₫
                   </div>
-                </div>
-              </div>
-            </div>
-          </Card>
+                )}
+                </Card>
 
-        </Col>
-      </Row>
+              </TabPane>
 
-      <Modal
+              <TabPane tab={<span><ShoppingOutlined /> Lịch sử đơn hàng</span>} key="2">
+                <Card bordered={false} className="customer-info-card">
+                  <div style={{ marginBottom: 16 }}>
+                    <Space>
+                      <Text>Tổng số:</Text>
+                      <Tag color="blue">{orderStats.total} đơn hàng</Tag>
+                      <Divider type="vertical" />
+                      <Tag color="blue" icon={<ClockCircleOutlined />}>Mới: {orderStats.new}</Tag>
+                      <Tag color="orange" icon={<DollarOutlined />}>Đã thanh toán: {orderStats.paid}</Tag>
+                      <Tag color="green" icon={<CheckCircleOutlined />}>Đã giao: {orderStats.delivered}</Tag>
+                    </Space>
+                  </div>
+                </div >
+            </div >
+          </Card >
+
+        </Col >
+      </Row >
+
+      {/* Address Modal */}
+      < Modal
         title={
-          <Space align="center">
+          < Space align="center" >
             <HomeOutlined />
             <span>Địa chỉ giao hàng của {customer?.fullName}</span>
-          </Space>
+          </ >
         }
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
         width={600}
       >
-        {addresses.length > 0 ? (
-          <List
-            itemLayout="vertical"
-            dataSource={addresses}
-            renderItem={(item) => (
-              <List.Item
-                className={`address-item ${item.default ? 'address-default' : 'address-normal'}`}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                      <UserOutlined style={{ marginRight: '8px' }} />
-                      <Text strong>{item.fullName}</Text>
-                    </div>
+        {
+          addresses.length > 0 ? (
+            <List
+              itemLayout="vertical"
+              dataSource={addresses}
+              renderItem={(item) => (
+                <List.Item
+                  className={`address-item ${item.default ? 'address-default' : 'address-normal'}`}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                        <UserOutlined style={{ marginRight: '8px' }} />
+                        <Text strong>{item.fullName}</Text>
+                      </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                      <PhoneOutlined style={{ marginRight: '8px' }} />
-                      <Text>{item.phoneNumber}</Text>
-                    </div>
+                      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                        <PhoneOutlined style={{ marginRight: '8px' }} />
+                        <Text>{item.phoneNumber}</Text>
+                      </div>
 
-                    <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '8px' }}>
-                      <EnvironmentOutlined style={{ marginRight: '8px', marginTop: '4px' }} />
-                      <div>
-                        <Text>{item.address}</Text>
-                        {item.city && (
-                          <div>
-                            <Text type="secondary">{item.city}</Text>
-                          </div>
-                        )}
+                      <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '8px' }}>
+                        <EnvironmentOutlined style={{ marginRight: '8px', marginTop: '4px' }} />
+                        <div>
+                          <Text>{item.address}</Text>
+                          {item.city && (
+                            <div>
+                              <Text type="secondary">{item.city}</Text>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {item.default && (
-                    <Badge.Ribbon text="Mặc định" color="green">
-                      <div style={{ width: 20, height: 20 }}></div>
-                    </Badge.Ribbon>
-                  )}
-                </div>
-              </List.Item>
-            )}
-          />
-        ) : (
-          <Alert
-            message="Không có địa chỉ giao hàng nào"
-            description="Khách hàng này chưa có địa chỉ giao hàng nào được lưu trong hệ thống."
-            type="warning"
-            showIcon
-          />
+                    {item.default && (
+                      <Badge.Ribbon text="Mặc định" color="green">
+                        <div style={{ width: 20, height: 20 }}></div>
+                      </Badge.Ribbon>
+                    )}
+                  </div>
+                </List.Item>
+              )}
+            />
+          ) : (
+            <Alert
+              message="Không có địa chỉ giao hàng nào"
+              description="Khách hàng này chưa có địa chỉ giao hàng nào được lưu trong hệ thống."
+              type="warning"
+              showIcon
+            />
+          )
+        }
+      </ >
+
+      {/* Order Detail Modal */}
+      < Modal
+        title={
+          < Space align="center" >
+            <FileTextOutlined />
+            <span>Chi tiết đơn hàng #{selectedOrder?.id}</span>
+          </Space >
+        }
+        open={orderModalVisible}
+        onCancel={() => setOrderModalVisible(false)}
+        footer={
+          [
+            <Button key="back" onClick={() => setOrderModalVisible(false)}>
+              Đóng
+            </Button>,
+            <Button key="link" type="primary">
+              <Link to={`/orders/${selectedOrder?.id}`} style={{ color: 'white' }}>
+                Xem đầy đủ
+              </Link>
+            </Button>,
+          ]}
+        width={600}
+      >
+        {selectedOrder && (
+          <div>
+            <Descriptions title="Thông tin đơn hàng" bordered column={1}>
+              <Descriptions.Item label="Mã đơn hàng">#{selectedOrder.id}</Descriptions.Item>
+              <Descriptions.Item label="Ngày đặt">{formatDate(selectedOrder.orderTime)}</Descriptions.Item>
+              <Descriptions.Item label="Tổng tiền">
+                <Text strong>{selectedOrder.total.toLocaleString()}₫</Text>
+              </Descriptions.Item>
+              <Descriptions.Item label="Trạng thái">
+                {getStatusTag(selectedOrder.orderStatus)}
+              </Descriptions.Item>
+            </Descriptions>
+
+            <div style={{ marginTop: 24, textAlign: 'center' }}>
+              <Text type="secondary">Để xem chi tiết đơn hàng, vui lòng nhấn "Xem đầy đủ"</Text>
+            </div>
+          </div>
         )}
-      </Modal>
-    </div>
+      </Modal >
+    </div >
   )
 }

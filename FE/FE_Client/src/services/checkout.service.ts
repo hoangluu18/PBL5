@@ -29,27 +29,23 @@ export const getCheckoutInfoForSelectedCartItems = async (customerId: number, ca
     }
 };
 
-export const saveCheckout = async (customerId: number, cartIds: number[]): Promise<void> => {
+export const saveCheckout = async (customerId: number, cartIds: number[], paymentMethod: string): Promise<any> => {
     try {
         if (!cartIds || cartIds.length === 0) {
             throw new Error('Danh sách sản phẩm không được để trống');
         }
 
-        await axios.post(
+        const response = await axios.post(
             `/checkout/save/${customerId}`,
-            cartIds,  // Gửi mảng cartIds làm request body
+            {
+                cartIds,
+                paymentMethod
+            }
         );
 
-        console.log('Order saved for customer:', customerId);
-        console.log('With cart IDs:', cartIds);
+        return response.data;
     } catch (error) {
         console.error('Error saving checkout:', error);
-
-        // if (axios.isAxiosError(error)) {
-        //     console.error('Status:', error.response?.status);
-        //     console.error('Response data:', error.response?.data);
-        // }
-
         throw error;
     }
 };
@@ -98,7 +94,7 @@ export const clearBuyNowData = (): void => {
     localStorage.removeItem('buyNowTimestamp');
 };
 
-export const saveCheckoutBuyNow = async (customerId: number): Promise<void> => {
+export const saveCheckoutBuyNow = async (customerId: number, paymentMethod: string): Promise<any> => {
     try {
         // Lấy dữ liệu từ localStorage
         const buyNowInfo = localStorage.getItem('buyNowInfo');
@@ -108,20 +104,18 @@ export const saveCheckoutBuyNow = async (customerId: number): Promise<void> => {
 
         const checkoutInfo = JSON.parse(buyNowInfo);
 
-        await axios.post(
+        const response = await axios.post(
             `/checkout/save-buy-now/${customerId}`,
-            checkoutInfo,  // Gửi toàn bộ thông tin checkout từ localStorage
+            {
+                checkoutInfo,
+                paymentMethod
+            }
         );
 
         console.log('Buy now order saved for customer:', customerId);
+        return response.data; // Trả về response.data thay vì void
     } catch (error) {
         console.error('Error saving buy now checkout:', error);
-
-        // if (axios.isAxiosError(error)) {
-        //     console.error('Status:', error.response?.status);
-        //     console.error('Response data:', error.response?.data);
-        // }
-
         throw error;
     }
 };
