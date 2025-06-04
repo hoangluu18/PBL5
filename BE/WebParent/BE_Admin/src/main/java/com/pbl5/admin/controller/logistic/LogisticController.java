@@ -67,7 +67,7 @@ public class LogisticController {
         return ResponseEntity.ok(response);
     }
 
-s    @PutMapping("/profile")
+    @PutMapping("/profile")
     public ResponseEntity<?> updateUserProfile(@RequestBody UserDto userDto) {
         ResponseDto response = new ResponseDto();
         try {
