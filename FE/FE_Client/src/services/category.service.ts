@@ -18,6 +18,17 @@ class CategoryService {
         return categories;
     }
 
+    async getAllCategories(): Promise<Category[]> {
+        let categories: Category[] | PromiseLike<Category[]> = [];
+        try {
+            const response = await axios.get<Category[]>(`/c/all`);
+            categories = response.data;
+        } catch (error) {
+            console.error(error);
+        }
+        return categories;
+    }
+
     async searchProductByCategory(
         alias: string,
         minPrice?: number,
