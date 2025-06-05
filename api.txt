@@ -1,0 +1,392 @@
+{
+  "id": 275602042,
+  "master_id": 275602042,
+  "sku": "1021308174418",
+  "name": "Laptop ASUS TUF Gaming F15 FX507ZC4-HN095W (Intel Core i5-12500H | 16GB | 512GB | 15.6 inch FHD | RTX 3050 | Win 11 | Xám) - Hàng Chính Hãng - Bảo Hành 24 Tháng",
+  "url_key": "laptop-asus-tuf-gaming-f15-fx507zc4-hn095w-intel-core-i5-12500h-16gb-512gb-15-6-inch-fhd-rtx-3050-win-11-xam-hang-chinh-hang-bao-hanh-24-thang-p275602042",
+  "url_path": "laptop-asus-tuf-gaming-f15-fx507zc4-hn095w-intel-core-i5-12500h-16gb-512gb-15-6-inch-fhd-rtx-3050-win-11-xam-hang-chinh-hang-bao-hanh-24-thang-p275602042.html?spid=275602043",
+  "short_url": "https://tiki.vn/product-p275602042.html?spid=275602043",
+  "type": "simple",
+  "book_cover": null,
+  "short_description": "ASUS TUF Gaming F15 - FX507ZC4-HN095WThiết kế tối ưu, đường nét mới mẻLaptop ASUS TUF Gaming F15 FX507ZC4-HN095W mang thiết kế hoàn toàn mới, hoàn thiện với chất liệu cứng cáp, bộ khung nhỏ hơn 4.5...",
+  "price": 19819000,
+  "list_price": 19819000,
+  "original_price": 19819000,
+  "badges": [
+    {
+      "code": "new_pdp",
+      "text": "v1"
+    }
+  ],
+  "badges_new": [
+    {
+      "placement": "left_brand",
+      "code": "is_authentic",
+      "type": "is_authentic",
+      "index": 4,
+      "icon": "https://salt.tikicdn.com/ts/upload/d7/56/04/b93b8c666e13f49971483596ef14800f.png",
+      "icon_width": 89,
+      "icon_height": 20,
+      "text_color": null,
+      "background_color": null,
+      "href": null,
+      "text": null
+    },
+    {
+      "placement": "right_authentic",
+      "code": "return_policy",
+      "type": "return_policy",
+      "index": 3,
+      "icon": "https://salt.tikicdn.com/ts/ta/b1/3f/4e/cc3d0a2dd751a7b06dd97d868d6afa56.png",
+      "icon_width": 114,
+      "icon_height": 20,
+      "text_color": null,
+      "background_color": null,
+      "href": null,
+      "text": null
+    }
+  ],
+  "badges_v3": [
+    {
+      "placement": "pdp_badge",
+      "code": "return_policy",
+      "type": "pdp_icon_badge",
+      "index": 3,
+      "icon": "https://salt.tikicdn.com/ts/ta/b1/3f/4e/cc3d0a2dd751a7b06dd97d868d6afa56.png",
+      "icon_width": 114,
+      "icon_height": 20,
+      "text_color": null,
+      "background_color": null,
+      "href": null,
+      "text": null
+    },
+    {
+      "placement": "pdp_badge",
+      "code": "is_authentic",
+      "type": "pdp_icon_badge",
+      "index": 4,
+      "icon": "https://salt.tikicdn.com/ts/upload/d7/56/04/b93b8c666e13f49971483596ef14800f.png",
+      "icon_width": 89,
+      "icon_height": 20,
+      "text_color": null,
+      "background_color": null,
+      "href": null,
+      "text": null
+    }
+  ],
+  "tracking_info": {
+    "amplitude": {
+      "is_authentic": true,
+      "is_freeship_xtra": false,
+      "is_hero": false,
+      "is_top_brand": false,
+      "return_reason": "any_reason"
+    }
+  },
+  "discount": 0,
+  "discount_rate": 0,
+  "rating_average": 0,
+  "review_count": 0,
+  "review_text": "Chưa có đánh giá",
+  "favourite_count": 0,
+  "thumbnail_url": "https://salt.tikicdn.com/cache/280x280/ts/product/63/97/79/2e41d88212f46bba7f0e67474e5bdc77.jpg",
+  "has_ebook": false,
+  "inventory_status": "available",
+  "inventory_type": "backorder",
+  "productset_group_name": "",
+  "is_fresh": false,
+  "seller": null,
+  "is_flower": false,
+  "has_buynow": true,
+  "is_gift_card": false,
+  "salable_type": null,
+  "data_version": 3300,
+  "day_ago_created": 327,
+  "meta_title": "",
+  "meta_description": "",
+  "meta_keywords": "",
+  "is_baby_milk": false,
+  "is_acoholic_drink": false,
+  "description": "\u003Ch1\u003EASUS TUF Gaming F15 - FX507ZC4-HN095W\u003C/h1\u003E\n\u003Ch2\u003E\u003Cimg src=\"https://salt.tikicdn.com/cache/w750/ts/product/39/6a/40/a9dfea383deabed68eca8994659d0d91.jpg\" alt=\"\" /\u003E\u003C/h2\u003E\n\u003Ch2\u003EThiết kế tối ưu, đường nét mới mẻ\u003C/h2\u003E\n\u003Cp\u003E\u003Cstrong\u003ELaptop ASUS TUF Gaming F15 FX507ZC4-HN095W\u003C/strong\u003E mang thiết kế hoàn toàn mới, hoàn thiện với chất liệu cứng cáp, bộ khung nhỏ hơn 4.5% so với các model cũ,, được thiết kế tối ưu không gian sử dụng mà không làm ảnh hưởng đến diện tích bàn phím kích thước đầy đủ; Ngoài ra, các chi tiết tinh tế với thiết kế in nổi logo ở mặt lưng cũng giúp làm nổi bật ngoại hình của chiếc laptop gaming \u003Cstrong\u003ETUF F15 2022\u003C/strong\u003E này, đèn báo trạng thái bốn chiều được tích hợp sát phần bản lề để cho bạn dễ dàng theo dõi, giám sát các thông tin hệ thống nhanh chóng mà không cần mở máy.\u003C/p\u003E\n\u003Cp\u003E\u003Cimg src=\"https://salt.tikicdn.com/cache/w750/ts/product/e3/ba/44/11826e7a14da6d88f17b074378b6f275.jpg\" alt=\"\" /\u003E\u003C/p\u003E\n\u003Cp\u003EThuộc dòng \u003Cstrong\u003ETUF Gaming\u003C/strong\u003E, vậy nên để đảm bảo máy hoạt động ổn định trong điều kiện môi trường khắc nghiệt, \u003Cstrong\u003EASUS TUF Gaming F15 FX507ZC4-HN095W\u003C/strong\u003E đã phải trải qua các bài kiểm tra khắc nghiệt bao gồm thả rơi, rung, độ ẩm, nhiệt độ cực đoan, để bạn yên tâm trong quá trình sử dụng hàng ngày.\u003C/p\u003E\n\u003Cp\u003E\u003Cimg src=\"https://salt.tikicdn.com/cache/w750/ts/product/b3/db/e9/4f4f2eed37b34fcfa81841bd5ad1f470.jpg\" alt=\"\" /\u003E\u003C/p\u003E\n\u003Ch2\u003EHiệu suất gaming đáng kỳ vọng\u003C/h2\u003E\n\u003Cp\u003ELà một chiếc  với mức giá \u003Cstrong\u003Ehọc sinh - sinh viên\u003C/strong\u003E, \u003Cstrong\u003EASUS TUF Gaming F15 FX507ZC4-HN095W\u003C/strong\u003E mang đến cấu hình khá ấn tượng. Đầu tiên phải kể đến bộ vi xử lý Intel Core i5-12500H với mức xung nhịp lên tới 4.5Ghz và bộ nhớ đệm thông minh 18MB, với con chip này thì khá là thoải mái cho bạn từ học tập đến chơi các tựa game nổi tiếng hiện nay mà ít hoặc hầu như không gặp phải tình trạng giật lag. Thêm vào đó là bộ nhớ RAM 16GB \u003Cstrong\u003Ebus 4800\u003C/strong\u003E \u003Cstrong\u003EMHz\u003C/strong\u003E mới cùng ổ cứng SSD 512GB giúp mang đến khả năng đa nhiệm ổn cùng không gian lưu trữ tốt để sử dụng với các nhu cầu thông thường mà không cần phải nâng cấp cao hơn.\u003C/p\u003E\n\u003Cp\u003E\u003Cimg src=\"https://salt.tikicdn.com/ts/product/6b/5d/09/cc41bf20397f5e785bc75e64fe7f386e.jpg\" alt=\"\" /\u003E\u003C/p\u003E\n\u003Cp\u003EĐặc biệt là card đồ họa rời \u003Cstrong\u003ENVIDIA GeForce\u003C/strong\u003E RTX 3050 4GB GDDR6 với \u003Cstrong\u003ETGP\u003C/strong\u003E tối đa tới 140W, cung cấp sức mạnh đồ họa để bạn có thể chơi game cũng như thực hiện các tác vụ đồ họa mượt mà với tốc độ khung hình ổn định cho các tựa game hiện đại. Chưa dừng lại ở đó, \u003Cstrong\u003EASUS TUF Gaming F15 FX507ZC4-HN095W\u003C/strong\u003E còn được tích hợp công nghệ \u003Cstrong\u003EMUX Switch\u003C/strong\u003E giúp giảm thiểu độ trễ, đẩy mạnh hiệu năng lên trung bình từ 5-10%.\u003C/p\u003E\n\u003Cp\u003E\u003Cimg src=\"https://salt.tikicdn.com/cache/w750/ts/product/84/4a/18/214dcfdd933472ea6b720f87d859b8c0.jpg\" alt=\"\" /\u003E\u003C/p\u003E\n\u003Cp\u003EChinh phục các trận đấu với hệ thống tản nhiệt hiệu quả, ít tiếng ồn với 2 quạt Arc Flow 84 cánh, thêm nữa là kết hợp với 4 khe thoát nhiệt và 5 ống dẫn nhiệt tùy chỉnh, do đó luôn mang đến nhiệt độ mát mẻ cho \u003Cstrong\u003EAsus TUF Gaming F15 2022\u003C/strong\u003E ngay cả trong các trận game nặng nhất.\u003C/p\u003E\n\u003Cp\u003E\u003Cimg src=\"https://salt.tikicdn.com/cache/w750/ts/product/5e/18/ab/58d7f2f7ab14c2b07615af4dee4ed4d4.jpg\" alt=\"\" /\u003E\u003C/p\u003E\n\u003Ch2\u003EMàn hình chơi game mượt mà 144Hz\u003C/h2\u003E\n\u003Cp\u003E\u003Cimg src=\"https://salt.tikicdn.com/cache/w750/ts/product/13/80/3f/ba2ad4ae744f83c25d3736941f6fdc18.jpg\" alt=\"\" /\u003E\u003C/p\u003E\n\u003Cp\u003EĐem đến hình ảnh xuất sắc trong các tựa game để bạn không bỏ lỡ bất cứ khoảnh khắc nào trên màn hình FHD 144Hz. Màn hình của \u003Cstrong\u003EASUS TUF Gaming F15 FX507ZC4\u003C/strong\u003E được trang bị công nghệ Adaptive-Sync giúp đồng bộ tần số làm mới của màn và tốc độ xuất hình của GPU để tránh và giảm thiểu các hiện tượng giật, lag màn để đem đến trải nghiệm chơi game tốt nhất cho bạn. \u003Cstrong\u003EMàn hình FHD\u003C/strong\u003E với dải màu lên tới 100% sRGB, do đó mang đến khả năng tái hiện màu sắc vô cùng chân thực. Tỷ lệ màn hình trên thân máy lên tới 80% ấn tượng, điều này giúp cung cấp trải nghiệm từ xem phim đến chơi game đắm chìm hơn.\u003C/p\u003E\n\u003Ch2\u003EPin và Bàn phím\u003C/h2\u003E\n\u003Cp\u003E\u003Cstrong\u003EASUS TUF Gaming F15 FX507ZC4-HN095W\u003C/strong\u003E sở hữu thời lượng pin khá ổn với \u003Cstrong\u003EPin Li-ion\u003C/strong\u003E 4-Cell 56WHrs, giúp mang đến năng lượng cho bạn sử dụng trong thời gian dài, đặc biệt là còn được tích hợp công nghệ sạc nhanh 50% Pin chỉ trong 30 phút, để cho bạn không phải chờ đợi lâu mỗi khi cần đem đi sử dụng bên ngoài.\u003C/p\u003E\n\u003Cp\u003E\u003Cimg src=\"https://salt.tikicdn.com/cache/w750/ts/product/f0/a7/9b/0b900d36002ba5ec97bd0ff4d4900745.jpg\" alt=\"\" /\u003E\u003C/p\u003E\n\u003Cp\u003ETối ưu cho khả năng chơi game của bạn với  \u003Cstrong\u003Echiclet\u003C/strong\u003E thiết kế lấy cảm hứng từ máy tính để bàn với hành trình phím 1.7mm, tích hợp đèn nền phím RGB đồng nhất, tạo phong cách riêng đặc biệt của riêng bạn, các phím nóng WASD được thiết kế nổi bật để dễ dàng và nhanh chóng nhận diện để thực hiện các lệnh di chuyển trong các trận game gay cấn. Công nghệ Overstroke giúp mang đến độ phản hồi nhanh chóng như chính xác và dễ dàng kiểm soát hơn. Mặc dù bộ khung được thiết kế gọn gàng hơn nhưng vẫn không hề làm ảnh hưởng bàn rê chuột, đặc biệt là thiết kế được lấy cảm hứng từ anime và mang kích thước lớn hơn lên tới 26% để cho bạn dễ dàng thao tác hơn.\u003C/p\u003E\n\u003Ch2\u003EÂm thanh và Kết nối\u003C/h2\u003E\n\u003Cp\u003E\u003Cimg src=\"https://salt.tikicdn.com/cache/w750/ts/product/02/8c/f0/94bbe7d20c927bce85f9dcc6367473cc.jpg\" alt=\"\" /\u003E\u003C/p\u003E\n\u003Cp\u003E\u003Cstrong\u003EAsus TUF Gaming F15 FX507ZC4-HN095W\u003C/strong\u003E mang đến âm thanh chơi game xuất sắc với trang bị lên tới 2 loa Dolby Atmos, giúp âm thanh được di chuyển trong không gian ba chiều (bao gồm cả chiều dọc), mang đến cho người nghe cảm giác âm thanh bao quanh họ từ mọi hướng. Âm thanh độ phân giải cao mang đến cho bạn trải nghiệm âm thanh tuyệt đỉnh qua tai nghe với chất lượng như bản gốc. Công nghệ khử tiếng ồn AI giúp duy trì cho nội dung đàm thoại cả ra và vào với âm thanh trong trẻo, không bị ảnh hưởng bởi tạp âm của môi trường bên ngoài, để bạn tập trung hơn khi học tập, làm việc, hay giải trí trong những bộ phim yêu thích hoặc những trận game kịch tính, thú vị.\u003C/p\u003E\n\u003Cp\u003E\u003Cimg src=\"https://salt.tikicdn.com/cache/w750/ts/product/bd/93/e8/19ec5b7f51291f9007df63b44aa3413f.jpg\" alt=\"\" /\u003E\u003C/p\u003E\n\u003Cp\u003ELaptop  2022 luôn mang đến cho bạn kết nối thuận tiện với đa dạng từ các cổng kết nối đến khả năng kết nối không dây. Được trang bị Wi-Fi 6 (802.11ax) (Dual band) 2*2 - đây là chuẩn Wifi mới mang đến tốc độ nhanh hơn, với hiệu suất tốt hơn trong môi trường dày đặc các thiết bị công nghệ như hiện nay, phạm vi phủ sóng linh hoạt và giúp đem đến tín hiệu mạnh mẽ và ổn định. Bluetooth 5.2 mang lại cải tiến về tốc độ và phạm vi kết nối, tiện lợi cho bạn có thể kết nối mọi lúc mọi nơi với các thiết bị không dây khác. Các cổng kết nối đa dạng duy trì cho kết nối của bạn với trang bị cổng \u003Cstrong\u003EHDMI 2.0b\u003C/strong\u003E kết hợp với cổng \u003Cstrong\u003EUSB 3.2 Gen 2 Type-C\u003C/strong\u003E hỗ trợ DisplayPort/ cung cấp năng lượng/ G-sync và sự linh hoạt đến từ cổng \u003Cstrong\u003EThunderbolt 4\u003C/strong\u003E hỗ trợ DisplayPort. Ngoài ra chiếc  này còn có thể dễ dàng kết nối mạng qua dây trực tiếp với cổng \u003Cstrong\u003EEthernet Gigabit\u003C/strong\u003E được trang bị sẵn.\u003C/p\u003E\n\u003Cp\u003EVới các tính năng và trang bị hiện đại được giới thiệu ở trên thì bạn đã có quyết định của mình chưa nào, đặt hàng để sở hữu ngay  chính hãng, giá tốt nhất tại An Khang cùng nhiều ưu đãi, khuyến mãi đi kèm hôm nay bạn nhé!\u003C/p\u003E\n\u003Cp\u003ELƯU Ý: Quý khách hàng mua Laptop sẽ được tặng balo hoặc túi xách máy tính tùy đợt hàng. Giá sản phẩm đã bao gồm VAT, Shop có hỗ trợ nâng cấp Ram, SSD (Mua thêm) cho những dòng Laptop có thể nâng cấp được và cài đặt miễn phí hệ điều hành (với những máy chưa có sẵn Windows) + các ứng dụng, phần mềm cơ bản khác thường dùng. Quý khách vui lòng nhắn tin cho shop để yêu cầu xuất hóa đơn và cài đặt, nâng cấp (Nếu cần).\u003C/p\u003E\u003Cp\u003EGiá sản phẩm trên Tiki đã bao gồm thuế theo luật hiện hành. Bên cạnh đó, tuỳ vào loại sản phẩm, hình thức và địa chỉ giao hàng mà có thể phát sinh thêm chi phí khác như phí vận chuyển, phụ phí hàng cồng kềnh, thuế nhập khẩu (đối với đơn hàng giao từ nước ngoài có giá trị trên 1 triệu đồng).....\u003C/p\u003E",
+  "images": [
+    {
+      "base_url": "https://salt.tikicdn.com/ts/product/63/97/79/2e41d88212f46bba7f0e67474e5bdc77.jpg",
+      "is_gallery": true,
+      "label": null,
+      "large_url": "https://salt.tikicdn.com/cache/w1200/ts/product/63/97/79/2e41d88212f46bba7f0e67474e5bdc77.jpg",
+      "medium_url": "https://salt.tikicdn.com/cache/w300/ts/product/63/97/79/2e41d88212f46bba7f0e67474e5bdc77.jpg",
+      "position": null,
+      "small_url": "https://salt.tikicdn.com/cache/200x280/ts/product/63/97/79/2e41d88212f46bba7f0e67474e5bdc77.jpg",
+      "thumbnail_url": "https://salt.tikicdn.com/cache/200x280/ts/product/63/97/79/2e41d88212f46bba7f0e67474e5bdc77.jpg"
+    },
+    {
+      "base_url": "https://salt.tikicdn.com/ts/product/52/13/fe/fdfbf8119694e1536906e44924445fc8.jpg",
+      "is_gallery": true,
+      "label": null,
+      "large_url": "https://salt.tikicdn.com/cache/w1200/ts/product/52/13/fe/fdfbf8119694e1536906e44924445fc8.jpg",
+      "medium_url": "https://salt.tikicdn.com/cache/w300/ts/product/52/13/fe/fdfbf8119694e1536906e44924445fc8.jpg",
+      "position": null,
+      "small_url": "https://salt.tikicdn.com/cache/200x280/ts/product/52/13/fe/fdfbf8119694e1536906e44924445fc8.jpg",
+      "thumbnail_url": "https://salt.tikicdn.com/cache/200x280/ts/product/52/13/fe/fdfbf8119694e1536906e44924445fc8.jpg"
+    },
+    {
+      "base_url": "https://salt.tikicdn.com/ts/product/40/4f/ab/226d1a1a34cc34058e1a6aebe996b0b5.jpg",
+      "is_gallery": true,
+      "label": null,
+      "large_url": "https://salt.tikicdn.com/cache/w1200/ts/product/40/4f/ab/226d1a1a34cc34058e1a6aebe996b0b5.jpg",
+      "medium_url": "https://salt.tikicdn.com/cache/w300/ts/product/40/4f/ab/226d1a1a34cc34058e1a6aebe996b0b5.jpg",
+      "position": null,
+      "small_url": "https://salt.tikicdn.com/cache/200x280/ts/product/40/4f/ab/226d1a1a34cc34058e1a6aebe996b0b5.jpg",
+      "thumbnail_url": "https://salt.tikicdn.com/cache/200x280/ts/product/40/4f/ab/226d1a1a34cc34058e1a6aebe996b0b5.jpg"
+    },
+    {
+      "base_url": "https://salt.tikicdn.com/ts/product/71/7e/9a/78d8e8a2e2b51ad9c442bda86c609862.jpg",
+      "is_gallery": true,
+      "label": null,
+      "large_url": "https://salt.tikicdn.com/cache/w1200/ts/product/71/7e/9a/78d8e8a2e2b51ad9c442bda86c609862.jpg",
+      "medium_url": "https://salt.tikicdn.com/cache/w300/ts/product/71/7e/9a/78d8e8a2e2b51ad9c442bda86c609862.jpg",
+      "position": null,
+      "small_url": "https://salt.tikicdn.com/cache/200x280/ts/product/71/7e/9a/78d8e8a2e2b51ad9c442bda86c609862.jpg",
+      "thumbnail_url": "https://salt.tikicdn.com/cache/200x280/ts/product/71/7e/9a/78d8e8a2e2b51ad9c442bda86c609862.jpg"
+    },
+    {
+      "base_url": "https://salt.tikicdn.com/ts/product/80/8e/20/983b31b7fc1283c71ac7db852d123924.jpg",
+      "is_gallery": true,
+      "label": null,
+      "large_url": "https://salt.tikicdn.com/cache/w1200/ts/product/80/8e/20/983b31b7fc1283c71ac7db852d123924.jpg",
+      "medium_url": "https://salt.tikicdn.com/cache/w300/ts/product/80/8e/20/983b31b7fc1283c71ac7db852d123924.jpg",
+      "position": null,
+      "small_url": "https://salt.tikicdn.com/cache/200x280/ts/product/80/8e/20/983b31b7fc1283c71ac7db852d123924.jpg",
+      "thumbnail_url": "https://salt.tikicdn.com/cache/200x280/ts/product/80/8e/20/983b31b7fc1283c71ac7db852d123924.jpg"
+    },
+    {
+      "base_url": "https://salt.tikicdn.com/ts/product/02/8c/f0/8f8adc4ebc7dc80ff35bed565b49fd10.jpg",
+      "is_gallery": true,
+      "label": null,
+      "large_url": "https://salt.tikicdn.com/cache/w1200/ts/product/02/8c/f0/8f8adc4ebc7dc80ff35bed565b49fd10.jpg",
+      "medium_url": "https://salt.tikicdn.com/cache/w300/ts/product/02/8c/f0/8f8adc4ebc7dc80ff35bed565b49fd10.jpg",
+      "position": null,
+      "small_url": "https://salt.tikicdn.com/cache/200x280/ts/product/02/8c/f0/8f8adc4ebc7dc80ff35bed565b49fd10.jpg",
+      "thumbnail_url": "https://salt.tikicdn.com/cache/200x280/ts/product/02/8c/f0/8f8adc4ebc7dc80ff35bed565b49fd10.jpg"
+    },
+    {
+      "base_url": "https://salt.tikicdn.com/ts/product/82/de/1f/7a8fa005f6e842b2ff48ad6b5b3b9a9c.jpg",
+      "is_gallery": true,
+      "label": null,
+      "large_url": "https://salt.tikicdn.com/cache/w1200/ts/product/82/de/1f/7a8fa005f6e842b2ff48ad6b5b3b9a9c.jpg",
+      "medium_url": "https://salt.tikicdn.com/cache/w300/ts/product/82/de/1f/7a8fa005f6e842b2ff48ad6b5b3b9a9c.jpg",
+      "position": null,
+      "small_url": "https://salt.tikicdn.com/cache/200x280/ts/product/82/de/1f/7a8fa005f6e842b2ff48ad6b5b3b9a9c.jpg",
+      "thumbnail_url": "https://salt.tikicdn.com/cache/200x280/ts/product/82/de/1f/7a8fa005f6e842b2ff48ad6b5b3b9a9c.jpg"
+    },
+    {
+      "base_url": "https://salt.tikicdn.com/ts/product/4d/24/7a/7f7203f930804851a77ad8b00cf4b974.jpg",
+      "is_gallery": true,
+      "label": null,
+      "large_url": "https://salt.tikicdn.com/cache/w1200/ts/product/4d/24/7a/7f7203f930804851a77ad8b00cf4b974.jpg",
+      "medium_url": "https://salt.tikicdn.com/cache/w300/ts/product/4d/24/7a/7f7203f930804851a77ad8b00cf4b974.jpg",
+      "position": null,
+      "small_url": "https://salt.tikicdn.com/cache/200x280/ts/product/4d/24/7a/7f7203f930804851a77ad8b00cf4b974.jpg",
+      "thumbnail_url": "https://salt.tikicdn.com/cache/200x280/ts/product/4d/24/7a/7f7203f930804851a77ad8b00cf4b974.jpg"
+    },
+    {
+      "base_url": "https://salt.tikicdn.com/ts/product/80/b7/5e/465e0fce63e839c8b945d1dc9931af4b.jpg",
+      "is_gallery": true,
+      "label": null,
+      "large_url": "https://salt.tikicdn.com/cache/w1200/ts/product/80/b7/5e/465e0fce63e839c8b945d1dc9931af4b.jpg",
+      "medium_url": "https://salt.tikicdn.com/cache/w300/ts/product/80/b7/5e/465e0fce63e839c8b945d1dc9931af4b.jpg",
+      "position": null,
+      "small_url": "https://salt.tikicdn.com/cache/200x280/ts/product/80/b7/5e/465e0fce63e839c8b945d1dc9931af4b.jpg",
+      "thumbnail_url": "https://salt.tikicdn.com/cache/200x280/ts/product/80/b7/5e/465e0fce63e839c8b945d1dc9931af4b.jpg"
+    }
+  ],
+  "warranty_policy": null,
+  "brand": {
+    "id": 17826,
+    "name": "Asus",
+    "slug": "asus"
+  },
+  "current_seller": {
+    "id": 52525,
+    "sku": "2765941242204",
+    "name": "An Khang Computer",
+    "link": "https://tiki.vn/cua-hang/an-khang-computer",
+    "logo": "https://vcdn.tikicdn.com/ts/seller/cf/bd/dd/88c80230fb386b035b99f7697378a438.png",
+    "price": 19819000,
+    "product_id": "275602043",
+    "store_id": 50016,
+    "is_best_store": false,
+    "is_offline_installment_supported": null
+  },
+  "other_sellers": [],
+  "specifications": [
+    {
+      "name": "Content",
+      "attributes": [
+        {
+          "code": "brand",
+          "name": "Thương hiệu",
+          "value": "Asus"
+        },
+        {
+          "code": "brand_country",
+          "name": "Xuất xứ thương hiệu",
+          "value": "China"
+        },
+        {
+          "code": "cpu",
+          "name": "CPU",
+          "value": "Intel Core i5-12500H"
+        },
+        {
+          "code": "origin",
+          "name": "Xuất xứ (Made in)",
+          "value": "China"
+        },
+        {
+          "code": "ram",
+          "name": "RAM",
+          "value": "16GB DDR4-3200 So-dimm (2x8GB)"
+        }
+      ]
+    },
+    {
+      "name": "Operation",
+      "attributes": [
+        {
+          "code": "is_warranty_applied",
+          "name": "Sản phẩm có được bảo hành không?",
+          "value": "Có"
+        },
+        {
+          "code": "warranty_form",
+          "name": "Hình thức bảo hành",
+          "value": "Điện tử"
+        },
+        {
+          "code": "warranty_time_period",
+          "name": "Thời gian bảo hành",
+          "value": "2 Năm"
+        }
+      ]
+    }
+  ],
+  "product_links": [],
+  "gift_item_title": "0 quà tặng kèm",
+  "services_and_promotions": [],
+  "promitions": [],
+  "stock_item": {
+    "max_sale_qty": 1000,
+    "min_sale_qty": 1,
+    "preorder_date": null,
+    "qty": 1000
+  },
+  "categories": {
+    "id": 5584,
+    "name": "Laptop Gaming",
+    "is_leaf": true
+  },
+  "breadcrumbs": [
+    {
+      "url": "/laptop-may-vi-tinh-linh-kien/c1846",
+      "name": "Laptop - Máy Vi Tính - Linh kiện",
+      "category_id": 1846
+    },
+    {
+      "url": "/laptop/c8095",
+      "name": "Laptop",
+      "category_id": 8095
+    },
+    {
+      "url": "/laptop-gaming/c5584",
+      "name": "Laptop Gaming",
+      "category_id": 5584
+    },
+    {
+      "url": "https://tiki.vn/laptop-asus-tuf-gaming-f15-fx507zc4-hn095w-intel-core-i5-12500h-16gb-512gb-15-6-inch-fhd-rtx-3050-win-11-xam-hang-chinh-hang-bao-hanh-24-thang-p275602042.html",
+      "name": "Laptop ASUS TUF Gaming F15 FX507ZC4-HN095W (Intel Core i5-12500H | 16GB | 512GB | 15.6 inch FHD | RTX 3050 | Win 11 | Xám) - Hàng Chính Hãng - Bảo Hành 24 Tháng",
+      "category_id": 0
+    }
+  ],
+  "installment_info_v2": null,
+  "installment_info_v3": [
+    {
+      "display_text": "Ưu đãi đến 600k với thẻ TikiCard",
+      "icon": "https://salt.tikicdn.com/ts/upload/73/4d/f7/f86e767bffc14aa3d6abed348630100b.png",
+      "summary": "Ưu đãi đến 600k với thẻ TikiCard.",
+      "title": "Ưu đãi đến 600k với thẻ TikiCard",
+      "type": "other",
+      "url": "https://tiki.vn/san-pham-so/the-dong-thuong-hieu-tiki-co-card"
+    },
+    {
+      "display_text": "Mua trước trả sau",
+      "icon": "https://salt.tikicdn.com/ts/upload/2a/27/6a/7bbba1f6c93a1a42a3c314e7b5825f4c.png",
+      "summary": "Duyệt hồ sơ nhanh chóng qua công ty tài chính.",
+      "title": "Mua trước trả sau",
+      "type": "postpaid",
+      "url": "https://tiki.vn/mua-truoc-tra-sau/thanh-toan?src=pdp&masterId=275602042&pid=275602043&seller_id=52525&qty=1"
+    }
+  ],
+  "is_seller_in_chat_whitelist": true,
+  "inventory": {
+    "product_virtual_type": null,
+    "fulfillment_type": "dropship"
+  },
+  "warranty_info": [
+    {
+      "name": "Thời gian bảo hành",
+      "value": "2 Năm"
+    },
+    {
+      "name": "Hình thức bảo hành",
+      "value": "Điện tử"
+    },
+    {
+      "name": "Nơi bảo hành",
+      "value": "Bảo hành chính hãng"
+    },
+    {
+      "name": "Hướng dẫn bảo hành",
+      "value": "Xem chi tiết",
+      "url": "https://hotro.tiki.vn/s/article/chinh-sach-bao-hanh-tai-tiki-nhu-the-nao"
+    }
+  ],
+  "return_and_exchange_policy": "Đổi trả trong\u003Cbr\u003E\u003Cb\u003E7 ngày\u003C/b\u003E\u003Cbr\u003Enếu sp lỗi.",
+  "is_tier_pricing_available": false,
+  "is_tier_pricing_eligible": false,
+  "benefits": [
+    {
+      "icon": "https://salt.tikicdn.com/ts/upload/c5/37/ee/76c708d43e377343e82baee8a0340297.png",
+      "text": "Được đồng kiểm khi nhận hàng"
+    },
+    {
+      "icon": "https://salt.tikicdn.com/ts/upload/ea/02/b4/b024e431ec433e6c85d4734aaf35bd65.png",
+      "text": "\u003Cb\u003EĐược hoàn tiền 200%\u003C/b\u003E nếu là hàng giả."
+    },
+    {
+      "icon": "https://salt.tikicdn.com/ts/upload/d8/c7/a5/1cd5bd2f27f9bd74b2c340b8e27c4d82.png",
+      "text": "Đổi trả miễn phí trong 30 ngày. Được đổi ý.",
+      "sub_text": [],
+      "cta": {
+        "text": "Chi tiết",
+        "type": "open_policy_return_modal"
+      }
+    }
+  ],
+  "return_policy": {
+    "body": [
+      {
+        "label": "",
+        "content": [
+          "Được đổi ý (sản phẩm phải còn nguyên hộp, tem, phụ kiện, chưa kích hoạt bảo hành, không áp dụng đơn hàng trả góp), hoặc",
+          "Sản phẩm không đúng cam kết (lỗi kỹ thuật, giao sai/thiếu, bể vỡ…)"
+        ]
+      }
+    ],
+    "cta": {
+      "link": "https://hotro.tiki.vn/s/article/chinh-sach-doi-tra-san-pham",
+      "text_button": "Tìm hiểu thêm"
+    },
+    "title": "Đổi trả miễn phí trong 30 ngày"
+  }
+}
