@@ -61,8 +61,8 @@ const NavBar = () => {
         menuItems.push(
             {
                 key: "user",
-                icon: <ShopOutlined />,
-                label: <Link to="/profile">{user.name}</Link>,
+                icon: <UserOutlined />,
+                label: <span>{user.name}</span>
             },
             {
                 key: "logout",

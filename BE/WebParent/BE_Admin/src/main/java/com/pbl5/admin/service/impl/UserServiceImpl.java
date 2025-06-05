@@ -1,16 +1,22 @@
 package com.pbl5.admin.service.impl;
 
+
 import com.pbl5.admin.dto.PasswordChangeDto;
+import com.pbl5.admin.dto.UserDto;
+
 import com.pbl5.admin.dto.UserProfileDto;
+
 import com.pbl5.admin.exception.UserNotFoundException;
 import com.pbl5.admin.repository.UserRepository;
 import com.pbl5.admin.service.UserService;
 import com.pbl5.admin.service.aws.S3StorageService;
 import com.pbl5.common.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +34,16 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private S3StorageService s3StorageService;
+
+    @Override
+    public User findById(Integer id) throws UserNotFoundException {
+        User user = userRepository.findById(id).orElse(null);
+        if(user == null){
+            throw new UserNotFoundException("Could not find any user with ID: " + id);
+        }
+        return user;
+    }
+
 
     @Override
     public User findByEmail(String email) throws UserNotFoundException {
@@ -99,18 +115,29 @@ public class UserServiceImpl implements UserService {
         User user = userOpt.get();
 
         // Xóa ảnh cũ trên S3 nếu có
-        if (user.getPhotos() != null && !user.getPhotos().isEmpty()) {
-            s3StorageService.deleteFile(user.getPhotos());
+        if (user.getPhoto() != null && !user.getPhoto().isEmpty()) {
+            s3StorageService.deleteFile(user.getPhoto());
         }
 
         // Upload ảnh mới lên S3 với thư mục users
         String imageUrl = s3StorageService.uploadFile(file, "avatars/");
 
         // Cập nhật đường dẫn ảnh trong database
-        user.setPhotos(imageUrl);
+        user.setPhoto(imageUrl);
         User savedUser = userRepository.save(user);
 
         return convertToDto(savedUser);
+    }
+
+    @Override
+    public User save(UserDto user) {
+        User existingUser = userRepository.findById(user.getId()).get();
+        existingUser.setEmail(user.getEmail());
+        existingUser.setFirstName(user.getFirstName());
+        existingUser.setLastName(user.getLastName());
+        existingUser.setPhoto(user.getPhoto());
+
+        return userRepository.save(existingUser);
     }
 
     private UserProfileDto convertToDto(User user) {
@@ -119,7 +146,7 @@ public class UserServiceImpl implements UserService {
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getPhotos(),
+                user.getPhoto(),
                 user.isEnabled()
         );
     }

@@ -26,4 +26,5 @@ public class CategoryController {
         List<CategoryDto> categories = categoryService.getCategoriesByBrand(brandId);
         return ResponseEntity.ok(categories);
     }
+
 }

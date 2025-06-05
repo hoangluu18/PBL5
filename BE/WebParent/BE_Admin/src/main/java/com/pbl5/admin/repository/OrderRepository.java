@@ -1,5 +1,7 @@
 package com.pbl5.admin.repository;
 
+import com.pbl5.admin.dto.admin.ShopRevenueDto;
+import com.pbl5.admin.dto.admin.ShopStatisticProjection;
 import com.pbl5.admin.dto.dashboard.RevenueReportDto;
 import com.pbl5.admin.dto.dashboard.TopProductReportDto;
 import com.pbl5.common.entity.Order;
@@ -83,4 +85,45 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
     List<TopProductReportDto> findTopProductsByMonth(@Param("month") String month, @Param("shopId") int shopId);
      @Query("SELECT SUM(o.total) FROM Order o WHERE o.customerId = :customerId AND o.orderStatus = 'DELIVERED'")
     Double calculateTotalSpendingByCustomerId(@Param("customerId") Integer customerId);
+
+
+     @Query(nativeQuery = true,
+     value = "SELECT s.name shopName, COALESCE(SUM(o.total),0) revenue FROM orders o\n" +
+             "JOIN shops s ON s.id = o.shop_id\n" +
+             " WHERE o.order_status = 'DELIVERED' AND DATE_FORMAT(o.order_time, '%Y-%m') = :date\n" +
+             "GROUP BY o.shop_id;")
+     List<ShopRevenueDto> findShopRevenueByDate(@Param("date") String date);
+
+    @Query(nativeQuery = true,
+            value = "SELECT \n" +
+                    "    sub.shop_id AS id,\n" +
+                    "    sub.shopName,\n" +
+                    "    CAST(sub.totalOrders AS DOUBLE) AS totalOrders,\n" +
+                    "    sub.completedOrders,\n" +
+                    "    sub.canceledOrders,\n" +
+                    "    sub.failedOrders,\n" +
+                    "    sub.revenue,\n" +
+                    "    CASE WHEN sub.totalOrders = 0 THEN 0 ELSE (sub.completedOrders / sub.totalOrders * 100) END AS completionRate\n" +
+                    "FROM (\n" +
+                    "    SELECT \n" +
+                    "        o.shop_id,\n" +
+                    "        s.name AS shopName,\n" +
+                    "        COUNT(o.id) AS totalOrders,\n" +
+                    "        SUM(CASE WHEN o.order_status = 'DELIVERED' THEN 1 ELSE 0 END) AS completedOrders,\n" +
+                    "        SUM(CASE WHEN o.order_status = 'RETURNED' THEN 1 ELSE 0 END) AS canceledOrders,\n" +
+                    "        SUM(CASE WHEN o.order_status = 'CANCELED' THEN 1 ELSE 0 END) AS failedOrders,\n" +
+                    "        COALESCE(SUM(o.total), 0) AS revenue\n" +
+                    "    FROM \n" +
+                    "        orders o \n" +
+                    "    JOIN \n" +
+                    "        shops s ON o.shop_id = s.id\n" +
+                    "    WHERE \n" +
+                    "        DATE_FORMAT(o.order_time, '%Y-%m') = :date\n" +
+                    "    GROUP BY \n" +
+                    "        o.shop_id, s.name\n" +
+                    ") AS sub;")
+    List<ShopStatisticProjection> findStatisticOrderByDate(@Param("date") String date);
+
+    List<Order> findByCustomerId(Integer customerId);
+
 }

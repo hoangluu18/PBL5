@@ -1,5 +1,8 @@
 package com.pbl5.admin.dto;
 
+import com.pbl5.admin.dto.orders.OrderDto;
+
+import java.util.List;
 
 public class CustomerDto {
     private Integer id;
@@ -8,15 +11,22 @@ public class CustomerDto {
     private Double totalSpending;
     private String email;
     private String avatar;
+    private List<OrderDto> orders; // ✅ Thêm danh sách đơn hàng
 
-    // Constructor
-    public CustomerDto(Integer id, String fullName, String phone, Double totalSpending, String email, String avatar) {
+    // Constructor có tất cả các trường
+    public CustomerDto(Integer id, String fullName, String phone, Double totalSpending, String email, String avatar, List<OrderDto> orders) {
         this.id = id;
         this.fullName = fullName;
         this.phone = phone;
         this.totalSpending = totalSpending;
         this.email = email;
         this.avatar = avatar;
+        this.orders = orders;
+    }
+
+    // Constructor không có orders (dùng cho các trường hợp khác)
+    public CustomerDto(Integer id, String fullName, String phone, Double totalSpending, String email, String avatar) {
+        this(id, fullName, phone, totalSpending, email, avatar, null);
     }
 
     // Getters and Setters
@@ -43,5 +53,8 @@ public class CustomerDto {
     public String getAvatar() { return avatar; }
 
     public void setAvatar(String avatar) { this.avatar = avatar; }
-}
 
+    public List<OrderDto> getOrders() { return orders; }
+
+    public void setOrders(List<OrderDto> orders) { this.orders = orders; }
+}

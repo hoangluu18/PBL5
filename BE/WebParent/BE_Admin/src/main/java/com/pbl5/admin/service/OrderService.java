@@ -27,4 +27,8 @@ public interface OrderService {
     OrderExtraInfo getOrderExtraInfo(int orderId);
 
     OrderDetailDto getOrderDetails(int orderId);
+
+    List<OrderDetailDto> getAllOrderDetails();
+
+    void updateOrderStatus(int orderId, String status);
 }
