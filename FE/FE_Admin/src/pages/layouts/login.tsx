@@ -39,7 +39,18 @@ const LoginPage = () => {
                     localStorage.setItem("user", JSON.stringify(user));
                     localStorage.setItem("access_token", (accessToken));
                     setUser(user);
-                    navigate("/");
+                    console.log(roles)
+                    if (roles.indexOf("Seller") !== -1) {
+                        console.log("SALESPERSON");
+                        navigate('/shop/dashboard');
+                    } else if (roles.indexOf("Admin") !== -1) {
+                        navigate('/admin/dashboard');
+                    } else if (roles.indexOf("Logistic") !== -1) {
+                        navigate('/logistic/orderManagement');
+                    }
+                    else {
+                        navigate('/login');
+                    }
                 },
             });
         }

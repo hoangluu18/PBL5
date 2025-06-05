@@ -20,8 +20,14 @@ public class JwtTokenService {
         AuthResponse authResponse = new AuthResponse();
         authResponse.setAccessToken(accessToken);
         authResponse.setId(user.getId());
-        authResponse.setName(user.getShop().getName());
-        authResponse.setPhoto(user.getShop().getPhoto());
+        if(user.getRoles().stream().map(Role::getName).anyMatch(r -> r.equals("Seller"))){
+            authResponse.setName(user.getShop().getName());
+            authResponse.setPhoto(user.getShop().getPhoto());
+        }else if (user.getRoles().stream().map(Role::getName).anyMatch(r -> r.equals("Logistic"))) {
+            authResponse.setName(user.getFirstName() + " " + user.getLastName());
+            authResponse.setPhoto(user.getPhoto());
+        }
+
         authResponse.setRoles(user.getRoles().stream().map(Role::getName).toList());
 
 

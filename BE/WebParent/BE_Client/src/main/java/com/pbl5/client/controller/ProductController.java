@@ -136,6 +136,7 @@ public class ProductController {
         Map<String, List<ProductVariantDto>> map = variants.stream()
                 .map(p -> {
                     ProductVariantDto dto = new ProductVariantDto();
+                    dto.setId(p.getId());
                     dto.setKey(p.getKey());
                     dto.setValue(p.getValue());
                     dto.setQuantity(p.getQuantity());

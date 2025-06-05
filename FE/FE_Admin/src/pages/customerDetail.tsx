@@ -1,12 +1,13 @@
 import { useParams, Link } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { 
-  Card, Spin, Alert, Button, Modal, Badge, List, Typography, 
+
+import {
+  Card, Spin, Alert, Button, Modal, Badge, List, Typography,
   Space, Row, Col, Statistic, Avatar, Breadcrumb, Divider, Tag,
   Table, Tabs, Empty, Descriptions
 } from 'antd'
-import { 
+import {
   HomeOutlined, PhoneOutlined, UserOutlined, ClockCircleOutlined,
   MailOutlined, DollarOutlined, EnvironmentOutlined, ArrowLeftOutlined,
   ShoppingOutlined, CheckCircleOutlined, FileTextOutlined, SyncOutlined, GiftOutlined, CarOutlined, ExclamationCircleOutlined, SwapOutlined, RollbackOutlined
@@ -21,6 +22,7 @@ interface Order {
   total: number;
   orderStatus: string;
 }
+
 
 interface Customer {
   id: number
@@ -203,7 +205,7 @@ export default function CustomerDetail() {
       setLoading(false)
       return
     }
-    
+
     axios.get(`http://localhost:8080/api/saleperson/customers/${customerId}`)
       .then(res => {
         setCustomer(res.data)
@@ -239,9 +241,9 @@ export default function CustomerDetail() {
   };
 
   const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { 
-      year: 'numeric', 
-      month: '2-digit', 
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit'
@@ -333,7 +335,7 @@ export default function CustomerDetail() {
       dataIndex: 'orderTime',
       key: 'orderTime',
       render: (date: string) => formatDate(date),
-      sorter: (a: Order, b: Order) => 
+      sorter: (a: Order, b: Order) =>
         new Date(b.orderTime).getTime() - new Date(a.orderTime).getTime(),
       defaultSortOrder: 'descend' as const
     },
@@ -367,10 +369,10 @@ export default function CustomerDetail() {
 
   // Calculate order statistics
   const getOrderStats = () => {
-    if (!customer?.orders) return { 
-      total: 0, 
-      new: 0, 
-      paid: 0, 
+    if (!customer?.orders) return {
+      total: 0,
+      new: 0,
+      paid: 0,
       processing: 0,
       packaged: 0,
       picked: 0,
@@ -380,7 +382,7 @@ export default function CustomerDetail() {
       returned: 0,
       refunded: 0
     };
-    
+
     return {
       total: customer.orders.length,
       new: customer.orders.filter(o => o.orderStatus === 'NEW').length,
@@ -437,7 +439,7 @@ export default function CustomerDetail() {
           { title: customer?.fullName || `Khách hàng #${customerId}` },
         ]}
       />
-      
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <Title level={2} style={{ margin: 0 }}>
           <UserOutlined /> {customer?.fullName}
@@ -446,22 +448,22 @@ export default function CustomerDetail() {
           <Link to="/customers" style={{ color: 'white' }}>Quay lại danh sách</Link>
         </Button>
       </div>
-      
+
       <Row gutter={[24, 24]}>
         {/* Left column - Customer profile */}
         <Col xs={24} lg={7}>
           <Card className="customer-profile-card" bordered={false}>
             <div className="customer-avatar-container">
               {customer?.avatar ? (
-                <img 
-                  src={getImageUrl(customer.avatar)} 
-                  alt={customer.fullName} 
+                <img
+                  src={getImageUrl(customer.avatar)}
+                  alt={customer.fullName}
                   className="customer-avatar"
                 />
               ) : (
-                <Avatar 
-                  size={120} 
-                  icon={<UserOutlined />} 
+                <Avatar
+                  size={120}
+                  icon={<UserOutlined />}
                   style={{ backgroundColor: '#1890ff' }}
                 />
               )}
@@ -470,27 +472,9 @@ export default function CustomerDetail() {
               </Title>
               <Tag color="blue">Mã KH: {customer?.id}</Tag>
             </div>
-            
-            <div className="divider-with-text">Thông tin liên hệ</div>
-            
-            <div style={{ padding: '0 8px 16px' }}>
-              <div className="info-item" style={{ marginBottom: 12 }}>
-                <PhoneOutlined className="info-icon" style={{ fontSize: 16 }} />
-                <div>
-                  <div style={{ color: '#888', marginBottom: 4, fontSize: 13 }}>Số điện thoại</div>
-                  <div style={{ fontSize: 15 }}>{customer?.phone || 'Chưa cập nhật'}</div>
-                </div>
-              </div>
-              
-              <div className="info-item" style={{ marginBottom: 0 }}>
-                <MailOutlined className="info-icon" style={{ fontSize: 16 }} />
-                <div>
-                  <div style={{ color: '#888', marginBottom: 4, fontSize: 13 }}>Email</div>
-                  <div style={{ fontSize: 15 }}>{customer?.email || 'Chưa cập nhật'}</div>
-                </div>
-              </div>
-            </div>
-            
+
+            <Divider />
+
             <div className="customer-stats">
               <Statistic
                 title={<span style={{ fontSize: 15 }}><DollarOutlined /> Tổng chi tiêu</span>}
@@ -500,259 +484,169 @@ export default function CustomerDetail() {
                 valueStyle={{ color: '#3f8600', fontWeight: 'bold' }}
               />
             </div>
-            
-            <div className="divider-with-text">Tổng quan đơn hàng</div>
-            
-            <Row gutter={[12, 12]}>
-              <Col span={12}>
-                <div className="stats-card">
-                  <ShoppingOutlined style={{ fontSize: 22, color: '#1890ff' }} />
-                  <div className="stats-value">{orderStats.total}</div>
-                  <div className="stats-label">Tổng đơn hàng</div>
-                </div>
-              </Col>
-              <Col span={12}>
-                <div className="stats-card">
-                  <CheckCircleOutlined style={{ fontSize: 22, color: '#52c41a' }} />
-                  <div className="stats-value">{orderStats.delivered}</div>
-                  <div className="stats-label">Đã giao hàng</div>
-                </div>
-              </Col>
-            </Row>
-            
-            <Divider style={{ margin: '20px 0' }} />
-            
+
+            <Divider />
+
+            <Button
+              type="primary"
+              icon={<HomeOutlined />}
+              onClick={fetchAddresses}
+              block
+              size="large"
+              style={{ marginBottom: 16 }}
+            >
+              Xem địa chỉ giao hàng
+            </Button>
           </Card>
         </Col>
-        
-        {/* Right column - Detailed information and orders */}
-        <Col xs={24} lg={17}>
-          <Tabs activeKey={activeTab} onChange={setActiveTab} type="card">
-            <TabPane tab={<span><UserOutlined /> Thông tin cơ bản</span>} key="1">
-              <Card className="customer-info-card" bordered={false}>
-                <div style={{ padding: '16px 8px' }}>
-                  <Row gutter={[24, 0]}>
-                    <Col xs={24} md={12}>
-                      <div className="info-item">
-                        <UserOutlined className="info-icon" />
-                        <div>
-                          <div style={{ color: '#888', marginBottom: 4 }}>Họ tên</div>
-                          <div style={{ fontSize: 16, fontWeight: 500 }}>{customer?.fullName}</div>
-                        </div>
-                      </div>
-                      
-                      <div className="info-item">
-                        <MailOutlined className="info-icon" />
-                        <div>
-                          <div style={{ color: '#888', marginBottom: 4 }}>Email</div>
-                          <div style={{ fontSize: 16 }}>{customer?.email || 'Chưa cập nhật'}</div>
-                        </div>
-                      </div>
-                    </Col>
-                    
-                    <Col xs={24} md={12}>
-                      <div className="info-item">
-                        <PhoneOutlined className="info-icon" />
-                        <div>
-                          <div style={{ color: '#888', marginBottom: 4 }}>Số điện thoại</div>
-                          <div style={{ fontSize: 16 }}>{customer?.phone || 'Chưa cập nhật'}</div>
-                        </div>
-                      </div>
-                      
-                      <div className="info-item">
-                        <DollarOutlined className="info-icon" />
-                        <div>
-                          <div style={{ color: '#888', marginBottom: 4 }}>Tổng chi tiêu</div>
-                          <div style={{ fontSize: 16, fontWeight: 500, color: '#3f8600' }}>
-                            {customer?.totalSpending?.toLocaleString()}₫
-                          </div>
-                        </div>
-                      </div>
-                    </Col>
-                  </Row>
+
+        {/* Right column - Detailed information */}
+        <Col xs={24} md={16}>
+          <Card className="customer-info-card" bordered={false} title="Thông tin chi tiết">
+            <div style={{ padding: '16px 8px' }}>
+              <div className="info-item">
+                <UserOutlined className="info-icon" />
+                <div>
+                  <div style={{ color: '#888', marginBottom: 4 }}>Họ tên</div>
+                  <div style={{ fontSize: 16, fontWeight: 500 }}>{customer?.fullName}</div>
                 </div>
-              </Card>
-              
-              <Card
-                className="customer-info-card"
-                bordered={false}
-                title="Địa chỉ giao hàng"
-                extra={
-                  addresses.length > 0 && (
-                    <Button type="link" onClick={() => fetchAddresses(true)} style={{ padding: 0 }}>
-                      Xem tất cả
-                    </Button>
-                  )
-                }
-              >
-                {addresses.length > 0 ? (
-                  <List
-                    itemLayout="vertical"
-                    dataSource={addresses.slice(0, 2)}
-                    renderItem={(item) => (
-                      <List.Item
-                        className={`address-item ${item.default ? 'address-default' : 'address-normal'}`}
-                      >
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <div style={{ flex: 1 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                              <UserOutlined style={{ marginRight: 8 }} />
-                              <Text strong>{item.fullName}</Text>
-                            </div>
-                            
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-                              <PhoneOutlined style={{ marginRight: 8 }} />
-                              <Text>{item.phoneNumber}</Text>
-                            </div>
-                            
-                            <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-                              <EnvironmentOutlined style={{ marginRight: 8, marginTop: 4 }} />
-                              <div>
-                                <Text>{item.address}</Text>
-                                {item.city && (
-                                  <div>
-                                    <Text type="secondary">{item.city}</Text>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                          
-                          {item.default && (
-                            <Badge.Ribbon text="Mặc định" color="green">
-                              <div style={{ width: 20, height: 20 }}></div>
-                            </Badge.Ribbon>
-                          )}
-                        </div>
-                      </List.Item>
-                    )}
-                  />
-                ) : (
-                  <div style={{ padding: '30px 0', textAlign: 'center' }}>
-                    <EnvironmentOutlined style={{ fontSize: 36, color: '#d9d9d9' }} />
-                    <Paragraph style={{ marginTop: 16 }}>
-                      Khách hàng chưa có địa chỉ giao hàng nào
-                    </Paragraph>
-                    <Button onClick={() => fetchAddresses(true)}>Tải lại dữ liệu</Button>
+              </div>
+
+              <div className="info-item">
+                <MailOutlined className="info-icon" />
+                <div>
+                  <div style={{ color: '#888', marginBottom: 4 }}>Email</div>
+                  <div style={{ fontSize: 16 }}>{customer?.email || 'Chưa cập nhật'}</div>
+                </div>
+              </div>
+
+              <div className="info-item">
+                <PhoneOutlined className="info-icon" />
+                <div>
+                  <div style={{ color: '#888', marginBottom: 4 }}>Số điện thoại</div>
+                  <div style={{ fontSize: 16 }}>{customer?.phone || 'Chưa cập nhật'}</div>
+                </div>
+              </div>
+
+              <div className="info-item">
+                <DollarOutlined className="info-icon" />
+                <div>
+                  <div style={{ color: '#888', marginBottom: 4 }}>Tổng chi tiêu</div>
+                  <div style={{ fontSize: 16, fontWeight: 500, color: '#3f8600' }}>
+                    {customer?.totalSpending?.toLocaleString()}₫
                   </div>
                 )}
-              </Card>
-              
-            </TabPane>
-            
-            <TabPane tab={<span><ShoppingOutlined /> Lịch sử đơn hàng</span>} key="2">
-              <Card bordered={false} className="customer-info-card">
-                <div style={{ marginBottom: 16 }}>
-                  <Space>
-                    <Text>Tổng số:</Text>
-                    <Tag color="blue">{orderStats.total} đơn hàng</Tag>
-                    <Divider type="vertical" />
-                    <Tag color="blue" icon={<ClockCircleOutlined />}>Mới: {orderStats.new}</Tag>
-                    <Tag color="orange" icon={<DollarOutlined />}>Đã thanh toán: {orderStats.paid}</Tag>
-                    <Tag color="green" icon={<CheckCircleOutlined />}>Đã giao: {orderStats.delivered}</Tag>
-                  </Space>
-                </div>
-                
-                <Table 
-                  dataSource={customer?.orders || []} 
-                  columns={orderColumns} 
-                  rowKey="id"
-                  pagination={{ 
-                    pageSize: 10,
-                    showTotal: (total, range) => `${range[0]}-${range[1]} / ${total} đơn hàng`
-                  }}
-                />
-              </Card>
-            </TabPane>
-          </Tabs>
-        </Col>
-      </Row>
+                </Card>
+
+              </TabPane>
+
+              <TabPane tab={<span><ShoppingOutlined /> Lịch sử đơn hàng</span>} key="2">
+                <Card bordered={false} className="customer-info-card">
+                  <div style={{ marginBottom: 16 }}>
+                    <Space>
+                      <Text>Tổng số:</Text>
+                      <Tag color="blue">{orderStats.total} đơn hàng</Tag>
+                      <Divider type="vertical" />
+                      <Tag color="blue" icon={<ClockCircleOutlined />}>Mới: {orderStats.new}</Tag>
+                      <Tag color="orange" icon={<DollarOutlined />}>Đã thanh toán: {orderStats.paid}</Tag>
+                      <Tag color="green" icon={<CheckCircleOutlined />}>Đã giao: {orderStats.delivered}</Tag>
+                    </Space>
+                  </div>
+                </div >
+            </div >
+          </Card >
+
+        </Col >
+      </Row >
 
       {/* Address Modal */}
-      <Modal
+      < Modal
         title={
-          <Space align="center">
+          < Space align="center" >
             <HomeOutlined />
             <span>Địa chỉ giao hàng của {customer?.fullName}</span>
-          </Space>
+          </ >
         }
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
         width={600}
       >
-        {addresses.length > 0 ? (
-          <List
-            itemLayout="vertical"
-            dataSource={addresses}
-            renderItem={(item) => (
-              <List.Item
-                className={`address-item ${item.default ? 'address-default' : 'address-normal'}`}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                      <UserOutlined style={{ marginRight: '8px' }} />
-                      <Text strong>{item.fullName}</Text>
-                    </div>
-                    
-                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                      <PhoneOutlined style={{ marginRight: '8px' }} />
-                      <Text>{item.phoneNumber}</Text>
-                    </div>
-                    
-                    <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '8px' }}>
-                      <EnvironmentOutlined style={{ marginRight: '8px', marginTop: '4px' }} />
-                      <div>
-                        <Text>{item.address}</Text>
-                        {item.city && (
-                          <div>
-                            <Text type="secondary">{item.city}</Text>
-                          </div>
-                        )}
+        {
+          addresses.length > 0 ? (
+            <List
+              itemLayout="vertical"
+              dataSource={addresses}
+              renderItem={(item) => (
+                <List.Item
+                  className={`address-item ${item.default ? 'address-default' : 'address-normal'}`}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                        <UserOutlined style={{ marginRight: '8px' }} />
+                        <Text strong>{item.fullName}</Text>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                        <PhoneOutlined style={{ marginRight: '8px' }} />
+                        <Text>{item.phoneNumber}</Text>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '8px' }}>
+                        <EnvironmentOutlined style={{ marginRight: '8px', marginTop: '4px' }} />
+                        <div>
+                          <Text>{item.address}</Text>
+                          {item.city && (
+                            <div>
+                              <Text type="secondary">{item.city}</Text>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
+
+                    {item.default && (
+                      <Badge.Ribbon text="Mặc định" color="green">
+                        <div style={{ width: 20, height: 20 }}></div>
+                      </Badge.Ribbon>
+                    )}
                   </div>
-                  
-                  {item.default && (
-                    <Badge.Ribbon text="Mặc định" color="green">
-                      <div style={{ width: 20, height: 20 }}></div>
-                    </Badge.Ribbon>
-                  )}
-                </div>
-              </List.Item>
-            )}
-          />
-        ) : (
-          <Alert
-            message="Không có địa chỉ giao hàng nào"
-            description="Khách hàng này chưa có địa chỉ giao hàng nào được lưu trong hệ thống."
-            type="warning"
-            showIcon
-          />
-        )}
-      </Modal>
-      
+                </List.Item>
+              )}
+            />
+          ) : (
+            <Alert
+              message="Không có địa chỉ giao hàng nào"
+              description="Khách hàng này chưa có địa chỉ giao hàng nào được lưu trong hệ thống."
+              type="warning"
+              showIcon
+            />
+          )
+        }
+      </ >
+
       {/* Order Detail Modal */}
-      <Modal
+      < Modal
         title={
-          <Space align="center">
+          < Space align="center" >
             <FileTextOutlined />
             <span>Chi tiết đơn hàng #{selectedOrder?.id}</span>
-          </Space>
+          </Space >
         }
         open={orderModalVisible}
         onCancel={() => setOrderModalVisible(false)}
-        footer={[
-          <Button key="back" onClick={() => setOrderModalVisible(false)}>
-            Đóng
-          </Button>,
-          <Button key="link" type="primary">
-            <Link to={`/orders/${selectedOrder?.id}`} style={{ color: 'white' }}>
-              Xem đầy đủ
-            </Link>
-          </Button>,
-        ]}
+        footer={
+          [
+            <Button key="back" onClick={() => setOrderModalVisible(false)}>
+              Đóng
+            </Button>,
+            <Button key="link" type="primary">
+              <Link to={`/orders/${selectedOrder?.id}`} style={{ color: 'white' }}>
+                Xem đầy đủ
+              </Link>
+            </Button>,
+          ]}
         width={600}
       >
         {selectedOrder && (
@@ -767,13 +661,13 @@ export default function CustomerDetail() {
                 {getStatusTag(selectedOrder.orderStatus)}
               </Descriptions.Item>
             </Descriptions>
-            
+
             <div style={{ marginTop: 24, textAlign: 'center' }}>
               <Text type="secondary">Để xem chi tiết đơn hàng, vui lòng nhấn "Xem đầy đủ"</Text>
             </div>
           </div>
         )}
-      </Modal>
-    </div>
+      </Modal >
+    </div >
   )
 }

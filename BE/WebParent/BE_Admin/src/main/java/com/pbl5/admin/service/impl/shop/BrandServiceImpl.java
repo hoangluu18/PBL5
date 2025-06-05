@@ -39,6 +39,32 @@ public class BrandServiceImpl implements BrandService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteBrandById(Integer id) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
+        brandRepository.delete(brand);
+    }
+
+    @Override
+    public Brand saveBrand(BrandDto brandDto) {
+
+        Brand brand = new Brand();
+        brand.setName(brandDto.getName());
+        brand.setLogo(brandDto.getLogo());
+        return brandRepository.save(brand);
+
+    }
+
+    @Override
+    public Brand updateBrand(BrandDto brandDto) {
+        Brand brand = brandRepository.findById(brandDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Brand not found"));
+        brand.setName(brandDto.getName());
+        brand.setLogo(brandDto.getLogo());
+        return brandRepository.save(brand);
+    }
+
     private BrandDto convertToDto(Brand brand) {
         BrandDto dto = new BrandDto();
         dto.setId(brand.getId());
