@@ -16,7 +16,7 @@ export default function ShopRevenueChart({ selectedDate }: ShopRevenueChartProps
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [selectedDate]);
 
     const fetchData = async () => {
         try {
