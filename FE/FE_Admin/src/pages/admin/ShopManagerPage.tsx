@@ -217,7 +217,7 @@ const ShopManagement: React.FC = () => {
             render: (text, record) => (
                 <div className="flex items-center">
                     <Avatar
-                        src={`/images/shops/${record.photo}`}
+                        src={`${record.photo}`}
                         size={40}
                     />
                     <span className="font-medium ml-3">{text}</span>

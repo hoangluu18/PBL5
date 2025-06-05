@@ -39,6 +39,12 @@ public class CategoryController {
         return ResponseEntity.ok(rootCategoryDtos);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllCategories() {
+
+        return ResponseEntity.ok(categoryService.getAll());
+    }
+
     @GetMapping("/{alias}")
     public ResponseEntity<?> search(@PathVariable("alias") String alias,
                                     @RequestParam(value = "page", defaultValue = "1") int page,

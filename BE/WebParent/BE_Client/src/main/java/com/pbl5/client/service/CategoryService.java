@@ -19,4 +19,5 @@ public interface CategoryService {
 
     List<BrandDto> getBrands(Category category);
 
+    List<CategoryDto> getAll();
 }
