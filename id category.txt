@@ -1,0 +1,31 @@
+dien-thoai-may-tinh-bang/c1789, 'https://salt.tikicdn.com/cache/100x100/ts/category/54/c0/ff/fe98a4afa2d3e5142dc8096addc4e40b.png.webp' -> ok
+ + dien-thoai-smartphone/c1795, 'https://salt.tikicdn.com/ts/category/02/57/3e/89dd8e669f671e2417eeb330c52421ac.png' -> ok
+ + may-tinh-bang/c1794, 'https://salt.tikicdn.com/ts/category/f5/e0/74/753fb4a026262e4c1464e3a403ee405e.png' -> ok
+
+thiet-bi-kts-phu-kien-so/c1815, 'https://salt.tikicdn.com/cache/100x100/ts/category/75/34/29/78e428fdd90408587181005f5cc3de32.png.webp' -> ok
+ + thiet-bi-choi-game-va-phu-kien/c2667, 'https://salt.tikicdn.com/ts/category/a2/f4/ca/a408a504d25bae20629423fa3c67d3d1.png' -> ok
+   + phu-kien-gaming/c6742, 'https://salt.tikicdn.com/ts/category/14/41/ee/4d43a0a54f2768ae84c77b26e68eca3e.png' -> ok
+   + ghe-gaming/c7273, '' -> ok
+ + phu-kien-may-tinh-va-laptop/c28670, 'https://salt.tikicdn.com/cache/280x280/ts/product/37/54/d0/334fa3ea6f97297bbeb9e1f0660859e9.png' -> ok
+   + phu-kien-laptop/c7795, 'https://salt.tikicdn.com/cache/280x280/ts/product/b2/ea/75/008c2f71ad0f2c62ab413801c09a0a65.png' -> ok
+   + ban-di-chuot-mieng-lot-chuot/c1831, 'https://salt.tikicdn.com/cache/280x280/ts/product/94/18/11/347e929c7ece49606a449d57c809825a.jpg' -> ok
+   + phu-kien-phim-chuot-choi-game/c28692, 'https://salt.tikicdn.com/cache/280x280/ts/product/e2/4f/02/ac61c87c4547dc52df391aabe0456e4b.png' -> ok
+   + tai-nghe-may-tinh/c28702, 'https://salt.tikicdn.com/cache/280x280/ts/product/7f/38/88/9a7bca5ef0b3141b66db8e79a7622a9c.jpg' -> ok
+
+thoi-trang-nu/c931, 'https://salt.tikicdn.com/cache/100x100/ts/category/55/5b/80/48cbaafe144c25d5065786ecace86d38.png.webp' -> ok
+ + dam-vay-lien/c941, 'https://salt.tikicdn.com/ts/category/76/0e/c0/1107391154220a78694cfd129ab58d02.png' -> ok
+    + dam-dang-om/c27580, 'https://salt.tikicdn.com/cache/280x280/ts/product/3c/4a/74/97afcd8b6be0ba9532478778a27387e3.jpg' -> ok
+    + dam-cong-so-nu/c5344, 'https://salt.tikicdn.com/ts/category/1d/68/ea/887fd29c67e592d63d1b0368eb00ad65.png' -> ok
+    + dam-baby-doll/c67217, 'https://salt.tikicdn.com/ts/category/f8/10/61/02d756fa3528682f4fc97f18582d8dd5.png' -> ok
+ + ao-vest-ao-khoac-nu/c936, 'https://salt.tikicdn.com/ts/category/cd/98/33/a8ab70f7d57f1d3c13374784287d1ec6.png' -> ok
+    + ao-vest-blazer-nu/c27588, 'https://salt.tikicdn.com/cache/280x280/ts/product/61/ff/db/1edb8d025aa62926b176ecefd27d3736.jpg' -> ok
+    + ao-khoac-chong-nang-nu/c49354, 'https://salt.tikicdn.com/cache/280x280/ts/product/9b/5c/88/8a7310d0c849551acd08d6b15f057386.jpg' -> ok
+    + ao-khoac-da-nu/c27596, 'https://salt.tikicdn.com/cache/280x280/ts/product/ae/4e/25/4b8ffa78f1476281aa494c5f422268d5.jpg' -> ok
+
+thoi-trang-nam/c915, 'https://salt.tikicdn.com/cache/100x100/ts/category/00/5d/97/384ca1a678c4ee93a0886a204f47645d.png.webp' -> ok
+ + ao-thun-nam/c917, 'https://salt.tikicdn.com/cache/280x280/ts/product/b7/f2/89/92169f33c703aa060871e5ab80a8e4e8.jpg' -> ok
+    + ao-thun-nam-ngan-tay-co-co/c5333, 'https://salt.tikicdn.com/cache/280x280/ts/product/61/7c/c4/7c008ad5b937ff9b72c5a43ea88a3ddd.jpg' -> ok
+    + ao-thun-nam-ngan-tay-khong-co/c1685, 'https://salt.tikicdn.com/cache/280x280/ts/product/b7/f2/89/92169f33c703aa060871e5ab80a8e4e8.jpg'-> ok
+ + ao-vest-ao-khoac-nam/c925, 'https://salt.tikicdn.com/cache/280x280/ts/product/04/2d/96/f5635601859057cf3ddfdec1dcc2a694.png' -> ok
+    + ao-khoac-gio/c49458, 'https://salt.tikicdn.com/cache/280x280/ts/product/04/2d/96/f5635601859057cf3ddfdec1dcc2a694.png' -> ok
+    + ao-vest-va-blazer-nam/c27566, 'https://salt.tikicdn.com/cache/280x280/ts/product/19/b0/b7/7d8d56c975e31a2ee267baccffc4d65d.jpg' -> ok

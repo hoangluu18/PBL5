@@ -9,8 +9,11 @@ from slugify import slugify  # pip install python-slugify
 
 os.makedirs("./data", exist_ok=True)
 
-laptop_page_url = "https://tiki.vn/api/v2/products?limit=48&include=advertisement&aggregations=1&category=8095&page={}&urlKey=laptop"
+category_id = 26870  # Laptop category ID
+
+laptop_page_url = "https://tiki.vn/api/v2/products?limit=48&include=advertisement&aggregations=1&category=" + str(category_id) + "&page={}"
 product_url = "https://tiki.vn/api/v2/products/{}"
+
 
 product_id_file = "./data/product-id.txt"
 product_data_file = "./data/product.txt"
@@ -23,7 +26,7 @@ db_config = {
     'host': 'localhost',
     'user': 'root',
     'password': '1234',  # Change to your password
-    'database': 'pbl5_ecommerce'  # Change to your database name
+    'database': 'pbl5_ecommercee'  # Change to your database name
 }
 
 def crawl_product_id(max_products=50):
@@ -157,9 +160,9 @@ def insert_product_to_db(cursor, product_data):
             short_description, full_description, enabled,
             created_at, in_stock, main_image, updated_at,
             weight, height, width, length,
-            brand_id, category_id, shop_id,
+            category_id, shop_id,
             average_rating, review_count
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         
         values = (
@@ -167,7 +170,7 @@ def insert_product_to_db(cursor, product_data):
             short_description, full_description, 1,  # enabled = 1
             now, 1, main_image, now,  # in_stock = 1
             0.0, 0.0, 0.0, 0.0,  # weight, height, width, length (default to 0)
-            1, 16, 1,  # brand_id=1, category_id=16 (laptop), shop_id=1
+            category_id, 1,  # brand_id=1, category_id=16 (laptop), shop_id=1
             average_rating, review_count
         )
         
@@ -280,6 +283,17 @@ def crawl_and_save_to_db(max_products=50):
     print(f"✗ Errors: {error_count} products")
     print(f"Total processed: {success_count + error_count}/{len(product_list)}")
 
+def randomBrandIdInArray(arrays):
+    """Generate a random brand ID from array"""
+    import random
+    return random.choice(arrays)  # Use choice() to pick from array
+
+def randomBrandId(min_val, max_val):
+    """Generate a random brand ID in range"""
+    import random
+    return random.randint(min_val, max_val)
 # Run the crawler
 if __name__ == "__main__":
     crawl_and_save_to_db(50)    
+    #print(randomBrandIdInArray([3,5]))
+    print(category_id)
