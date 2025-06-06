@@ -1,0 +1,834 @@
+[
+  {
+    "id": 1,
+    "name": "Nike T-Shirt Plus",
+    "brand": "Nike",
+    "category": "quần áo",
+    "alias": "nike-t-shirt",
+    "shop": "John Store",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.5,
+    "review_count": 3,
+    "description": "⭐Bảng size bên shop các bạn tham khảo ạ: 👉 Bảng size mang tính chất tham khảo bạn có thể lấy size to hơn hoặc nhỏ theo yêu cầu của bạn!Lưu ý: Các bạn có thể nhắn tin cho shop để tư vấn size. I. SHOP CAM KẾT - Sản phẩm Áo sơ mi kaki basic giống mô tả 1oo% - Hình ảnh sản phẩm là ảnh thật, các hình hoàn toàn do shop tự thiết kế. - Kiểm tra cẩn thận trước khi gói hàng giao cho Quý Khách - Hàng có sẵn, giao hàng ngay khi nhận được đơn - Hoàn tiền nếu sản phẩm không giống với mô tả - Chấp nhận đổi hàng khi size không vừa trong 3 ngày. II. HỖ TRỢ ĐỔI TRẢ THEO quy địᵰh - Điều kiện áp dụng (trong vòng 2 ngày kể từ khi nhận sản phẩm) - Hàng hoá bị rách, in lỗi, bung chỉ, và các lỗi do vận chuyển hoặc do nhà sản xuất. 1. Trường hợp được chấp nhận: - Hàng giao sai size khách đã đặt hàng - Giao thiếu hàng 2. Trường hợp không đủ điều kiện áp dụng chính sách: - Quá 2 ngày kể từ khi Quý khách nhận hàng - Gửi lại hàng không đúng mẫu mã, - Không thích, không hợp, đặt nhầm mã, nhầm màu,... III. MÔ TẢ SẢN PHẨM ⭐ Tên sản phẩm : Áo sơ mi kaki basic cao cấp ⭐ Chất Liệu: Chất kaki xuất hàn xịn ⭐ Màu Sắc: Xám - Be - Xanh ⭐ Đặc Tính: Chất vải áo là chất kaki cao cấp dày dặn, dễ phối hợp đồ, nam nữ mặc đều đẹp ạ #aosominam #aosomi #somi #somikaki #somibasic #somitheu #somitron #sominam #unisex #formrong",
+    "specifications": [
+      {
+        "name": "Hãng",
+        "value": "Nike"
+      },
+      {
+        "name": "Chất liệu",
+        "value": "100% Cotton"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 1\n        Tên sản phẩm: Nike T-Shirt Plus\n        link: http://localhost:5173/p/nike-t-shirt \n        Thương hiệu: Nike\n        Danh mục: quần áo\n        Cửa hàng: John Store\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.5/5 (3 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        ⭐Bảng size bên shop các bạn tham khảo ạ: 👉 Bảng size mang tính chất tham khảo bạn có thể lấy size to hơn hoặc nhỏ theo yêu cầu của bạn!Lưu ý: Các bạn có thể nhắn tin cho shop để tư vấn size. I. SHOP CAM KẾT - Sản phẩm Áo sơ mi kaki basic giống mô tả 1oo% - Hình ảnh sản phẩm là ảnh thật, các hình hoàn toàn do shop tự thiết kế. - Kiểm tra cẩn thận trước khi gói hàng giao cho Quý Khách - Hàng có sẵn, giao hàng ngay khi nhận được đơn - Hoàn tiền nếu sản phẩm không giống với mô tả - Chấp nhận đổi hàng khi size không vừa trong 3 ngày. II. HỖ TRỢ ĐỔI TRẢ THEO quy địᵰh - Điều kiện áp dụng (trong vòng 2 ngày kể từ khi nhận sản phẩm) - Hàng hoá bị rách, in lỗi, bung chỉ, và các lỗi do vận chuyển hoặc do nhà sản xuất. 1. Trường hợp được chấp nhận: - Hàng giao sai size khách đã đặt hàng - Giao thiếu hàng 2. Trường hợp không đủ điều kiện áp dụng chính sách: - Quá 2 ngày kể từ khi Quý khách nhận hàng - Gửi lại hàng không đúng mẫu mã, - Không thích, không hợp, đặt nhầm mã, nhầm màu,... III. MÔ TẢ SẢN PHẨM ⭐ Tên sản phẩm : Áo sơ mi kaki basic cao cấp ⭐ Chất Liệu: Chất kaki xuất hàn xịn ⭐ Màu Sắc: Xám - Be - Xanh ⭐ Đặc Tính: Chất vải áo là chất kaki cao cấp dày dặn, dễ phối hợp đồ, nam nữ mặc đều đẹp ạ #aosominam #aosomi #somi #somikaki #somibasic #somitheu #somitron #sominam #unisex #formrong\n\n        Thông số kỹ thuật:\n        Hãng: Nike, Chất liệu: 100% Cotton\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 2,
+    "name": "Adidas Running Shoes",
+    "brand": "Adidas",
+    "category": "giày",
+    "alias": "adidas-running-shoes",
+    "shop": "Jane Footwear",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.5,
+    "review_count": 1,
+    "description": "Detailed description of Adidas Shoes",
+    "specifications": [
+      {
+        "name": "Sole Type",
+        "value": "Rubber"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 2\n        Tên sản phẩm: Adidas Running Shoes\n        link: http://localhost:5173/p/adidas-running-shoes \n        Thương hiệu: Adidas\n        Danh mục: giày\n        Cửa hàng: Jane Footwear\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.5/5 (1 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Detailed description of Adidas Shoes\n\n        Thông số kỹ thuật:\n        Sole Type: Rubber\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 3,
+    "name": "Áo Polo Nike thể thao",
+    "brand": "Nike",
+    "category": "quần áo",
+    "alias": "ao-polo-nike",
+    "shop": "John Store",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.5,
+    "review_count": 1,
+    "description": "Mô tả chi tiết sản phẩm he he 123",
+    "specifications": [
+      {
+        "name": "Size",
+        "value": "S"
+      }
+    ],
+    "dimensions": {
+      "length": 100.0,
+      "width": 100.0,
+      "height": 100.0,
+      "weight": 1.0
+    },
+    "full_context": "ID Sản phẩm: 3\n        Tên sản phẩm: Áo Polo Nike thể thao\n        link: http://localhost:5173/p/ao-polo-nike \n        Thương hiệu: Nike\n        Danh mục: quần áo\n        Cửa hàng: John Store\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.5/5 (1 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Mô tả chi tiết sản phẩm he he 123\n\n        Thông số kỹ thuật:\n        Size: S\n\n        Kích thước: Dài 100.0cm x Rộng 100.0cm x Cao 100.0cm\n        Trọng lượng: 1.0kg"
+  },
+  {
+    "id": 4,
+    "name": "Giày chạy bộ Adidas Boost",
+    "brand": "Adidas",
+    "category": "giày",
+    "alias": "giay-adidas-boost",
+    "shop": "Jane Footwear",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.5,
+    "review_count": 1,
+    "description": "Mô tả chi tiết sản phẩm",
+    "specifications": [
+      {
+        "name": "Size",
+        "value": "S, M, L"
+      },
+      {
+        "name": "Màu sắc",
+        "value": "Đen, Trắng"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 4\n        Tên sản phẩm: Giày chạy bộ Adidas Boost\n        link: http://localhost:5173/p/giay-adidas-boost \n        Thương hiệu: Adidas\n        Danh mục: giày\n        Cửa hàng: Jane Footwear\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.5/5 (1 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Mô tả chi tiết sản phẩm\n\n        Thông số kỹ thuật:\n        Size: S, M, L, Màu sắc: Đen, Trắng\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 5,
+    "name": "Ba lô Puma thời trang",
+    "brand": "Puma",
+    "category": "phụ kiện",
+    "alias": "ba-lo-puma",
+    "shop": "Jane Footwear",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.5,
+    "review_count": 0,
+    "description": "Mô tả chi tiết sản phẩm",
+    "specifications": [
+      {
+        "name": "Chất liệu",
+        "value": "Lưới thoáng khí"
+      },
+      {
+        "name": "Size",
+        "value": "39, 40, 41, 42, 43"
+      },
+      {
+        "name": "Màu sắc",
+        "value": "Xanh, Vàng, Đen"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 5\n        Tên sản phẩm: Ba lô Puma thời trang\n        link: http://localhost:5173/p/ba-lo-puma \n        Thương hiệu: Puma\n        Danh mục: phụ kiện\n        Cửa hàng: Jane Footwear\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.5/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Mô tả chi tiết sản phẩm\n\n        Thông số kỹ thuật:\n        Chất liệu: Lưới thoáng khí, Size: 39, 40, 41, 42, 43, Màu sắc: Xanh, Vàng, Đen\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 6,
+    "name": "Áo khoác Adidas Climawarm",
+    "brand": "Adidas",
+    "category": "quần áo",
+    "alias": "ao-khoac-adidas",
+    "shop": "Jane Footwear",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.5,
+    "review_count": 0,
+    "description": "Mô tả chi tiết sản phẩm",
+    "specifications": [
+      {
+        "name": "Chất liệu",
+        "value": "Vải bố cao cấp"
+      }
+    ],
+    "dimensions": {
+      "length": 100.0,
+      "width": 100.0,
+      "height": 100.0,
+      "weight": 1.0
+    },
+    "full_context": "ID Sản phẩm: 6\n        Tên sản phẩm: Áo khoác Adidas Climawarm\n        link: http://localhost:5173/p/ao-khoac-adidas \n        Thương hiệu: Adidas\n        Danh mục: quần áo\n        Cửa hàng: Jane Footwear\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.5/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Mô tả chi tiết sản phẩm\n\n        Thông số kỹ thuật:\n        Chất liệu: Vải bố cao cấp\n\n        Kích thước: Dài 100.0cm x Rộng 100.0cm x Cao 100.0cm\n        Trọng lượng: 1.0kg"
+  },
+  {
+    "id": 7,
+    "name": "Giày sneaker Under Armour",
+    "brand": "Under Armour",
+    "category": "giày",
+    "alias": "giay-ua-sneaker",
+    "shop": "John Store",
+    "price": 250000.0,
+    "discount_percent": 10.0,
+    "final_price": 225000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.5,
+    "review_count": 0,
+    "description": "Mô tả chi tiết sản phẩm",
+    "specifications": [
+      {
+        "name": "Chất liệu",
+        "value": "Vải thoáng khí"
+      },
+      {
+        "name": "Size",
+        "value": "S, M, L, XL"
+      },
+      {
+        "name": "Màu sắc",
+        "value": "Xám, Đen"
+      }
+    ],
+    "dimensions": {
+      "length": 100.0,
+      "width": 100.0,
+      "height": 100.0,
+      "weight": 1.0
+    },
+    "full_context": "ID Sản phẩm: 7\n        Tên sản phẩm: Giày sneaker Under Armour\n        link: http://localhost:5173/p/giay-ua-sneaker \n        Thương hiệu: Under Armour\n        Danh mục: giày\n        Cửa hàng: John Store\n        Giá gốc: 250,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 225,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.5/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Mô tả chi tiết sản phẩm\n\n        Thông số kỹ thuật:\n        Chất liệu: Vải thoáng khí, Size: S, M, L, XL, Màu sắc: Xám, Đen\n\n        Kích thước: Dài 100.0cm x Rộng 100.0cm x Cao 100.0cm\n        Trọng lượng: 1.0kg"
+  },
+  {
+    "id": 8,
+    "name": "Túi đeo chéo Reebok",
+    "brand": "Reebok",
+    "category": "giày",
+    "alias": "tui-deo-reebok",
+    "shop": "John Store",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.5,
+    "review_count": 0,
+    "description": "Mô tả chi tiết sản phẩm",
+    "specifications": [
+      {
+        "name": "Chất liệu",
+        "value": "Vải lưới đàn hồi"
+      },
+      {
+        "name": "Size",
+        "value": "41, 42, 43, 44"
+      },
+      {
+        "name": "Màu sắc",
+        "value": "Đỏ, Đen, Xanh"
+      }
+    ],
+    "dimensions": {
+      "length": 100.0,
+      "width": 100.0,
+      "height": 100.0,
+      "weight": 1.0
+    },
+    "full_context": "ID Sản phẩm: 8\n        Tên sản phẩm: Túi đeo chéo Reebok\n        link: http://localhost:5173/p/tui-deo-reebok \n        Thương hiệu: Reebok\n        Danh mục: giày\n        Cửa hàng: John Store\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.5/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Mô tả chi tiết sản phẩm\n\n        Thông số kỹ thuật:\n        Chất liệu: Vải lưới đàn hồi, Size: 41, 42, 43, 44, Màu sắc: Đỏ, Đen, Xanh\n\n        Kích thước: Dài 100.0cm x Rộng 100.0cm x Cao 100.0cm\n        Trọng lượng: 1.0kg"
+  },
+  {
+    "id": 9,
+    "name": "Áo thun thể thao Adidas",
+    "brand": "Adidas",
+    "category": "quần áo",
+    "alias": "ao-thun-adidas",
+    "shop": "Jane Footwear",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.5,
+    "review_count": 0,
+    "description": "Mô tả chi tiết sản phẩm",
+    "specifications": [
+      {
+        "name": "Ngăn chứa",
+        "value": "2 ngăn chính, 1 ngăn phụ"
+      },
+      {
+        "name": "Chất liệu",
+        "value": "Vải chống nước"
+      },
+      {
+        "name": "Size",
+        "value": "One Size"
+      }
+    ],
+    "dimensions": {
+      "length": 100.0,
+      "width": 100.0,
+      "height": 100.0,
+      "weight": 1.0
+    },
+    "full_context": "ID Sản phẩm: 9\n        Tên sản phẩm: Áo thun thể thao Adidas\n        link: http://localhost:5173/p/ao-thun-adidas \n        Thương hiệu: Adidas\n        Danh mục: quần áo\n        Cửa hàng: Jane Footwear\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.5/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Mô tả chi tiết sản phẩm\n\n        Thông số kỹ thuật:\n        Ngăn chứa: 2 ngăn chính, 1 ngăn phụ, Chất liệu: Vải chống nước, Size: One Size\n\n        Kích thước: Dài 100.0cm x Rộng 100.0cm x Cao 100.0cm\n        Trọng lượng: 1.0kg"
+  },
+  {
+    "id": 10,
+    "name": "Giày thể thao Puma RS-X",
+    "brand": "Puma",
+    "category": "giày",
+    "alias": "giay-puma-rsx",
+    "shop": "John Store",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.5,
+    "review_count": 0,
+    "description": "Mô tả chi tiết sản phẩm",
+    "specifications": [
+      {
+        "name": "Chất liệu",
+        "value": "Cotton 100%"
+      },
+      {
+        "name": "Size",
+        "value": "M, L, XL, XXL"
+      }
+    ],
+    "dimensions": {
+      "length": 100.0,
+      "width": 100.0,
+      "height": 100.0,
+      "weight": 1.0
+    },
+    "full_context": "ID Sản phẩm: 10\n        Tên sản phẩm: Giày thể thao Puma RS-X\n        link: http://localhost:5173/p/giay-puma-rsx \n        Thương hiệu: Puma\n        Danh mục: giày\n        Cửa hàng: John Store\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.5/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Mô tả chi tiết sản phẩm\n\n        Thông số kỹ thuật:\n        Chất liệu: Cotton 100%, Size: M, L, XL, XXL\n\n        Kích thước: Dài 100.0cm x Rộng 100.0cm x Cao 100.0cm\n        Trọng lượng: 1.0kg"
+  },
+  {
+    "id": 11,
+    "name": "Áo Thun Nike Pro Dri-FIT",
+    "brand": "Nike",
+    "category": "quần áo",
+    "alias": "ao-thun-nike-pro-drifit",
+    "shop": "Thời Trang Minh Hương",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.7,
+    "review_count": 0,
+    "description": "Áo thun thể thao Nike Pro với công nghệ Dri-FIT giúp thấm hút mồ hôi nhanh chóng, thoáng khí tối đa. Chất liệu vải mềm mại, co giãn 4 chiều, phù hợp cho các hoạt động thể thao và tập luyện hàng ngày.",
+    "specifications": [
+      {
+        "name": "Công nghệ",
+        "value": "Nike Dri-FIT"
+      },
+      {
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      },
+      {
+        "name": "Chất liệu",
+        "value": "88% Polyester, 12% Elastane"
+      },
+      {
+        "name": "Kích thước",
+        "value": "S, M, L, XL, XXL"
+      },
+      {
+        "name": "Màu sắc",
+        "value": "Đen, Xanh navy, Trắng"
+      }
+    ],
+    "dimensions": {
+      "length": 60.0,
+      "width": 40.0,
+      "height": 5.0,
+      "weight": 0.2
+    },
+    "full_context": "ID Sản phẩm: 11\n        Tên sản phẩm: Áo Thun Nike Pro Dri-FIT\n        link: http://localhost:5173/p/ao-thun-nike-pro-drifit \n        Thương hiệu: Nike\n        Danh mục: quần áo\n        Cửa hàng: Thời Trang Minh Hương\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.7/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Áo thun thể thao Nike Pro với công nghệ Dri-FIT giúp thấm hút mồ hôi nhanh chóng, thoáng khí tối đa. Chất liệu vải mềm mại, co giãn 4 chiều, phù hợp cho các hoạt động thể thao và tập luyện hàng ngày.\n\n        Thông số kỹ thuật:\n        Công nghệ: Nike Dri-FIT, Xuất xứ: Việt Nam, Chất liệu: 88% Polyester, 12% Elastane, Kích thước: S, M, L, XL, XXL, Màu sắc: Đen, Xanh navy, Trắng\n\n        Kích thước: Dài 60.0cm x Rộng 40.0cm x Cao 5.0cm\n        Trọng lượng: 0.2kg"
+  },
+  {
+    "id": 12,
+    "name": "Giày Adidas Ultraboost 21",
+    "brand": "Adidas",
+    "category": "giày",
+    "alias": "giay-adidas-ultraboost-21",
+    "shop": "Giày Thể Thao Phong Cách",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.8,
+    "review_count": 0,
+    "description": "Giày chạy bộ Adidas Ultraboost 21 với lớp đệm Boost mang lại sự êm ái và đàn hồi tối đa. Thân giày được làm từ vải Primeknit+ co giãn, ôm chân và thoáng khí. Đế ngoài Continental™ Rubber bền bỉ, chống trượt trên mọi địa hình.",
+    "specifications": [
+      {
+        "name": "Xuất xứ",
+        "value": "Indonesia"
+      },
+      {
+        "name": "Trọng lượng",
+        "value": "340g (size 42)"
+      },
+      {
+        "name": "Chất liệu đế",
+        "value": "Boost foam + Continental™ Rubber"
+      },
+      {
+        "name": "Kích thước",
+        "value": "39, 40, 41, 42, 43, 44"
+      },
+      {
+        "name": "Màu sắc",
+        "value": "Đen, Trắng, Xanh dương"
+      }
+    ],
+    "dimensions": {
+      "length": 30.0,
+      "width": 25.0,
+      "height": 12.0,
+      "weight": 0.7
+    },
+    "full_context": "ID Sản phẩm: 12\n        Tên sản phẩm: Giày Adidas Ultraboost 21\n        link: http://localhost:5173/p/giay-adidas-ultraboost-21 \n        Thương hiệu: Adidas\n        Danh mục: giày\n        Cửa hàng: Giày Thể Thao Phong Cách\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.8/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Giày chạy bộ Adidas Ultraboost 21 với lớp đệm Boost mang lại sự êm ái và đàn hồi tối đa. Thân giày được làm từ vải Primeknit+ co giãn, ôm chân và thoáng khí. Đế ngoài Continental™ Rubber bền bỉ, chống trượt trên mọi địa hình.\n\n        Thông số kỹ thuật:\n        Xuất xứ: Indonesia, Trọng lượng: 340g (size 42), Chất liệu đế: Boost foam + Continental™ Rubber, Kích thước: 39, 40, 41, 42, 43, 44, Màu sắc: Đen, Trắng, Xanh dương\n\n        Kích thước: Dài 30.0cm x Rộng 25.0cm x Cao 12.0cm\n        Trọng lượng: 0.7kg"
+  },
+  {
+    "id": 13,
+    "name": "Túi Đeo Chéo Puma Essential",
+    "brand": "Puma",
+    "category": "phụ kiện",
+    "alias": "tui-deo-cheo-puma",
+    "shop": "Phụ Kiện Thời Trang Thanh Thảo",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.6,
+    "review_count": 0,
+    "description": "Túi đeo chéo Puma Essential với thiết kế nhỏ gọn, tiện lợi cho việc mang theo các vật dụng cần thiết. Chất liệu polyester cao cấp, chống thấm nước nhẹ, dễ dàng vệ sinh. Nhiều ngăn tiện dụng và dây đeo điều chỉnh được.",
+    "specifications": [
+      {
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      },
+      {
+        "name": "Chất liệu",
+        "value": "Polyester chống thấm"
+      },
+      {
+        "name": "Số ngăn",
+        "value": "3 ngăn (1 chính, 2 phụ)"
+      },
+      {
+        "name": "Dung tích",
+        "value": "2 lít"
+      },
+      {
+        "name": "Kích thước",
+        "value": "20cm x 15cm x 5cm"
+      }
+    ],
+    "dimensions": {
+      "length": 5.0,
+      "width": 15.0,
+      "height": 20.0,
+      "weight": 0.3
+    },
+    "full_context": "ID Sản phẩm: 13\n        Tên sản phẩm: Túi Đeo Chéo Puma Essential\n        link: http://localhost:5173/p/tui-deo-cheo-puma \n        Thương hiệu: Puma\n        Danh mục: phụ kiện\n        Cửa hàng: Phụ Kiện Thời Trang Thanh Thảo\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.6/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Túi đeo chéo Puma Essential với thiết kế nhỏ gọn, tiện lợi cho việc mang theo các vật dụng cần thiết. Chất liệu polyester cao cấp, chống thấm nước nhẹ, dễ dàng vệ sinh. Nhiều ngăn tiện dụng và dây đeo điều chỉnh được.\n\n        Thông số kỹ thuật:\n        Xuất xứ: Việt Nam, Chất liệu: Polyester chống thấm, Số ngăn: 3 ngăn (1 chính, 2 phụ), Dung tích: 2 lít, Kích thước: 20cm x 15cm x 5cm\n\n        Kích thước: Dài 5.0cm x Rộng 15.0cm x Cao 20.0cm\n        Trọng lượng: 0.3kg"
+  },
+  {
+    "id": 14,
+    "name": "Áo Khoác Reebok Training Essentials",
+    "brand": "Reebok",
+    "category": "quần áo",
+    "alias": "ao-khoac-reebok-training",
+    "shop": "Thời Trang Thể Thao Minh Tâm",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.5,
+    "review_count": 0,
+    "description": "Áo khoác thể thao Reebok Training Essentials với chất liệu chống gió nhẹ, thích hợp cho các hoạt động ngoài trời và tập luyện. Thiết kế tối giản với logo Reebok đặc trưng, có mũ trùm đầu và hai túi zip bên hông.",
+    "specifications": [
+      {
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      }
+    ],
+    "dimensions": {
+      "length": 5.0,
+      "width": 55.0,
+      "height": 70.0,
+      "weight": 0.5
+    },
+    "full_context": "ID Sản phẩm: 14\n        Tên sản phẩm: Áo Khoác Reebok Training Essentials\n        link: http://localhost:5173/p/ao-khoac-reebok-training \n        Thương hiệu: Reebok\n        Danh mục: quần áo\n        Cửa hàng: Thời Trang Thể Thao Minh Tâm\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.5/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Áo khoác thể thao Reebok Training Essentials với chất liệu chống gió nhẹ, thích hợp cho các hoạt động ngoài trời và tập luyện. Thiết kế tối giản với logo Reebok đặc trưng, có mũ trùm đầu và hai túi zip bên hông.\n\n        Thông số kỹ thuật:\n        Xuất xứ: Việt Nam\n\n        Kích thước: Dài 5.0cm x Rộng 55.0cm x Cao 70.0cm\n        Trọng lượng: 0.5kg"
+  },
+  {
+    "id": 15,
+    "name": "Quần Jogger Under Armour Rival Fleece",
+    "brand": "Under Armour",
+    "category": "quần áo",
+    "alias": "quan-jogger-under-armour",
+    "shop": "Phụ Kiện Thời Trang Thanh Thảo",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.7,
+    "review_count": 0,
+    "description": "Quần jogger Under Armour Rival Fleece với chất liệu nỉ mềm mại, giữ ấm tốt, phù hợp cho mùa lạnh. Thiết kế ôm dần về phía dưới, bo gấu, thích hợp cho cả tập luyện và đi chơi thường ngày.",
+    "specifications": [
+      {
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 15\n        Tên sản phẩm: Quần Jogger Under Armour Rival Fleece\n        link: http://localhost:5173/p/quan-jogger-under-armour \n        Thương hiệu: Under Armour\n        Danh mục: quần áo\n        Cửa hàng: Phụ Kiện Thời Trang Thanh Thảo\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.7/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Quần jogger Under Armour Rival Fleece với chất liệu nỉ mềm mại, giữ ấm tốt, phù hợp cho mùa lạnh. Thiết kế ôm dần về phía dưới, bo gấu, thích hợp cho cả tập luyện và đi chơi thường ngày.\n\n        Thông số kỹ thuật:\n        Xuất xứ: Việt Nam\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 16,
+    "name": "Giày Đá Bóng Nike Phantom GT2",
+    "brand": "Nike",
+    "category": "giày",
+    "alias": "giay-da-bong-nike-phantom",
+    "shop": "Thời Trang Minh Hương",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.9,
+    "review_count": 0,
+    "description": "Giày đá bóng Nike Phantom GT2 với công nghệ Generative Texture trên thân giày giúp kiểm soát bóng tốt hơn. Đế giày được thiết kế đặc biệt cho cảm giác bám sân tốt. Phù hợp với các cầu thủ chuyên nghiệp và bán chuyên.",
+    "specifications": [
+      {
+        "name": "xuất xứ",
+        "value": "Việt Nam"
+      }
+    ],
+    "dimensions": {
+      "length": 30.0,
+      "width": 25.0,
+      "height": 10.0,
+      "weight": 0.6
+    },
+    "full_context": "ID Sản phẩm: 16\n        Tên sản phẩm: Giày Đá Bóng Nike Phantom GT2\n        link: http://localhost:5173/p/giay-da-bong-nike-phantom \n        Thương hiệu: Nike\n        Danh mục: giày\n        Cửa hàng: Thời Trang Minh Hương\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.9/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Giày đá bóng Nike Phantom GT2 với công nghệ Generative Texture trên thân giày giúp kiểm soát bóng tốt hơn. Đế giày được thiết kế đặc biệt cho cảm giác bám sân tốt. Phù hợp với các cầu thủ chuyên nghiệp và bán chuyên.\n\n        Thông số kỹ thuật:\n        xuất xứ: Việt Nam\n\n        Kích thước: Dài 30.0cm x Rộng 25.0cm x Cao 10.0cm\n        Trọng lượng: 0.6kg"
+  },
+  {
+    "id": 17,
+    "name": "Balo Adidas Classic 3-Stripes",
+    "brand": "Adidas",
+    "category": "phụ kiện",
+    "alias": "balo-adidas-classic",
+    "shop": "Giày Thể Thao Phong Cách",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.6,
+    "review_count": 0,
+    "description": "Balo Adidas Classic 3-Stripes với thiết kế đơn giản, logo ba sọc đặc trưng. Nhiều ngăn tiện dụng, có ngăn đựng laptop 15 inch, dung tích lớn phù hợp cho đi học, đi làm và đi chơi.",
+    "specifications": [
+      {
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      }
+    ],
+    "dimensions": {
+      "length": 15.0,
+      "width": 30.0,
+      "height": 45.0,
+      "weight": 0.8
+    },
+    "full_context": "ID Sản phẩm: 17\n        Tên sản phẩm: Balo Adidas Classic 3-Stripes\n        link: http://localhost:5173/p/balo-adidas-classic \n        Thương hiệu: Adidas\n        Danh mục: phụ kiện\n        Cửa hàng: Giày Thể Thao Phong Cách\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.6/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Balo Adidas Classic 3-Stripes với thiết kế đơn giản, logo ba sọc đặc trưng. Nhiều ngăn tiện dụng, có ngăn đựng laptop 15 inch, dung tích lớn phù hợp cho đi học, đi làm và đi chơi.\n\n        Thông số kỹ thuật:\n        Xuất xứ: Việt Nam\n\n        Kích thước: Dài 15.0cm x Rộng 30.0cm x Cao 45.0cm\n        Trọng lượng: 0.8kg"
+  },
+  {
+    "id": 18,
+    "name": "Áo Polo Puma ESS Pique",
+    "brand": "Puma",
+    "category": "quần áo",
+    "alias": "ao-polo-puma-ess",
+    "shop": "Phụ Kiện Thời Trang Thanh Thảo",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.5,
+    "review_count": 0,
+    "description": "Áo polo Puma ESS Pique với chất liệu pique thoáng mát, thấm hút mồ hôi tốt. Thiết kế cổ điển với logo mèo Puma thêu tinh tế. Phù hợp cho cả đi làm, đi chơi và hoạt động thể thao nhẹ nhàng.",
+    "specifications": [
+      {
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 18\n        Tên sản phẩm: Áo Polo Puma ESS Pique\n        link: http://localhost:5173/p/ao-polo-puma-ess \n        Thương hiệu: Puma\n        Danh mục: quần áo\n        Cửa hàng: Phụ Kiện Thời Trang Thanh Thảo\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.5/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Áo polo Puma ESS Pique với chất liệu pique thoáng mát, thấm hút mồ hôi tốt. Thiết kế cổ điển với logo mèo Puma thêu tinh tế. Phù hợp cho cả đi làm, đi chơi và hoạt động thể thao nhẹ nhàng.\n\n        Thông số kỹ thuật:\n        Xuất xứ: Việt Nam\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 19,
+    "name": "Giày Tập Luyện Reebok Nano X1",
+    "brand": "Reebok",
+    "category": "giày",
+    "alias": "giay-tap-luyen-reebok-nano",
+    "shop": "Thời Trang Thể Thao Minh Tâm",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.8,
+    "review_count": 0,
+    "description": "Giày tập luyện đa năng Reebok Nano X1 phù hợp cho nhiều bộ môn từ chạy bộ đến nâng tạ. Công nghệ Floatride Energy đem lại sự êm ái, trong khi phần upper Flexweave đảm bảo sự ôm chân và thoáng khí.",
+    "specifications": [
+      {
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 19\n        Tên sản phẩm: Giày Tập Luyện Reebok Nano X1\n        link: http://localhost:5173/p/giay-tap-luyen-reebok-nano \n        Thương hiệu: Reebok\n        Danh mục: giày\n        Cửa hàng: Thời Trang Thể Thao Minh Tâm\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.8/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Giày tập luyện đa năng Reebok Nano X1 phù hợp cho nhiều bộ môn từ chạy bộ đến nâng tạ. Công nghệ Floatride Energy đem lại sự êm ái, trong khi phần upper Flexweave đảm bảo sự ôm chân và thoáng khí.\n\n        Thông số kỹ thuật:\n        Xuất xứ: Việt Nam\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 20,
+    "name": "Áo Thun Under Armour Tech 2.0",
+    "brand": "Under Armour",
+    "category": "quần áo",
+    "alias": "ao-thun-under-armour-tech",
+    "shop": "Phụ Kiện Thời Trang Thanh Thảo",
+    "price": 200000.0,
+    "discount_percent": 10.0,
+    "final_price": 180000.0,
+    "in_stock": "\u0001",
+    "average_rating": 4.7,
+    "review_count": 0,
+    "description": "Áo thun Under Armour Tech 2.0 với công nghệ HeatGear® giúp thấm hút mồ hôi nhanh và khô nhanh. Chất liệu siêu nhẹ và mềm mại, tạo cảm giác thoải mái suốt cả ngày dài hoạt động.",
+    "specifications": [
+      {
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 20\n        Tên sản phẩm: Áo Thun Under Armour Tech 2.0\n        link: http://localhost:5173/p/ao-thun-under-armour-tech \n        Thương hiệu: Under Armour\n        Danh mục: quần áo\n        Cửa hàng: Phụ Kiện Thời Trang Thanh Thảo\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 180,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 4.7/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        Áo thun Under Armour Tech 2.0 với công nghệ HeatGear® giúp thấm hút mồ hôi nhanh và khô nhanh. Chất liệu siêu nhẹ và mềm mại, tạo cảm giác thoải mái suốt cả ngày dài hoạt động.\n\n        Thông số kỹ thuật:\n        Xuất xứ: Việt Nam\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 21,
+    "name": "Áo coolmate",
+    "brand": null,
+    "category": null,
+    "alias": "ao-coolmate",
+    "shop": "John Store",
+    "price": 250000.0,
+    "discount_percent": 20.0,
+    "final_price": 200000.0,
+    "in_stock": "\u0000",
+    "average_rating": 0.0,
+    "review_count": 0,
+    "description": "pẹ·epd oá·ao",
+    "specifications": [
+      {
+        "name": "Hãng",
+        "value": "Coolmate"
+      },
+      {
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 21\n        Tên sản phẩm: Áo coolmate\n        link: http://localhost:5173/p/ao-coolmate \n        Thương hiệu: None\n        Danh mục: None\n        Cửa hàng: John Store\n        Giá gốc: 250,000 VNĐ\n        Giảm giá: 20.0%\n        Giá khuyến mãi: 200,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 0.0/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        pẹ·epd oá·ao\n\n        Thông số kỹ thuật:\n        Hãng: Coolmate, Xuất xứ: Việt Nam\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 22,
+    "name": "Dép quai đen mới 2025",
+    "brand": null,
+    "category": null,
+    "alias": "dep-quai-den-moi-2025",
+    "shop": "John Store",
+    "price": 145000.0,
+    "discount_percent": 50.0,
+    "final_price": 72500.0,
+    "in_stock": "\u0000",
+    "average_rating": 0.0,
+    "review_count": 0,
+    "description": "",
+    "specifications": [
+      {
+        "name": "Hãng",
+        "value": "Bitis"
+      },
+      {
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 22\n        Tên sản phẩm: Dép quai đen mới 2025\n        link: http://localhost:5173/p/dep-quai-den-moi-2025 \n        Thương hiệu: None\n        Danh mục: None\n        Cửa hàng: John Store\n        Giá gốc: 145,000 VNĐ\n        Giảm giá: 50.0%\n        Giá khuyến mãi: 72,500 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 0.0/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        \n\n        Thông số kỹ thuật:\n        Hãng: Bitis, Xuất xứ: Việt Nam\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 23,
+    "name": "Dép tổ ong công nghệ nano",
+    "brand": null,
+    "category": null,
+    "alias": "dep-to-ong-cong-nghe-nano",
+    "shop": "John Store",
+    "price": 200000.0,
+    "discount_percent": 50.0,
+    "final_price": 100000.0,
+    "in_stock": "\u0000",
+    "average_rating": 0.0,
+    "review_count": 0,
+    "description": "",
+    "specifications": [
+      {
+        "name": "Hãng",
+        "value": "Ba anh em"
+      },
+      {
+        "name": "Xuất xứ",
+        "value": "Việt Nam"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 23\n        Tên sản phẩm: Dép tổ ong công nghệ nano\n        link: http://localhost:5173/p/dep-to-ong-cong-nghe-nano \n        Thương hiệu: None\n        Danh mục: None\n        Cửa hàng: John Store\n        Giá gốc: 200,000 VNĐ\n        Giảm giá: 50.0%\n        Giá khuyến mãi: 100,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 0.0/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        \n\n        Thông số kỹ thuật:\n        Hãng: Ba anh em, Xuất xứ: Việt Nam\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 26,
+    "name": "Mô hình Zoro mới nhất 2025",
+    "brand": null,
+    "category": null,
+    "alias": "mo-hinh-zoro-moi-nhat-2025",
+    "shop": "John Store",
+    "price": 500000.0,
+    "discount_percent": 20.0,
+    "final_price": 400000.0,
+    "in_stock": "\u0000",
+    "average_rating": 0.0,
+    "review_count": 0,
+    "description": "",
+    "specifications": [
+      {
+        "name": "Xuất xứ",
+        "value": "Trung Quốc"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 26\n        Tên sản phẩm: Mô hình Zoro mới nhất 2025\n        link: http://localhost:5173/p/mo-hinh-zoro-moi-nhat-2025 \n        Thương hiệu: None\n        Danh mục: None\n        Cửa hàng: John Store\n        Giá gốc: 500,000 VNĐ\n        Giảm giá: 20.0%\n        Giá khuyến mãi: 400,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 0.0/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        \n\n        Thông số kỹ thuật:\n        Xuất xứ: Trung Quốc\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 27,
+    "name": "Mô hình Luffy",
+    "brand": null,
+    "category": null,
+    "alias": "mo-hinh-luffy",
+    "shop": "John Store",
+    "price": 500000.0,
+    "discount_percent": 5.0,
+    "final_price": 475000.0,
+    "in_stock": "\u0000",
+    "average_rating": 0.0,
+    "review_count": 0,
+    "description": "",
+    "specifications": [
+      {
+        "name": "Xuất xứ",
+        "value": "Trung Quốc"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 27\n        Tên sản phẩm: Mô hình Luffy\n        link: http://localhost:5173/p/mo-hinh-luffy \n        Thương hiệu: None\n        Danh mục: None\n        Cửa hàng: John Store\n        Giá gốc: 500,000 VNĐ\n        Giảm giá: 5.0%\n        Giá khuyến mãi: 475,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 0.0/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        \n\n        Thông số kỹ thuật:\n        Xuất xứ: Trung Quốc\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  },
+  {
+    "id": 28,
+    "name": "Quạt cầm tay mini",
+    "brand": null,
+    "category": null,
+    "alias": "quat-cam-tay-mini",
+    "shop": "John Store",
+    "price": 300000.0,
+    "discount_percent": 10.0,
+    "final_price": 270000.0,
+    "in_stock": "\u0000",
+    "average_rating": 0.0,
+    "review_count": 0,
+    "description": "",
+    "specifications": [
+      {
+        "name": "Xuất xứ",
+        "value": "Trung Quốc"
+      }
+    ],
+    "dimensions": {
+      "length": 0.0,
+      "width": 0.0,
+      "height": 0.0,
+      "weight": 0.0
+    },
+    "full_context": "ID Sản phẩm: 28\n        Tên sản phẩm: Quạt cầm tay mini\n        link: http://localhost:5173/p/quat-cam-tay-mini \n        Thương hiệu: None\n        Danh mục: None\n        Cửa hàng: John Store\n        Giá gốc: 300,000 VNĐ\n        Giảm giá: 10.0%\n        Giá khuyến mãi: 270,000 VNĐ\n        Trạng thái: Còn hàng\n        Đánh giá: 0.0/5 (0 lượt đánh giá)\n\n        Mô tả sản phẩm:\n        \n\n        Thông số kỹ thuật:\n        Xuất xứ: Trung Quốc\n\n        Kích thước: Dài 0.0cm x Rộng 0.0cm x Cao 0.0cm\n        Trọng lượng: 0.0kg"
+  }
+]
