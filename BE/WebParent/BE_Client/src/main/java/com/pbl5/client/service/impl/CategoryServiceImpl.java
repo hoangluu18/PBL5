@@ -2,12 +2,15 @@ package com.pbl5.client.service.impl;
 
 import com.pbl5.client.dto.BrandDto;
 import com.pbl5.client.dto.category.CategoryDto;
+import com.pbl5.client.dto.category.RootCategoryDto;
 import com.pbl5.client.exception.CategoryNotFoundException;
 import com.pbl5.client.repository.CategoryRepository;
 import com.pbl5.client.service.CategoryService;
 import com.pbl5.common.entity.Brand;
 import com.pbl5.common.entity.Category;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -73,5 +76,17 @@ public class CategoryServiceImpl implements CategoryService {
         return brandDtos;
     }
 
+    @Override
+    public List<CategoryDto> getAll() {
 
+        List<Category> categories = categoryRepository.findAll(PageRequest.ofSize(16)).getContent();
+        List<CategoryDto> categoryDtos = new ArrayList<>();
+
+        categories.forEach(c -> {
+            CategoryDto dto = new CategoryDto(c.getId(), c.getName(), c.getAlias(), c.getImage());
+            categoryDtos.add(dto);
+        });
+
+        return categoryDtos;
+    }
 }

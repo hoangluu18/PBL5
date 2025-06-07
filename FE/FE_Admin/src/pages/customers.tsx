@@ -171,7 +171,7 @@ const Customers = () => {
             src={getAvatarUrl(record.avatar)} 
             icon={<UserOutlined />} 
           />
-          <Link to={`/customers/${record.id}`}>
+          <Link to={`/shop/customers/${record.id}`}>
             <Text strong>{record.fullName}</Text>
           </Link>
         </Space>
@@ -218,7 +218,7 @@ const Customers = () => {
       render: (_: any, record: Customer) => (
         <Space size="middle">
           <Tooltip title="Xem chi tiết">
-            <Link to={`/customers/${record.id}`}>
+            <Link to={`/shop/customers/${record.id}`}>
               <Button type="primary" size="small" icon={<EyeOutlined />} />
             </Link>
           </Tooltip>

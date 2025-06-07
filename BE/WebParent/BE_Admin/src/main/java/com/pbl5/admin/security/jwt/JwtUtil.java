@@ -28,11 +28,11 @@ public class JwtUtil {
             throw new IllegalArgumentException("Customer cannot be null");
         }
         String subject = "";
+
         if(user.getShop() != null){
-             subject = String.format("%s,%s", user.getShop().getId(), user.getShop().getName());
-        }
-        else{
-             subject = String.format("%s,%s", user.getId(), user.getFirstName())+ " " + user.getLastName();
+            subject = String.format("%s,%s", user.getShop().getId(), user.getShop().getName());
+        }else {
+            subject = String.format("%s,%s", user.getId(), user.getFirstName() + " " + user.getLastName());
         }
 
 

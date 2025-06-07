@@ -26,6 +26,10 @@ public class JwtTokenService {
         }else if (user.getRoles().stream().map(Role::getName).anyMatch(r -> r.equals("Logistic"))) {
             authResponse.setName(user.getFirstName() + " " + user.getLastName());
             authResponse.setPhoto(user.getPhoto());
+
+        } else if (user.getRoles().stream().map(Role::getName).anyMatch(r -> r.equals("Admin"))) {
+            authResponse.setName(user.getFirstName() + " " + user.getLastName());
+            authResponse.setPhoto(user.getPhoto());
         }
         else if (user.getRoles().stream().map(Role::getName).anyMatch(r -> r.equals("Admin"))) {
             authResponse.setName(user.getFirstName() + " " + user.getLastName());

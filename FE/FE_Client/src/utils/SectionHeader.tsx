@@ -22,9 +22,9 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({ title, icon, linkText, li
             <Title level={2} style={{ color: color }}>
                 {title} {icon && <span className="ml-1">{icon}</span>}
             </Title>
-            {
+            {/* {
                 linkUrl && <Link className="text-primary underline" to={linkUrl}>{linkText} <ArrowRightOutlined /></Link>
-            }
+            } */}
 
         </Row>
 
