@@ -7,7 +7,10 @@ import com.pbl5.admin.dto.orders.*;
 import com.pbl5.admin.repository.OrderDetailRepository;
 import com.pbl5.admin.repository.OrderRepository;
 import com.pbl5.admin.service.OrderService;
+import com.pbl5.admin.service.shop.ShopProfileService;
 import com.pbl5.admin.specification.OrderSpecification;
+import com.pbl5.client.controller.ShopInfoController;
+import com.pbl5.client.service.ShopInfoService;
 import com.pbl5.common.entity.Order;
 import com.pbl5.common.entity.OrderDetail;
 import com.pbl5.common.entity.product.Product;
@@ -34,6 +37,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private ShopProfileService shopProfileService;
 
     @Override
     public void updateOrder(OrderStatusDto orderStatusDto) {
@@ -81,6 +87,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<RecentOrderDto> getRecentOrders(int shopId) {
+        shopId = shopProfileService.getShopIdByUserId(shopId);
         List<Order> recentOrders = orderRepository.findRecentOrders(shopId);
 
         return recentOrders.stream()

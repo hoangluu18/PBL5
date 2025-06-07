@@ -49,6 +49,7 @@ const NavBar: React.FC = () => {
             key: '1',
             label: 'Profile',
             icon: <UserOutlined />,
+            onClick: () => navigate('/shop/profile')
         },
         {
             key: '2',

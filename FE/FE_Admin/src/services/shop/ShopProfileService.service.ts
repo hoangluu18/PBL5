@@ -57,4 +57,28 @@ export class ShopProfileService {
             throw error;
         }
     }
+
+async getShopIdByUserId(userId: number): Promise<number> {
+    try {
+        console.log(`Calling API: ${API_URL}/api/shop/profile/get-shop-id with userId=${userId}`);
+        
+        // Đảm bảo tham số userId được truyền đúng
+        const response = await axios.get(`${API_URL}/api/shop/profile/get-shop-id`, {
+            params: { userId }
+        });
+        
+        console.log("API response:", response.data);
+        
+        if (!response.data || !response.data.data) {
+            throw new Error("Invalid response format");
+        }
+        
+        return response.data.data;
+    } catch (error) {
+        console.error('Error fetching shop ID by user ID:', error);
+        throw error;
+    }
+}
+
+
 }

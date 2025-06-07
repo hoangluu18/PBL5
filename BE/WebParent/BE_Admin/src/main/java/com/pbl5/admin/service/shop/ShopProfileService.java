@@ -6,4 +6,5 @@ public interface ShopProfileService {
     ShopProfileDto getShopProfileByUserId(int userId);
     ShopProfileDto updateShopProfile(ShopProfileDto shopProfileDto);
     void updateShopPhoto(int shopId, String photoUrl);
+    int getShopIdByUserId(int userId);
 }

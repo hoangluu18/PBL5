@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useContext } from 'react';
 import axios from '../axios.customize';
 import { 
   Table, Card, Input, Button, Space, Tag, Typography, 
@@ -12,7 +12,8 @@ import {
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import type { TableProps } from 'antd';
-
+import { AuthContext } from '../utils/auth.context';
+import { ShopProfileService } from '../services/shop/ShopProfileService.service';
 const { Title, Text } = Typography;
 
 interface Customer {
@@ -54,6 +55,7 @@ const styles = `
 `;
 
 const Customers = () => {
+  const { user } = useContext(AuthContext);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
@@ -65,6 +67,8 @@ const Customers = () => {
     activeCustomers: 0,
     totalSpending: 0
   });
+  const [shopId, setShopId] = useState<number | undefined>(undefined);
+  const shopProfileService = new ShopProfileService(); // Thêm service
 
   // Add styles to document
   useEffect(() => {
@@ -77,17 +81,18 @@ const Customers = () => {
     };
   }, []);
 
-  const fetchCustomers = async () => {
+   const fetchCustomers = async () => {
+    if (shopId === undefined) {
+      console.warn("Cannot fetch customers: shopId not available");
+      return;
+    }
+
     try {
       setLoading(true);
-  
-      const userData = localStorage.getItem('user');
-      const shopId = userData ? JSON.parse(userData).id : null;
-  
-      if (!shopId) {
-        throw new Error('Không tìm thấy shopId');
-      }
-  
+      
+      console.log("Fetching customers with shopId:", shopId);
+      
+      // Sử dụng shopId từ state thay vì từ localStorage
       const response = await axios.get(`/saleperson/customers?shopId=${shopId}`);
       const data = response.data;
       setCustomers(data);
@@ -111,10 +116,35 @@ const Customers = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const fetchShopId = async () => {
+      try {
+        if (user && user.id) {
+          console.log("Calling API with userId:", user.id);
+          
+          const userId = parseInt(String(user.id));
+          const fetchedShopId = await shopProfileService.getShopIdByUserId(userId);
+          console.log("Shop ID received:", fetchedShopId);
+          setShopId(fetchedShopId);
+        } else {
+          console.warn("User ID not available");
+        }
+      } catch (error) {
+        console.error("Failed to fetch shop ID:", error);
+        message.error("Không thể lấy thông tin Shop ID");
+      }
+    };
+    
+    fetchShopId();
+  }, [user]);
+
 
   useEffect(() => {
-    fetchCustomers();
-  }, []);
+    // Chỉ fetch khi đã có shopId
+    if (shopId !== undefined) {
+      fetchCustomers();
+    }
+  }, [shopId]);
 
   useEffect(() => {
     const filtered = customers.filter(customer => 

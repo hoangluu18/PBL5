@@ -67,6 +67,15 @@ public class ShopProfileServiceImpl implements ShopProfileService {
         shopRepository.save(shop);
     }
 
+    @Override
+    public int getShopIdByUserId(int userId) {
+        int shopId = shopRepository.findShopIdByUserId(userId);
+        if (shopId <= 0) {
+            throw new RuntimeException("Shop not found for user ID: " + userId);
+        }
+        return shopId;
+    }
+
     private ShopProfileDto mapToDto(Shop shop) {
         ShopProfileDto dto = new ShopProfileDto();
         dto.setId(shop.getId());

@@ -419,7 +419,7 @@ export default function CustomerDetail() {
           showIcon
           action={
             <Button type="primary">
-              <Link to="/customers">Quay lại danh sách</Link>
+              <Link to="/shop/customers">Quay lại danh sách</Link>
             </Button>
           }
         />
@@ -432,8 +432,8 @@ export default function CustomerDetail() {
       <Breadcrumb
         style={{ marginBottom: '16px' }}
         items={[
-          { title: <Link to="/dashboard">Trang chủ</Link> },
-          { title: <Link to="/customers">Quản lý khách hàng</Link> },
+          { title: <Link to="/shop/dashboard">Trang chủ</Link> },
+          { title: <Link to="/shop/customers">Quản lý khách hàng</Link> },
           { title: customer?.fullName || `Khách hàng #${customerId}` },
         ]}
       />
@@ -443,7 +443,7 @@ export default function CustomerDetail() {
           <UserOutlined /> {customer?.fullName}
         </Title>
         <Button type="primary" icon={<ArrowLeftOutlined />}>
-          <Link to="/customers" style={{ color: 'white' }}>Quay lại danh sách</Link>
+          <Link to="/shop/customers" style={{ color: 'white' }}>Quay lại danh sách</Link>
         </Button>
       </div>
 
