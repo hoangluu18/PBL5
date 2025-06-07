@@ -46,6 +46,10 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     itemsByShop[item.shopId].subtotal += item.price * item.quantity;
   });
 
+  const formatPrice = (price: number) => {
+    return Math.round(price).toLocaleString('vi-VN') + 'đ';
+  };
+
   return (
     <Card
       title={<div style={{ textAlign: 'center' }}>Đơn hàng</div>}
@@ -75,11 +79,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                             marginRight: '10px',
                           }}
                         >
-                          <Avatar 
-  shape="square" 
-  size={60} 
-  src={item.image.startsWith('http') ? item.image : `http://localhost:5173/src/assets/product-images/${item.image}`} 
-/>
+                          <Avatar
+                            shape="square"
+                            size={60}
+                            src={item.image.startsWith('http') ? item.image : `http://localhost:5173/src/assets/product-images/${item.image}`}
+                          />
                         </div>
                       }
                       title={
@@ -87,7 +91,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                       }
                       description={
                         <div style={{ marginTop: '5px' }}>
-                          {item.price.toLocaleString()}đ
+                          <Text strong style={{ color: '#ff4d4f' }}>
+                            {formatPrice(item.price)}
+                          </Text>
                         </div>
                       }
                     />
@@ -103,7 +109,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
                 }}
               >
                 <Text strong>Tổng tiền shop:</Text>
-                <Text strong>{shop.subtotal.toLocaleString()}đ</Text>
+                <Text strong>{formatPrice(shop.subtotal)}</Text>
               </div>
               <Divider style={{ margin: '10px 0' }} />
             </div>
@@ -117,7 +123,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
             }}
           >
             <Text>Tổng sản phẩm:</Text>
-            <Text>{subtotal.toLocaleString()}đ</Text>
+            <Text>{formatPrice(subtotal)}</Text>
           </div>
 
 
@@ -128,7 +134,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
               Tổng cộng:
             </Title>
             <Title level={4} style={{ margin: 0 }}>
-              {total.toLocaleString()}đ
+              {formatPrice(total)}
             </Title>
           </div>
         </>

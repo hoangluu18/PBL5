@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
@@ -35,4 +37,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("UPDATE Product p SET p.reviewCount = (SELECT COUNT(r) FROM Review r WHERE r.product.id = ?1) " +
             "WHERE p.id = ?1")
     void updateReviewCount(Integer productId);
+
+    @Query("SELECT p FROM Product p WHERE p.enabled = true ORDER BY p.reviewCount DESC, p.averageRating DESC LIMIT 30")
+    List<Product> getTopRatedProducts();
 }

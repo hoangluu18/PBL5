@@ -47,36 +47,36 @@ const CartPage: React.FC = () => {
     // Tìm item trong state hiện tại
     const item = cartItems.find(item => item.productId === productId);
     if (!item) return;
-    
+
     // Tính toán số lượng mới
     const newQuantity = Math.max(1, item.quantity + change);
-    
+
     // Cập nhật UI trước (optimistic update)
     setCartItems(currentItems =>
-        currentItems.map(item =>
-            item.productId === productId
-                ? { ...item, quantity: newQuantity }
-                : item
-        )
+      currentItems.map(item =>
+        item.productId === productId
+          ? { ...item, quantity: newQuantity }
+          : item
+      )
     );
-    
+
     try {
-        // Sau đó cập nhật trong database
-        await cartService.updateCartItemQuantity(cartItemId, newQuantity);
+      // Sau đó cập nhật trong database
+      await cartService.updateCartItemQuantity(cartItemId, newQuantity);
     } catch (error) {
-        console.error("Error updating quantity:", error);
-        // Khôi phục UI nếu có lỗi
-        setCartItems(currentItems =>
-            currentItems.map(item =>
-                item.productId === productId
-                    ? { ...item, quantity: item.quantity - change }
-                    : item
-            )
-        );
-        // Hiển thị thông báo lỗi
-        alert("Cập nhật số lượng thất bại. Vui lòng thử lại.");
+      console.error("Error updating quantity:", error);
+      // Khôi phục UI nếu có lỗi
+      setCartItems(currentItems =>
+        currentItems.map(item =>
+          item.productId === productId
+            ? { ...item, quantity: item.quantity - change }
+            : item
+        )
+      );
+      // Hiển thị thông báo lỗi
+      alert("Cập nhật số lượng thất bại. Vui lòng thử lại.");
     }
-};
+  };
 
   const handleDeleteItem = async (cartItemId: number) => {
     const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?");
@@ -135,10 +135,10 @@ const CartPage: React.FC = () => {
         <div className="empty-cart-content">
           <div className="empty-cart-illustration">
             <div className="cart-image-container">
-              <img 
-                src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-5521508-4610092.png" 
-                alt="Empty Cart" 
-                className="empty-cart-image" 
+              <img
+                src="https://cdni.iconscout.com/illustration/premium/thumb/empty-cart-5521508-4610092.png"
+                alt="Empty Cart"
+                className="empty-cart-image"
               />
             </div>
             <div className="cart-icon-overlay">
@@ -155,7 +155,9 @@ const CartPage: React.FC = () => {
     );
   }
 
-  const formatPrice = (price: number) => `${price.toLocaleString()}đ`;
+  const formatPrice = (price: number) => {
+    return Math.round(price).toLocaleString('vi-VN') + 'đ';
+  };
 
   const handleCheckout = () => {
     if (!customerId) {

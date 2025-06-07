@@ -27,109 +27,109 @@ const OrderDetail: React.FC = () => {
   const [isRefunding, setIsRefunding] = useState<boolean>(false);
 
 
-const checkRefundEligibility = async (orderId: number) => {
-  try {
-    // Lấy token từ localStorage
-    const token = localStorage.getItem('access_token');
-    
-    // Debug logs
-    console.log("Token:", token);
-    console.log("Request to:", `http://localhost:8081/api/payment/status/${orderId}`);
-    
-    const response = await axios.get(`http://localhost:8081/api/payment/status/${orderId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
+  const checkRefundEligibility = async (orderId: number) => {
+    try {
+      // Lấy token từ localStorage
+      const token = localStorage.getItem('access_token');
 
-    console.log('Kết quả kiểm tra escrow:', response.data);
+      // Debug logs
+      console.log("Token:", token);
+      console.log("Request to:", `http://localhost:8081/api/payment/status/${orderId}`);
 
-    // Backend chỉ trả về {"escrowStatus":"HOLDING"}
-    // Kiểm tra nếu escrowStatus là HOLDING
-    if (response.data.escrowStatus === 'HOLDING') {
-      setIsEligibleForRefund(true);
-    }
-  } catch (error) {
-    console.error('Lỗi kiểm tra điều kiện hoàn tiền:', error);
-    
-    // Xử lý lỗi cụ thể hơn
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
-      console.error("Lỗi xác thực. Token có thể đã hết hạn hoặc không hợp lệ");
-      message.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
-    }
-  }
-};
-
-const handleRefund = async () => {
-  if (!refundReason.trim()) {
-    message.error('Vui lòng nhập lý do hoàn tiền');
-    return;
-  }
-
-  setIsRefunding(true);
-  try {
-    // Lấy token từ localStorage - chú ý sửa từ 'accessToken' thành 'access_token'
-    const token = localStorage.getItem('access_token');
-    
-    // Debug logs
-    console.log("Token hoàn tiền:", token);
-    console.log("Request to:", `http://localhost:8081/api/payment/refund/${id}`);
-    
-    await axios.post(
-      `http://localhost:8081/api/payment/refund/${id}`,
-      { reason: refundReason },
-      {
+      const response = await axios.get(`http://localhost:8081/api/payment/status/${orderId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
-      }
-    );
+      });
 
-    message.success('Hoàn tiền thành công!');
-    setIsRefundModalVisible(false);
-    
-    // Tải lại thông tin đơn hàng
-    const data = await getOrderDetails(parseInt(id!), customerId);
-    setOrderDetails(data);
-    setIsEligibleForRefund(false);
-  } catch (error) {
-    console.error('Lỗi khi xử lý hoàn tiền:', error);
-    
-    // Xử lý lỗi chi tiết hơn
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
-      message.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
-    } else {
-      message.error('Có lỗi xảy ra khi hoàn tiền. Vui lòng thử lại sau.');
-    }
-  } finally {
-    setIsRefunding(false);
-  }
-};
+      console.log('Kết quả kiểm tra escrow:', response.data);
 
- useEffect(() => {
-  const fetchOrderDetails = async () => {
-    if (!id) return;
-
-    try {
-      setLoading(true);
-      console.log('Đang tải thông tin đơn hàng ID:', id, 'Khách hàng ID:', customerId);
-      const data = await getOrderDetails(parseInt(id), customerId);
-      setOrderDetails(data);
-      
-      // Kiểm tra điều kiện hoàn tiền chỉ khi đơn hàng đã giao và thanh toán bằng ví
-      if (data.orderDto.orderStatus === 'DELIVERED' && 
-          data.orderDto.paymentMethod === 'WALLET') {
-        await checkRefundEligibility(parseInt(id));
+      // Backend chỉ trả về {"escrowStatus":"HOLDING"}
+      // Kiểm tra nếu escrowStatus là HOLDING
+      if (response.data.escrowStatus === 'HOLDING') {
+        setIsEligibleForRefund(true);
       }
     } catch (error) {
-      console.error('Lỗi khi lấy thông tin đơn hàng:', error);
-    } finally {
-      setLoading(false);
+      console.error('Lỗi kiểm tra điều kiện hoàn tiền:', error);
+
+      // Xử lý lỗi cụ thể hơn
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        console.error("Lỗi xác thực. Token có thể đã hết hạn hoặc không hợp lệ");
+        message.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
+      }
     }
   };
 
-  fetchOrderDetails();
-}, [id, customerId]);
+  const handleRefund = async () => {
+    if (!refundReason.trim()) {
+      message.error('Vui lòng nhập lý do hoàn tiền');
+      return;
+    }
+
+    setIsRefunding(true);
+    try {
+      // Lấy token từ localStorage - chú ý sửa từ 'accessToken' thành 'access_token'
+      const token = localStorage.getItem('access_token');
+
+      // Debug logs
+      console.log("Token hoàn tiền:", token);
+      console.log("Request to:", `http://localhost:8081/api/payment/refund/${id}`);
+
+      await axios.post(
+        `http://localhost:8081/api/payment/refund/${id}`,
+        { reason: refundReason },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      message.success('Hoàn tiền thành công!');
+      setIsRefundModalVisible(false);
+
+      // Tải lại thông tin đơn hàng
+      const data = await getOrderDetails(parseInt(id!), customerId);
+      setOrderDetails(data);
+      setIsEligibleForRefund(false);
+    } catch (error) {
+      console.error('Lỗi khi xử lý hoàn tiền:', error);
+
+      // Xử lý lỗi chi tiết hơn
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        message.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
+      } else {
+        message.error('Có lỗi xảy ra khi hoàn tiền. Vui lòng thử lại sau.');
+      }
+    } finally {
+      setIsRefunding(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      if (!id) return;
+
+      try {
+        setLoading(true);
+        console.log('Đang tải thông tin đơn hàng ID:', id, 'Khách hàng ID:', customerId);
+        const data = await getOrderDetails(parseInt(id), customerId);
+        setOrderDetails(data);
+
+        // Kiểm tra điều kiện hoàn tiền chỉ khi đơn hàng đã giao và thanh toán bằng ví
+        if (data.orderDto.orderStatus === 'DELIVERED' &&
+          data.orderDto.paymentMethod === 'WALLET') {
+          await checkRefundEligibility(parseInt(id));
+        }
+      } catch (error) {
+        console.error('Lỗi khi lấy thông tin đơn hàng:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
+  }, [id, customerId]);
 
   if (loading) {
     return (
@@ -187,7 +187,7 @@ const handleRefund = async () => {
   };
 
   const formatPrice = (price: number) => {
-    return price.toLocaleString('vi-VN') + ' đ';
+    return Math.floor(price).toLocaleString('vi-VN') + 'đ';
   };
 
   const styles = `
@@ -493,17 +493,17 @@ const handleRefund = async () => {
         </div>
 
         {isEligibleForRefund && (
-            <Button 
-              type="primary" 
-              danger
-              onClick={() => setIsRefundModalVisible(true)}
-              className="refund-button"
-            >
-              Yêu cầu hoàn tiền
-            </Button>
-          )}
+          <Button
+            type="primary"
+            danger
+            onClick={() => setIsRefundModalVisible(true)}
+            className="refund-button"
+          >
+            Yêu cầu hoàn tiền
+          </Button>
+        )}
 
-                  {/* Modal hoàn tiền */}
+        {/* Modal hoàn tiền */}
         <Modal
           title="Yêu cầu hoàn tiền"
           open={isRefundModalVisible}

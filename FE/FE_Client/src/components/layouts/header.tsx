@@ -14,6 +14,7 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/auth.context";
 import CartService from "../../services/cart.service";
 import { clearBuyNowData } from "../../services/checkout.service";
+import { FaBuyNLarge } from "react-icons/fa";
 
 const { Header } = Layout;
 
@@ -48,54 +49,60 @@ const App = () => {
     };
 
     const userMenu = (
-         <Menu
-        items={[
-            {
-                key: '1',
-                label: 'Hồ sơ cá nhân',
-                icon: <UserOutlined />,
-                onClick: () => navigate('/profile')
-            },
-            {
-                key: '2',
-                label: 'Cửa hàng yêu thích',
-                icon: <HeartOutlined />,
-                onClick: () => navigate('/followed-shops')
-            },
-            {
-                key: '3',
-                label: 'Ví của tôi',
-                icon: <WalletOutlined />,
-                onClick: () => navigate('/wallet')
-            },
-            {
-                key: '4',
-                label: 'Đơn hàng của tôi',
-                icon: <ShoppingCartOutlined />,
-                onClick: () => navigate('/orders')
-            },
-            {
-                type: 'divider'
-            },
-            {
-                key: '5',
-                label: 'Đăng xuất',
-                icon: <LogoutOutlined />,
-                onClick: () => {
-                    localStorage.removeItem("access_token");
-                    localStorage.removeItem("customer");
-                    setCustomer({
-                        id: 0,
-                        username: "",
-                        email: "",
-                        phoneNumber: "",
-                        avatar: ""
-                    });
-                    navigate('/login');
+        <Menu
+            items={[
+                {
+                    key: '1',
+                    label: 'Hồ sơ cá nhân',
+                    icon: <UserOutlined />,
+                    onClick: () => navigate('/profile')
+                },
+                {
+                    key: '2',
+                    label: 'Cửa hàng yêu thích',
+                    icon: <HeartOutlined />,
+                    onClick: () => navigate('/followed-shops')
+                },
+                {
+                    key: '3',
+                    label: 'Ví của tôi',
+                    icon: <WalletOutlined />,
+                    onClick: () => navigate('/wallet')
+                },
+                {
+                    key: '4',
+                    label: 'Đơn hàng của tôi',
+                    icon: <ShoppingCartOutlined />,
+                    onClick: () => navigate('/orders')
+                },
+                {
+                    key: '7',
+                    label: 'Đăng kí trở thành người bán hàng',
+                    icon: <FaBuyNLarge />,
+                    onClick: () => navigate('/store-request')
+                },
+                {
+                    type: 'divider'
+                },
+                {
+                    key: '5',
+                    label: 'Đăng xuất',
+                    icon: <LogoutOutlined />,
+                    onClick: () => {
+                        localStorage.removeItem("access_token");
+                        localStorage.removeItem("customer");
+                        setCustomer({
+                            id: 0,
+                            username: "",
+                            email: "",
+                            phoneNumber: "",
+                            avatar: ""
+                        });
+                        navigate('/login');
+                    }
                 }
-            }
-        ]}
-    />
+            ]}
+        />
     );
 
     return (
