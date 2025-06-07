@@ -27,8 +27,15 @@ public class JwtUtil {
         if(user == null){
             throw new IllegalArgumentException("Customer cannot be null");
         }
+        String subject = "";
+        if(user.getShop() != null){
+             subject = String.format("%s,%s", user.getShop().getId(), user.getShop().getName());
+        }
+        else{
+             subject = String.format("%s,%s", user.getId(), user.getFirstName())+ " " + user.getLastName();
+        }
 
-        String subject = String.format("%s,%s", user.getShop().getId(), user.getShop().getName());
+
         long expirationTime = accessTokenExpiration * 60000 + System.currentTimeMillis();
         return Jwts.builder()
                 .setSubject(subject)
