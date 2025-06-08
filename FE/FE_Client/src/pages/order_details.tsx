@@ -27,12 +27,10 @@ const OrderDetail: React.FC = () => {
   const [isRefunding, setIsRefunding] = useState<boolean>(false);
 
 
-const checkRefundEligibility = async (orderId: number) => {
+const checkRefundEligibility = async (orderId: number, deliverDate?: string) => {
   try {
-    // Lấy token từ localStorage
     const token = localStorage.getItem('access_token');
     
-    // Debug logs
     console.log("Token:", token);
     console.log("Request to:", `http://localhost:8081/api/payment/status/${orderId}`);
     
@@ -44,15 +42,41 @@ const checkRefundEligibility = async (orderId: number) => {
 
     console.log('Kết quả kiểm tra escrow:', response.data);
 
-    // Backend chỉ trả về {"escrowStatus":"HOLDING"}
     // Kiểm tra nếu escrowStatus là HOLDING
     if (response.data.escrowStatus === 'HOLDING') {
-      setIsEligibleForRefund(true);
+      // Kiểm tra thời gian giao hàng để quyết định có thể hoàn tiền
+      // Sử dụng deliverDate từ tham số thay vì orderDetails
+      if (deliverDate) {
+        console.log('Ngày giao hàng:', deliverDate);
+        const deliveryDate = new Date(deliverDate);
+        const now = new Date();
+        
+        console.log('Delivery Date:', deliveryDate);
+        console.log('Current Time:', now);
+        
+        // Tính thời gian trôi qua (tính bằng milliseconds)
+        const elapsedTime = now.getTime() - deliveryDate.getTime();
+        
+        console.log('Thời gian đã trôi qua (ms):', elapsedTime);
+        // Thời gian cho phép hoàn tiền: 2 phút = 2 * 60 * 1000 milliseconds
+        const allowedTime = 2 * 60 * 1000; 
+        console.log('Thời gian cho phép (ms):', allowedTime);
+        
+        if (elapsedTime <= allowedTime) {
+          console.log('Đủ điều kiện hoàn tiền!');
+          setIsEligibleForRefund(true);
+        } else {
+          console.log('Quá thời gian cho phép hoàn tiền!');
+        }
+      } else {
+        console.log('Không tìm thấy ngày giao hàng!');
+      }
+    } else {
+      console.log('Escrow không ở trạng thái HOLDING!');
     }
   } catch (error) {
     console.error('Lỗi kiểm tra điều kiện hoàn tiền:', error);
     
-    // Xử lý lỗi cụ thể hơn
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       console.error("Lỗi xác thực. Token có thể đã hết hạn hoặc không hợp lệ");
       message.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại');
@@ -106,7 +130,7 @@ const handleRefund = async () => {
   }
 };
 
- useEffect(() => {
+useEffect(() => {
   const fetchOrderDetails = async () => {
     if (!id) return;
 
@@ -116,10 +140,10 @@ const handleRefund = async () => {
       const data = await getOrderDetails(parseInt(id), customerId);
       setOrderDetails(data);
       
-      // Kiểm tra điều kiện hoàn tiền chỉ khi đơn hàng đã giao và thanh toán bằng ví
-      if (data.orderDto.orderStatus === 'DELIVERED' && 
-          data.orderDto.paymentMethod === 'WALLET') {
-        await checkRefundEligibility(parseInt(id));
+      // Kiểm tra điều kiện hoàn tiền cho cả Wallet và COD
+      if (data.orderDto.orderStatus === 'DELIVERED' &&
+        (data.orderDto.paymentMethod === 'WALLET' || data.orderDto.paymentMethod === 'COD')) {
+        await checkRefundEligibility(parseInt(id), data.orderDto.deliverDate);
       }
     } catch (error) {
       console.error('Lỗi khi lấy thông tin đơn hàng:', error);
