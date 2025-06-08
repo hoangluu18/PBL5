@@ -149,12 +149,13 @@ public class EscrowService {
     /**
      * Tự động giải phóng tiền escrow sau thời gian quy định (2 phút)
      * Chạy mỗi 1 phút
+     * Wallet, COD
      */
     @Scheduled(fixedRate = 60000)
     @Transactional
     public void autoReleaseEscrow() {
+        System.out.println("Auto releaseEscrow is running...");
         try {
-            // Tìm các escrow đang ở trạng thái HOLDING cho đơn hàng đã DELIVERED
             List<Integer> pendingOrderIds = escrowRepository.findPendingOrderIdsNative();
 
             if (pendingOrderIds.isEmpty()) {
@@ -165,7 +166,6 @@ public class EscrowService {
 
             for (Integer orderId : pendingOrderIds) {
                 try {
-                    // Tìm escrow theo ID
                     Optional<Order> orderOpt = orderRepository.findById(orderId);
                     if (!orderOpt.isPresent()) {
                         continue;
@@ -174,22 +174,24 @@ public class EscrowService {
                     Escrow escrow = orderOpt.get().getEscrow();
                     Order order = orderOpt.get();
 
-                    // Lấy thời gian đơn hàng được đánh dấu là đã giao từ OrderTrack
                     Date deliveryTime = orderTrackRepository.findDeliveryTimeByOrderId(order.getId());
 
                     if (deliveryTime == null) {
                         continue;
                     }
 
-                    // Kiểm tra đã vượt quá thời gian quy định chưa (2 phút)
                     long elapsedTime = now.getTime() - deliveryTime.getTime();
                     long requiredTime = 2 * 60 * 1000; // 2 phút
 
                     if (elapsedTime >= requiredTime) {
-                        // Giải phóng tiền
-                        releaseEscrow(escrow);
-                        System.out.println("Đã tự động giải phóng escrow cho đơn hàng " + order.getId() +
-                                " sau " + (elapsedTime / 1000) + " giây");
+                        // Giải phóng cho cả WALLET và COD
+                        if ("COD".equals(escrow.getPaymentMethod())) {
+                            releaseCODEscrow(escrow);
+                            System.out.println("Đã tự động giải phóng COD escrow cho đơn hàng " + order.getId());
+                        } else {
+                            releaseEscrow(escrow);
+                            System.out.println("Đã tự động giải phóng wallet escrow cho đơn hàng " + order.getId());
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -199,6 +201,111 @@ public class EscrowService {
             e.printStackTrace();
         }
     }
+
+    //COD
+    /**
+     * Tạo COD Escrow khi đơn hàng DELIVERED (không cần ví customer)
+     */
+    @Transactional
+    public Escrow createCODEscrow(Order order, Wallet shopWallet, BigDecimal amount) {
+        // Tạo escrow cho COD
+        Escrow escrow = new Escrow();
+        escrow.setOrder(order);
+        escrow.setAmount(amount);
+        escrow.setStatus(Escrow.EscrowStatus.HOLDING);
+        escrow.setCustomerWallet(null); // COD không có customer wallet
+        escrow.setShopWallet(shopWallet);
+        escrow.setPaymentMethod("COD");
+
+        // Tạo transaction tracking cho COD
+        Transaction transaction = new Transaction();
+        transaction.setAmount(amount);
+        transaction.setType(Transaction.TransactionType.COD_ESCROW);
+        transaction.setStatus(Transaction.TransactionStatus.COMPLETED);
+        transaction.setOrder(order);
+        transaction.setTargetWallet(null); // Không có wallet cụ thể
+        transaction.setDescription("Tạo escrow COD cho đơn hàng #" + order.getId());
+
+        transactionService.saveTransaction(transaction);
+
+        System.out.println("Đã tạo COD escrow cho đơn hàng " + order.getId());
+        return escrowRepository.save(escrow);
+    }
+
+
+    /**
+     * Giải phóng tiền COD cho shop (tương tự wallet)
+     */
+    @Transactional
+    public void releaseCODEscrow(Escrow escrow) {
+        if (escrow.getStatus() != Escrow.EscrowStatus.HOLDING) {
+            throw new IllegalStateException("Escrow không ở trạng thái đang giữ tiền");
+        }
+
+        // Lấy ví shop
+        Wallet shopWallet = escrow.getShopWallet();
+        Optional<Wallet> walletOpt = walletRepository.findByIdWithLock(shopWallet.getId());
+
+        if (!walletOpt.isPresent()) {
+            throw new IllegalStateException("Ví shop không tồn tại");
+        }
+
+        Wallet wallet = walletOpt.get();
+
+        // Chuyển tiền vào ví shop
+        walletService.depositToWallet(wallet, escrow.getAmount());
+
+        // Cập nhật trạng thái escrow
+        escrow.setStatus(Escrow.EscrowStatus.RELEASED);
+        escrow.setReleasedAt(new Date());
+        escrowRepository.save(escrow);
+
+        // Tạo giao dịch chuyển tiền COD
+        Transaction transaction = new Transaction();
+        transaction.setAmount(escrow.getAmount());
+        transaction.setType(Transaction.TransactionType.COD_RELEASE);
+        transaction.setStatus(Transaction.TransactionStatus.COMPLETED);
+        transaction.setTargetWallet(wallet);
+        transaction.setOrder(escrow.getOrder());
+        transaction.setDescription("Giải phóng tiền COD cho shop từ đơn hàng #" + escrow.getOrder().getId());
+
+        transactionService.saveTransaction(transaction);
+
+        System.out.println("Đã giải phóng COD escrow cho đơn hàng " + escrow.getOrder().getId());
+    }
+
+    /**
+     * Hoàn tiền COD cho customer
+     */
+    @Transactional
+    public void refundCODEscrow(Escrow escrow, Wallet customerWallet) {
+        if (escrow.getStatus() != Escrow.EscrowStatus.HOLDING) {
+            throw new IllegalStateException("Escrow không ở trạng thái đang giữ tiền");
+        }
+
+        // Nạp tiền vào ví customer
+        walletService.depositToWallet(customerWallet, escrow.getAmount());
+
+        // Cập nhật trạng thái escrow
+        escrow.setStatus(Escrow.EscrowStatus.REFUNDED);
+        escrowRepository.save(escrow);
+
+        // Tạo giao dịch hoàn tiền COD
+        Transaction transaction = new Transaction();
+        transaction.setAmount(escrow.getAmount());
+        transaction.setType(Transaction.TransactionType.COD_REFUND);
+        transaction.setStatus(Transaction.TransactionStatus.COMPLETED);
+        transaction.setTargetWallet(customerWallet);
+        transaction.setOrder(escrow.getOrder());
+        transaction.setDescription("Hoàn tiền COD cho khách hàng từ đơn hàng #" + escrow.getOrder().getId());
+
+        transactionService.saveTransaction(transaction);
+
+        System.out.println("Đã hoàn tiền COD cho khách hàng từ đơn hàng " + escrow.getOrder().getId());
+    }
+
+
+
 
 
 

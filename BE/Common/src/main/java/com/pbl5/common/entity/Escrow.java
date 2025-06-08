@@ -27,7 +27,7 @@ public class Escrow extends IdBaseEntity {
     private Order order;
 
     @ManyToOne
-    @JoinColumn(name = "customer_wallet_id", nullable = false)
+    @JoinColumn(name = "customer_wallet_id", nullable = true)
     private Wallet customerWallet;
 
     @ManyToOne
@@ -52,4 +52,7 @@ public class Escrow extends IdBaseEntity {
         RELEASED,  // Đã chuyển tiền cho shop
         REFUNDED   // Đã hoàn tiền cho khách
     }
+
+    @Column(name = "payment_method")
+    private String paymentMethod;
 }

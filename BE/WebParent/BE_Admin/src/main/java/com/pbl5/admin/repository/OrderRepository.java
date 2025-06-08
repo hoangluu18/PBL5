@@ -126,4 +126,9 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
 
     List<Order> findByCustomerId(Integer customerId);
 
+    @Query("SELECT o FROM Order o WHERE o.shopId = :shopId AND o.orderStatus = :orderStatus ORDER BY o.orderTime DESC")
+    List<Order> findByShopIdAndOrderStatus(Integer shopId, Order.OrderStatus orderStatus);
+
+    @Query("SELECT o FROM Order o WHERE o.shopId = :shopId AND o.orderStatus = 'REFUNDED' ORDER BY o.orderTime DESC")
+    List<Order> findRefundedOrdersByShopId(@Param("shopId") Integer shopId);
 }

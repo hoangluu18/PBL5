@@ -57,7 +57,10 @@ public class Transaction extends IdBaseEntity {
         REFUND,  // Hoàn tiền
         TRANSFER, // Chuyển tiền từ hệ thống sang shop
         ESCROW_HOLD,  // Giữ tiền trong escrow
-        ESCROW_RELEASE // Giải phóng tiền từ escrow
+        ESCROW_RELEASE, // Giải phóng tiền từ escrow
+        COD_ESCROW,        // Tạo escrow cho COD
+        COD_RELEASE,       // Giải phóng tiền COD cho shop
+        COD_REFUND          // Hoàn tiền COD cho customer
     }
 
     public enum TransactionStatus {

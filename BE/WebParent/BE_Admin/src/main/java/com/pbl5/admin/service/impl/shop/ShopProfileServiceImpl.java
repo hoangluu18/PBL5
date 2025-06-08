@@ -1,11 +1,13 @@
 package com.pbl5.admin.service.impl.shop;
 
 import com.pbl5.admin.dto.shop.ShopProfileDto;
+import com.pbl5.admin.repository.payment.WalletRepository;
 import com.pbl5.admin.service.shop.ShopProfileService;
 import com.pbl5.common.entity.Shop;
 import com.pbl5.common.entity.User;
 import com.pbl5.admin.repository.shop.ShopRepository;
 import com.pbl5.admin.repository.UserRepository;
+import com.pbl5.common.entity.Wallet;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class ShopProfileServiceImpl implements ShopProfileService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private WalletRepository walletRepository;
 
     @Override
     public ShopProfileDto getShopProfileByUserId(int userId) {
@@ -74,6 +79,28 @@ public class ShopProfileServiceImpl implements ShopProfileService {
             throw new RuntimeException("Shop not found for user ID: " + userId);
         }
         return shopId;
+    }
+
+    @Override
+    public Wallet getShopWallet(Integer shopId) {
+        Optional<Shop> shopOpt = shopRepository.findById(shopId);
+        if (!shopOpt.isPresent()) {
+            throw new RuntimeException("Shop not found with ID: " + shopId);
+        }
+
+        Shop shop = shopOpt.get();
+        User user = shop.getUser();
+        if (user == null) {
+            throw new RuntimeException("User not found for shop ID: " + shopId);
+        }
+
+        // Tìm ví theo userId
+        Optional<Wallet> walletOpt = walletRepository.findByUserId(user.getId());
+        if (!walletOpt.isPresent()) {
+            throw new RuntimeException("Wallet not found for shop ID: " + shopId);
+        }
+
+        return walletOpt.get();
     }
 
     private ShopProfileDto mapToDto(Shop shop) {

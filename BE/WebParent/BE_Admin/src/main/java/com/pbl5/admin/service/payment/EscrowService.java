@@ -154,4 +154,31 @@ public class EscrowService {
             }
         }
     }
+
+
+    @Transactional
+    public Escrow createCODEscrow(Order order, Wallet shopWallet, BigDecimal amount) {
+        // Tạo escrow cho COD
+        Escrow escrow = new Escrow();
+        escrow.setOrder(order);
+        escrow.setAmount(amount);
+        escrow.setStatus(Escrow.EscrowStatus.HOLDING);
+        escrow.setCustomerWallet(null); // COD không có customer wallet
+        escrow.setShopWallet(shopWallet);
+        escrow.setPaymentMethod("COD");
+
+        // Tạo transaction tracking cho COD
+        Transaction transaction = new Transaction();
+        transaction.setAmount(amount);
+        transaction.setType(Transaction.TransactionType.COD_ESCROW);
+        transaction.setStatus(Transaction.TransactionStatus.COMPLETED);
+        transaction.setOrder(order);
+        transaction.setTargetWallet(null); // Không có wallet cụ thể
+        transaction.setDescription("Tạo escrow COD cho đơn hàng #" + order.getId());
+
+        transactionService.saveTransaction(transaction);
+
+        System.out.println("Đã tạo COD escrow cho đơn hàng " + order.getId());
+        return escrowRepository.save(escrow);
+    }
 }
