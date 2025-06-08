@@ -57,6 +57,12 @@ const NavBar: React.FC = () => {
             icon: <LogoutOutlined />,
             onClick: logout
         },
+        {
+            key: '3',
+            label: 'Wallet',
+            icon: <ShopOutlined />,
+            onClick: () => navigate('/shop/wallet')
+        }
     ];
 
     return (
