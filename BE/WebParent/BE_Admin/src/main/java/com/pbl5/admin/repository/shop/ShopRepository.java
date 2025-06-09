@@ -27,4 +27,6 @@ public interface ShopRepository extends JpaRepository<Shop, Integer> {
     void deleteById(int id);
     Shop save(Shop shop);
 
+    @Query("SELECT s.id FROM Shop s WHERE s.user.id = :userId")
+    int findShopIdByUserId(int userId);
 }

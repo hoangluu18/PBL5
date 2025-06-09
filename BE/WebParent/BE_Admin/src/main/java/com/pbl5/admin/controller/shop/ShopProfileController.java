@@ -71,4 +71,20 @@ public class ShopProfileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    @GetMapping("/get-shop-id")
+    public ResponseEntity<ResponseDto> getShopIdByUserId(@RequestParam int userId) {
+        ResponseDto response = new ResponseDto();
+        try {
+            int shopId = shopProfileService.getShopIdByUserId(userId);
+            response.setData(shopId);
+            response.setMessage("Shop ID retrieved successfully");
+            response.setStatusCode(200);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setMessage("Failed to retrieve shop ID: " + e.getMessage());
+            response.setStatusCode(500);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }

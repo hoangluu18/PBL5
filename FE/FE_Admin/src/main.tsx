@@ -23,7 +23,8 @@ import CategoriesManagement from './pages/admin/CategoryManagerPage.tsx';
 import LogisticsNav from './pages/layouts/logistic.layout.tsx';
 import OrderManagement from './pages/logistics/orderManagement.tsx';
 import ProfilePage from './pages/logistics/profile.tsx';
-
+import ShopProfile from './pages/shop_profile/ShopProfile.tsx';
+import ShopWallet from './pages/sales_person/wallet/ShopWallet.tsx';
 const router = createBrowserRouter([
   // ADMIN ROUTES
   {
@@ -117,6 +118,14 @@ const router = createBrowserRouter([
         path: "products",
         element: <ProductManagement />
       },
+      {
+        path: "profile",
+        element: <ShopProfile />
+      },
+      {
+        path: 'wallet',
+        element: <ShopWallet />
+      }
     ]
   },
 

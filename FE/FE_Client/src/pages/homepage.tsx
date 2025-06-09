@@ -10,13 +10,13 @@ import { useEffect, useState } from "react";
 import ProductService from "../services/product.service";
 import '../css/homepage.css'
 import { DoubleRightOutlined } from "@ant-design/icons";
+import ChatBot from "../components/ChatBot"; // Import ChatBot component
 
 const Homepage = () => {
     const [page, setPage] = useState<number>(1);
     const [products, setProducts] = useState<IProduct[]>([]);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
-
 
     useEffect(() => {
         fetchProducts();
@@ -111,6 +111,9 @@ const Homepage = () => {
                     </div>
                 </div>
             </div>
+            
+            {/* Thêm ChatBot component */}
+            <ChatBot />
         </>
     );
 }

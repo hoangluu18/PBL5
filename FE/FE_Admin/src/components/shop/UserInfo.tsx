@@ -202,7 +202,7 @@ const handleUploadPhoto = (info: any) => {
     return (
         <Card title={
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Title level={4}>Thông tin người đại diện</Title>
+                <Title level={2}>Thông tin người đại diện</Title>
                 {!editMode ? (
                     <Button
                         type="primary"

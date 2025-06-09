@@ -29,6 +29,12 @@ public interface EscrowRepository extends JpaRepository<Escrow, Integer> {
             nativeQuery = true)
     List<Integer> findPendingReleaseEscrowIdsNative();
 
+    @Query(value = "SELECT o.id FROM escrows e " +
+            "JOIN orders o ON e.order_id = o.id " +
+            "WHERE e.status = 'HOLDING' AND o.order_status = 'DELIVERED'",
+            nativeQuery = true)
+    List<Integer> findPendingOrderIdsNative();
+
     @Query(value = "SELECT `id`, `amount`, `created_at`, `released_at`, `status`, `customer_wallet_id`, `order_id`, `shop_wallet_id` FROM `escrows` WHERE escrows.order_id = :id", nativeQuery = true)
     Escrow findEscrowById(@Param("id") Integer id);
 
