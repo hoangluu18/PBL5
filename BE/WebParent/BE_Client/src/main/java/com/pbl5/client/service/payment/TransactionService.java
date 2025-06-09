@@ -161,13 +161,13 @@ public class TransactionService {
 
         Transaction transaction = transactionOpt.get();
 
-        if (transaction.getType() != Transaction.TransactionType.REFUND) {
-            throw new IllegalArgumentException("Không phải giao dịch hoàn tiền");
-        }
-
-        if (transaction.getStatus() != Transaction.TransactionStatus.PENDING) {
-            throw new IllegalStateException("Giao dịch không ở trạng thái chờ xử lý");
-        }
+//        if (transaction.getType() != Transaction.TransactionType.REFUND) {
+//            throw new IllegalArgumentException("Không phải giao dịch hoàn tiền");
+//        }
+//
+//        if (transaction.getStatus() != Transaction.TransactionStatus.PENDING) {
+//            throw new IllegalStateException("Giao dịch không ở trạng thái chờ xử lý");
+//        }
 
         Wallet targetWallet = transaction.getTargetWallet();
         Optional<Wallet> walletOpt = walletRepository.findByIdWithLock(targetWallet.getId());

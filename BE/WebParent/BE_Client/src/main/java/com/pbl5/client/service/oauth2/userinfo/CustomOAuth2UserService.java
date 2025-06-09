@@ -73,7 +73,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 }
             }
             customer.setAuthenticationType(Customer.AuthenticationType.GOOGLE);
-            customer = customerRepository.save(customer);
+            //customer = customerRepository.save(customer);
         } else {
             // Register new user
             customer = registerNewUser(oAuth2UserInfo);

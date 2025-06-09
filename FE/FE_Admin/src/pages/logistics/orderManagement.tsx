@@ -68,18 +68,39 @@ const statusSteps: StatusStep[] = [
     description: 'Đơn hàng mới được tạo'
   },
   {
+    status: 'PAID',
+    title: 'Đã thanh toán',
+    icon: <CheckCircleOutlined />,
+    color: '#13c2c2',
+    description: 'Đơn hàng đã được thanh toán'
+  },
+  {
     status: 'PROCESSING',
     title: 'Đang xử lý',
     icon: <SyncOutlined spin />,
     color: '#faad14',
-    description: 'Đơn hàng đang được chuẩn bị'
+    description: 'Đơn hàng đang được xử lý'
   },
   {
-    status: 'SHIPPED',
-    title: 'Đang giao',
-    icon: <CarOutlined />,
+    status: 'PACKAGED',
+    title: 'Đã đóng gói',
+    icon: <CheckCircleOutlined />,
+    color: '#2f54eb',
+    description: 'Đơn hàng đã được đóng gói'
+  },
+  {
+    status: 'PICKED',
+    title: 'Đã lấy hàng',
+    icon: <CheckCircleOutlined />,
     color: '#722ed1',
-    description: 'Đơn hàng đang trên đường giao'
+    description: 'Đơn hàng đã được lấy'
+  },
+  {
+    status: 'SHIPPING',
+    title: 'Đang giao hàng',
+    icon: <CarOutlined />,
+    color: '#fa8c16',
+    description: 'Đơn hàng đang được giao'
   },
   {
     status: 'DELIVERED',
@@ -87,6 +108,27 @@ const statusSteps: StatusStep[] = [
     icon: <CheckCircleOutlined />,
     color: '#52c41a',
     description: 'Đơn hàng đã giao thành công'
+  },
+  {
+    status: 'RETURN_REQUESTED',
+    title: 'Yêu cầu trả hàng',
+    icon: <SyncOutlined />,
+    color: '#fa541c',
+    description: 'Khách hàng yêu cầu trả hàng'
+  },
+  {
+    status: 'RETURNED',
+    title: 'Đã trả hàng',
+    icon: <SyncOutlined />,
+    color: '#f5222d',
+    description: 'Đơn hàng đã được trả lại'
+  },
+  {
+    status: 'REFUNDED',
+    title: 'Đã hoàn tiền',
+    icon: <CheckCircleOutlined />,
+    color: '#eb2f96',
+    description: 'Đơn hàng đã hoàn tiền'
   }
 ];
 

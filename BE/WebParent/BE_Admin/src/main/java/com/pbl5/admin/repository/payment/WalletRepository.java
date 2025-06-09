@@ -28,4 +28,6 @@ public interface WalletRepository extends JpaRepository<Wallet, Integer> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT w FROM Wallet w WHERE w.user.id = :userId")
     Optional<Wallet> findByUserIdWithLock(@Param("userId") Integer userId);
+
+    Optional<Wallet> findByUserId(Integer id);
 }

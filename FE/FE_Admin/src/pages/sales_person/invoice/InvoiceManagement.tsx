@@ -35,7 +35,7 @@ import OrderService from "../../../services/order.service";
 import InvoiceDetailComponent from "./InvoiceDetail";
 import { OrderOverviewDto, SearchOrderDto } from "../../../models/OrderDto";
 import axios from "axios";
-
+import {ShopProfileService} from '../../../services/shop/ShopProfileService.service';
 const { Title, Text } = Typography;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -71,6 +71,8 @@ const PAYMENT_METHODS = {
 };
 
 const InvoiceManagementPage: React.FC = () => {
+    const { user } = useContext(AuthContext);
+    const [shopId, setShopId] = useState<number | undefined>(undefined);
     // State management
     const [selectedInvoice, setSelectedInvoice] = useState<{
         invoiceId?: string;
@@ -83,8 +85,9 @@ const InvoiceManagementPage: React.FC = () => {
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const [starredInvoices, setStarredInvoices] = useState<string[]>([]);
     const [collapsed, setCollapsed] = useState(false);
-    const { user } = useContext(AuthContext);
     document.title = "Quản lý hóa đơn";
+
+    const shopProfileService = new ShopProfileService();
     // Default search parameters
     const [searchParams, setSearchParams] = useState<SearchOrderDto>({
         orderTimeFrom: dayjs().startOf('month').format('YYYY-MM-DD'),
@@ -94,17 +97,48 @@ const InvoiceManagementPage: React.FC = () => {
         deliveryDateFrom: '',
         deliveryDateTo: '',
         city: '',
-        shopId: user?.id,
+        shopId: undefined,
         keyword: '', // Thêm trường keyword cho tìm kiếm
     });
 
     const [provinces, setProvinces] = useState<{ value: string, label: string }[]>([]);
 
+
+        useEffect(() => {
+        const fetchShopId = async () => {
+            try {
+                if (user && user.id) {
+                    console.log("Calling API with userId:", user.id);
+                    
+                    const userId = parseInt(String(user.id));
+                    const fetchedShopId = await shopProfileService.getShopIdByUserId(userId);
+                    console.log("Shop ID received:", fetchedShopId);
+                    setShopId(fetchedShopId);
+                    
+                    // Cập nhật searchParams với shopId mới
+                    setSearchParams(prev => ({
+                        ...prev,
+                        shopId: fetchedShopId
+                    }));
+                } else {
+                    console.warn("User ID not available");
+                }
+            } catch (error) {
+                console.error("Failed to fetch shop ID:", error);
+                message.error("Không thể lấy thông tin Shop ID");
+            }
+        };
+        
+        fetchShopId();
+    }, [user]);
+
     // Fetch data on searchParams change
     useEffect(() => {
-        fetchData();
-        fetchProvinces()
-    }, [searchParams]);
+        if (shopId !== undefined) {
+            fetchData();
+            fetchProvinces();
+        }
+    }, [shopId, searchParams]);
 
     const fetchProvinces = async () => {
         try {
@@ -126,36 +160,32 @@ const InvoiceManagementPage: React.FC = () => {
         }
     };
 
-    const fetchData = async () => {
+       const fetchData = async () => {
+        if (shopId === undefined) return; // Không fetch nếu chưa có shopId
+        
         setLoading(true);
         try {
             const orderService = new OrderService();
 
-            // Tạo một đối tượng params API mới thay vì sửa đổi searchParams
             const apiParams: Record<string, any> = {};
 
-            // Chỉ thêm các trường có giá trị
             if (searchParams.orderTimeFrom) apiParams.orderTimeFrom = searchParams.orderTimeFrom;
             if (searchParams.orderTimeTo) apiParams.orderTimeTo = searchParams.orderTimeTo;
 
-            // Xử lý mảng paymentMethod
             if (searchParams.paymentMethod?.length > 0) {
                 apiParams.paymentMethod = searchParams.paymentMethod.join(',');
             }
 
-            // Xử lý mảng orderStatus
             if (searchParams.orderStatus?.length > 0) {
                 apiParams.orderStatus = searchParams.orderStatus.join(',');
             }
 
-            // Chỉ thêm các trường khác nếu có giá trị
             if (searchParams.keyword?.trim()) apiParams.keyword = searchParams.keyword.trim();
             if (searchParams.city) apiParams.city = searchParams.city;
             if (searchParams.deliveryDateFrom) apiParams.deliveryDateFrom = searchParams.deliveryDateFrom;
             if (searchParams.deliveryDateTo) apiParams.deliveryDateTo = searchParams.deliveryDateTo;
-            if (searchParams.shopId) apiParams.shopId = searchParams.shopId;
+            if (shopId) apiParams.shopId = shopId; // Sử dụng shopId từ state
 
-            // Gọi API với apiParams thay vì params
             const response = await orderService.getOrder(apiParams as SearchOrderDto);
             setInvoices(response);
             message.success(`Đã tải ${response.length} hóa đơn`);

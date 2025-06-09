@@ -2,6 +2,7 @@ package com.pbl5.admin.controller.salesperson;
 
 import com.pbl5.admin.dto.ResponseDto;
 import com.pbl5.admin.service.OrderService;
+import com.pbl5.admin.service.shop.ShopProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,13 @@ public class DashboardController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private ShopProfileService shopProfileService;
+
     @RequestMapping("/today-statistic")
     public ResponseEntity<ResponseDto> getRevenueChange(@RequestParam int shopId) {
         ResponseDto response = new ResponseDto();
+        shopId = shopProfileService.getShopIdByUserId(shopId);
         try {
             response.setData(orderService.getTodayStatistic(shopId));
             response.setMessage("Doanh thu hôm nay");
@@ -37,6 +42,7 @@ public class DashboardController {
     public ResponseEntity<ResponseDto> getReportByXDaysAndXMonths(@PathVariable("value") String value, int shopId) {
         ResponseDto response = new ResponseDto();
         LocalDate endDate = LocalDate.now();
+        shopId = shopProfileService.getShopIdByUserId(shopId);
         switch (value) {
             case "1_week_ago":
                 response.setData(orderService.getReportByDateRange(endDate.minusDays(7).toString(), endDate.toString(), shopId));
@@ -62,6 +68,7 @@ public class DashboardController {
     @GetMapping("/statistic/{startDate}/{endDate}")
     public ResponseEntity<ResponseDto> getReportByDateRange(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate, int shopId) {
         ResponseDto response = new ResponseDto();
+        shopId = shopProfileService.getShopIdByUserId(shopId);
         try {
             response.setData(orderService.getReportByDateRange(startDate, endDate, shopId));
             response.setMessage("Doanh thu từ " + startDate + " đến " + endDate);
@@ -77,6 +84,7 @@ public class DashboardController {
     @GetMapping("/statistic/top-product/{date}")
     public ResponseEntity<ResponseDto> getTopProductReport(@PathVariable("date") String date, int shopId) {
         ResponseDto response = new ResponseDto();
+        shopId = shopProfileService.getShopIdByUserId(shopId);
         try {
             response.setData(orderService.getTopProductReport(date, shopId));
             response.setMessage("Top sản phẩm bán chạy nhất tháng " + date);

@@ -13,8 +13,8 @@ import { Product, ProductsResponse } from '../../../models/Product';
 import { ProductService } from '../../../services/shop/ProductService.service';
 import ProductDetailModal from './ProductDetailModal';
 import { ProductDetail } from '../../../models/ProductDetail';
-import { AuthContext } from '../../../utils/auth.context';
-
+import { AuthContext } from '../../../utils/auth.context'
+import {ShopProfileService} from '../../../services/shop/ShopProfileService.service';
 const { Content, Sider } = Layout;
 const { Title, Text } = Typography;
 const { confirm } = Modal;
@@ -22,8 +22,9 @@ const { confirm } = Modal;
 const ProductManagement: React.FC = () => {
     const { user } = useContext(AuthContext);
     // Constants
-    const SHOP_ID = user.id || 1; 
+    const [SHOP_ID, setSHOP_ID] = useState<number | undefined>(undefined);
     const productService = new ProductService();
+    const shopProfileService = new ShopProfileService();
     // States
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -50,8 +51,38 @@ const ProductManagement: React.FC = () => {
 
     useEffect(() => {
         document.title = "Quản lý Hàng hóa";
-        fetchProducts();
-    }, [currentPage, pageSize, sortField, sortOrder, stockFilter]);
+        // Chỉ fetch dữ liệu khi đã có SHOP_ID
+        if (SHOP_ID !== null) {
+            fetchProducts();
+        }
+    }, [currentPage, pageSize, sortField, sortOrder, stockFilter, SHOP_ID]);
+
+
+useEffect(() => {
+    const fetchShopId = async () => {
+        try {
+            if (user && user.id) {
+                console.log("Calling API with userId:", user.id);
+                
+                // Đảm bảo user.id là số
+                const userId = parseInt(String(user.id));
+                
+                const shopId = await shopProfileService.getShopIdByUserId(userId);
+                console.log("Shop ID received:", shopId);
+                setSHOP_ID(shopId);
+            } else {
+                console.warn("User ID not available");
+            }
+        } catch (error) {
+            console.error("Failed to fetch shop ID:", error);
+            message.error("Không thể lấy thông tin Shop ID");
+            // Fallback to user.id nếu API lỗi
+            if (user && user.id) setSHOP_ID(user.id);
+        }
+    };
+    
+    fetchShopId();
+}, [user]);
 
     const fetchProducts = async () => {
         try {
@@ -80,7 +111,7 @@ const ProductManagement: React.FC = () => {
                     pageSize,
                     sort,
                     order,
-                    SHOP_ID
+                    SHOP_ID 
                 );
             } else if (minPrice !== null && maxPrice !== null) {
                 response = await productService.filterByPrice(

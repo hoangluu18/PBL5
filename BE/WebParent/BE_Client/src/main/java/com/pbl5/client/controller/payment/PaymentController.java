@@ -175,7 +175,19 @@ public class PaymentController {
             }
 
             // Hoàn tiền từ escrow về ví khách hàng
-            escrowService.refundEscrow(escrow.getId());
+            if (order.getPaymentMethod() == Order.PaymentMethod.WALLET) {
+                // Hoàn tiền cho Wallet (giữ nguyên code cũ)
+                escrowService.refundEscrow(escrow.getId());
+            }else if (order.getPaymentMethod() == Order.PaymentMethod.COD) {
+                // Hoàn tiền cho COD
+                // Lấy ví của khách hàng
+                Customer customer = order.getCustomer();
+                Wallet customerWallet = walletService.getOrCreateCustomerWallet(customer.getId(), customer);
+
+                // Gọi hàm hoàn tiền COD
+                escrowService.refundCODEscrow(escrow, customerWallet);
+            }
+
 
             // Cập nhật ghi chú và trạng thái đơn hàng
             order.setNote(request.getReason());

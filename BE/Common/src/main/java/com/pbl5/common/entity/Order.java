@@ -89,7 +89,8 @@ public class Order extends IdBaseEntity {
 
     // Enum cho order_status
     public enum OrderStatus {
-        DELIVERED, NEW,  PICKED, PROCESSING, REFUNDED, RETURNED, SHIPPING, RETURN_REQUESTED, PACKAGED, CANCELLED, PAID
+        DELIVERED, NEW,  PICKED, PROCESSING, REFUNDED, RETURNED, SHIPPING, RETURN_REQUESTED, PACKAGED, CANCELLED
+        , PAID, SHIPPED
     }
 
     // Enum cho payment_method

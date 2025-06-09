@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -181,4 +182,24 @@ public class TransactionService {
         transaction.setStatus(Transaction.TransactionStatus.COMPLETED);
         return transactionRepository.save(transaction);
     }
+
+    /**
+     * Lấy giao dịch theo ID đơn hàng
+     */
+
+    public Date getTimeUpdateRefundTransactionByOrderId(Integer orderId) {
+        List<Transaction> transactions = transactionRepository.findByOrderId(orderId);
+
+        return transactions.stream()
+                .filter(transaction -> transaction.getType() == Transaction.TransactionType.REFUND)
+                .map(Transaction::getCreatedAt)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy giao dịch hoàn tiền cho đơn hàng ID: " + orderId));
+    }
+
+    @Transactional
+    public Transaction saveTransaction(Transaction transaction) {
+        return transactionRepository.save(transaction);
+    }
 }
+

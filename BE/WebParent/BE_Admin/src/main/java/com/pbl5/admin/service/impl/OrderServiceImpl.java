@@ -6,16 +6,23 @@ import com.pbl5.admin.dto.dashboard.TopProductReportDto;
 import com.pbl5.admin.dto.orders.*;
 import com.pbl5.admin.repository.OrderDetailRepository;
 import com.pbl5.admin.repository.OrderRepository;
+import com.pbl5.admin.repository.OrderTrackRepository;
+import com.pbl5.admin.repository.UserRepository;
 import com.pbl5.admin.service.OrderService;
+import com.pbl5.admin.service.payment.EscrowService;
+import com.pbl5.admin.service.payment.WalletService;
+import com.pbl5.admin.service.shop.ShopProfileService;
 import com.pbl5.admin.specification.OrderSpecification;
 import com.pbl5.common.entity.Order;
 import com.pbl5.common.entity.OrderDetail;
+import com.pbl5.common.entity.OrderTrack;
 import com.pbl5.common.entity.product.Product;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,7 +31,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.lang.Thread.sleep;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -34,6 +40,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private ShopProfileService shopProfileService;
+
+    @Autowired
+    private OrderTrackRepository orderTrackRepository;
+
+    @Autowired
+    private EscrowService escrowService;
 
     @Override
     public void updateOrder(OrderStatusDto orderStatusDto) {
@@ -81,6 +96,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<RecentOrderDto> getRecentOrders(int shopId) {
+        shopId = shopProfileService.getShopIdByUserId(shopId);
         List<Order> recentOrders = orderRepository.findRecentOrders(shopId);
 
         return recentOrders.stream()
@@ -213,6 +229,20 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.findById(orderId).ifPresent(order -> {
             order.setOrderStatus(Order.OrderStatus.valueOf(status));
             orderRepository.save(order);
+
+            OrderTrack orderTrack = new OrderTrack();
+            orderTrack.setOrder(order);
+            orderTrack.setStatus(OrderTrack.OrderStatus.valueOf(status));
+            orderTrack.setUpdatedTime(new Date());
+            orderTrack.setNotes("Cập nhật trạng thái đơn hàng thành " + status);
+            orderTrackRepository.save(orderTrack);
+
+            // Nếu đơn hàng đã giao thành công và phương thức thanh toán là COD
+            if (order.getOrderStatus() == Order.OrderStatus.DELIVERED &&
+                    order.getPaymentMethod() == Order.PaymentMethod.COD) {
+                // Tạo escrow cho COD
+                escrowService.createCODEscrow(order, shopProfileService.getShopWallet(order.getShopId()), BigDecimal.valueOf(order.getTotal()));
+            }
         });
     }
 

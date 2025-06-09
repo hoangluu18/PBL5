@@ -7,13 +7,16 @@ import com.pbl5.client.repository.OrderTrackRepository;
 import com.pbl5.client.repository.payment.EscrowRepository;
 import com.pbl5.client.service.OrderService;
 import com.pbl5.client.service.payment.EscrowService;
+import com.pbl5.client.service.payment.WalletService;
 import com.pbl5.common.entity.Order;
 import com.pbl5.common.entity.OrderTrack;
 import com.pbl5.common.entity.Escrow;
+import com.pbl5.common.entity.Wallet;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 import com.pbl5.client.dto.OrderDto;
@@ -31,12 +34,18 @@ public class OrderServiceImpl implements OrderService {
     private final EscrowRepository escrowRepository;
     private final EscrowService escrowService;
 
+    private final WalletService walletService;
 
-    public OrderServiceImpl(OrderRepository repository, OrderTrackRepository orderTrackRepository, EscrowRepository escrowRepository, EscrowService escrowService) {
+    public OrderServiceImpl(OrderRepository repository,
+                            OrderTrackRepository orderTrackRepository,
+                            EscrowRepository escrowRepository,
+                            EscrowService escrowService,
+                            WalletService walletService) {
         this.repository = repository;
         this.orderTrackRepository = orderTrackRepository;
         this.escrowRepository = escrowRepository;
         this.escrowService = escrowService;
+        this.walletService = walletService;
     }
 
 
@@ -112,6 +121,45 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+//    @Transactional
+//    public void updateOrderStatus(Order order, Order.OrderStatus newStatus) {
+//        // Cập nhật trạng thái đơn hàng
+//        order.setOrderStatus(newStatus);
+//        repository.save(order);
+//
+//        // Tạo order track
+//        OrderTrack orderTrack = new OrderTrack();
+//        orderTrack.setOrder(order);
+//        orderTrack.setStatus(OrderTrack.OrderStatus.valueOf(newStatus.name()));
+//        orderTrack.setUpdatedTime(new Date());
+//        orderTrack.setNotes("Trạng thái đơn hàng cập nhật thành: " + newStatus);
+//        orderTrackRepository.save(orderTrack);
+//
+//        // Nếu đơn hàng đã giao thành công và phương thức thanh toán là ví điện tử
+//        // thì giải phóng tiền từ escrow sang ví shop
+//        if (newStatus == Order.OrderStatus.DELIVERED &&
+//                order.getPaymentMethod() == Order.PaymentMethod.WALLET) {
+//
+//            try {
+//                // Tìm escrow cho đơn hàng
+//                Escrow escrowOpt = escrowRepository.findEscrowById(order.getId());
+//                if (escrowOpt != null) {
+//                    Escrow escrow = escrowOpt;
+//                    // Nếu escrow đang ở trạng thái giữ tiền thì giải phóng
+//                    if (escrow.getStatus() == Escrow.EscrowStatus.HOLDING) {
+//                        escrowService.releaseEscrow(escrow);
+//
+//                        System.out.println("Đã giải phóng tiền từ escrow cho đơn hàng " + order.getId());
+//                    }
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                System.out.println("Lỗi khi giải phóng tiền từ escrow cho đơn hàng " + order.getId());
+//            }
+//        }
+//    }
+
+
     @Transactional
     public void updateOrderStatus(Order order, Order.OrderStatus newStatus) {
         // Cập nhật trạng thái đơn hàng
@@ -139,13 +187,37 @@ public class OrderServiceImpl implements OrderService {
                     // Nếu escrow đang ở trạng thái giữ tiền thì giải phóng
                     if (escrow.getStatus() == Escrow.EscrowStatus.HOLDING) {
                         escrowService.releaseEscrow(escrow);
-
                         System.out.println("Đã giải phóng tiền từ escrow cho đơn hàng " + order.getId());
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("Lỗi khi giải phóng tiền từ escrow cho đơn hàng " + order.getId());
+            }
+        }
+
+        // Thêm mới: Xử lý đơn hàng COD khi giao thành công
+        if (newStatus == Order.OrderStatus.DELIVERED &&
+                order.getPaymentMethod() == Order.PaymentMethod.COD) {
+
+            try {
+                // Lấy shop wallet từ người bán của đơn hàng
+                Wallet shopWallet = walletService.getOrCreateUserWallet(
+                        order.getShop().getUser().getId(),
+                        order.getShop().getUser()
+                );
+
+                // Tạo escrow cho đơn hàng COD
+                Escrow escrow = escrowService.createCODEscrow(
+                        order,
+                        shopWallet,
+                        BigDecimal.valueOf(order.getTotal())
+                );
+
+                System.out.println("Đã tạo COD escrow cho đơn hàng " + order.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Lỗi khi tạo COD escrow cho đơn hàng " + order.getId());
             }
         }
     }

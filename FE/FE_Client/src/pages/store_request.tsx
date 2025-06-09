@@ -318,12 +318,12 @@ export default function SellerRegistrationForm() {
                         <Text strong>Bị từ chối</Text>
                         <br />
                         <Text type="secondary">
-                            {new Date(requestStatus.updatedAt).toLocaleString('vi-VN')}
+                            {new Date(requestStatus.responseDate).toLocaleString('vi-VN')}
                         </Text>
-                        {requestStatus.rejectReason && (
+                        {requestStatus.responseNote && (
                             <>
                                 <br />
-                                <Text type="danger">Lý do: {requestStatus.rejectReason}</Text>
+                                <Text type="danger">Lý do: {requestStatus.responseNote}</Text>
                             </>
                         )}
                     </div>

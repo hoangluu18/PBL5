@@ -49,6 +49,7 @@ const NavBar: React.FC = () => {
             key: '1',
             label: 'Profile',
             icon: <UserOutlined />,
+            onClick: () => navigate('/shop/profile')
         },
         {
             key: '2',
@@ -56,6 +57,12 @@ const NavBar: React.FC = () => {
             icon: <LogoutOutlined />,
             onClick: logout
         },
+        {
+            key: '3',
+            label: 'Wallet',
+            icon: <ShopOutlined />,
+            onClick: () => navigate('/shop/wallet')
+        }
     ];
 
     return (

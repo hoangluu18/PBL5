@@ -9,7 +9,12 @@ import IProduct from "../models/dto/ProductDto";
 import { useEffect, useState } from "react";
 import ProductService from "../services/product.service";
 import '../css/homepage.css'
+
 import { DoubleRightOutlined, VerticalAlignTopOutlined } from "@ant-design/icons";
+
+
+import ChatBot from "../components/ChatBot"; // Import ChatBot component
+
 
 const Homepage = () => {
     const [page, setPage] = useState<number>(1);
@@ -17,6 +22,7 @@ const Homepage = () => {
     const [topProducts, setTopProducts] = useState<IProduct[]>([]);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
+
 
     // State để theo dõi scroll position
     const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
@@ -136,6 +142,7 @@ const Homepage = () => {
                 </div>
             </div>
 
+
             {/* Nút Scroll to Top */}
             <FloatButton
                 icon={<VerticalAlignTopOutlined />}
@@ -148,6 +155,10 @@ const Homepage = () => {
                 onClick={scrollToTop}
                 tooltip="Về đầu trang"
             />
+
+            {/* Thêm ChatBot component */}
+            <ChatBot />
+
         </>
     );
 }
