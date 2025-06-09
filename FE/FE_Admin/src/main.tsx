@@ -23,6 +23,7 @@ import CategoriesManagement from './pages/admin/CategoryManagerPage.tsx';
 import LogisticsNav from './pages/layouts/logistic.layout.tsx';
 import OrderManagement from './pages/logistics/orderManagement.tsx';
 import ProfilePage from './pages/logistics/profile.tsx';
+import StoreRequestPage from './pages/admin/StoreRequestPage.tsx';
 
 const router = createBrowserRouter([
   // ADMIN ROUTES
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: "categories",
         element: <CategoriesManagement />
+      },
+      {
+        path: "store_requests",
+        element: <StoreRequestPage />
       },
       {
         path: "settings",

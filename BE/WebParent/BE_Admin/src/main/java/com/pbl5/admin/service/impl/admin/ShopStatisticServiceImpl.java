@@ -4,13 +4,11 @@ import com.pbl5.admin.dto.admin.ShopRevenueDto;
 import com.pbl5.admin.dto.admin.ShopStatisticDto;
 import com.pbl5.admin.dto.admin.ShopStatisticProjection;
 import com.pbl5.admin.repository.OrderRepository;
-import com.pbl5.admin.service.ShopStatisticService;
-import com.pbl5.common.entity.Order;
+import com.pbl5.admin.service.admin.ShopStatisticService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

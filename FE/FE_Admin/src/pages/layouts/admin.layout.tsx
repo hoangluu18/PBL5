@@ -8,7 +8,8 @@ import {
     DownOutlined,
     SettingOutlined,
     BranchesOutlined,
-    CaretRightOutlined
+    CaretRightOutlined,
+    RedditSquareFilled
 } from '@ant-design/icons';
 import { AuthContext } from '../../utils/auth.context';
 
@@ -28,20 +29,26 @@ const NavBar: React.FC = () => {
         {
             key: 'shops',
             icon: <UserOutlined />,
-            label: 'shops',
+            label: 'Cửa hàng',
             onClick: () => navigate('/admin/shops')
         },
         {
             key: 'brands',
             icon: <BranchesOutlined />,
-            label: 'brands',
+            label: 'Nhãn hàng',
             onClick: () => navigate('/admin/brands')
         },
         {
             key: 'categories',
             icon: <CaretRightOutlined />,
-            label: 'categories',
+            label: 'Danh mục',
             onClick: () => navigate('/admin/categories')
+        },
+        {
+            key: 'store_requests',
+            icon: <RedditSquareFilled />,
+            label: 'Yêu cầu cửa hàng',
+            onClick: () => navigate('/admin/store_requests')
         },
         {
             key: 'settings',
