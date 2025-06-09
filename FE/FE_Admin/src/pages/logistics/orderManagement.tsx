@@ -472,7 +472,7 @@ const OrderManagement: React.FC = () => {
 
       {/* Drawer chi tiết đơn hàng */}
       <Drawer
-        title={`Chi tiết đơn hàng DH${selectedOrder?.orderId.toString().padStart(6, '0') || ''}`}
+        title={`Chi tiết đơn hàng ${selectedOrder?.orderId.toString()}`}
         placement="right"
         width={600}
         onClose={() => setDetailsVisible(false)}
@@ -563,7 +563,7 @@ const OrderManagement: React.FC = () => {
           </div>
         )}
       </Drawer>
-    </div>
+    </div >
   );
 };
 

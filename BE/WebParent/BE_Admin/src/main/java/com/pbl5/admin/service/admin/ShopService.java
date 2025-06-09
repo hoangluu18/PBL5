@@ -1,4 +1,4 @@
-package com.pbl5.admin.service;
+package com.pbl5.admin.service.admin;
 
 import com.pbl5.admin.dto.admin.ShopDto;
 

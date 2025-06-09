@@ -27,19 +27,19 @@ const NavBar: React.FC = () => {
         {
             key: 'customers',
             icon: <UserOutlined />,
-            label: 'Customers',
+            label: 'Khách hàng',
             onClick: () => navigate('/shop/customers')
         },
         {
             key: 'invoice',
             icon: <FileTextOutlined />,
-            label: 'Invoices',
+            label: 'Hóa đơn',
             onClick: () => navigate('/shop/invoice')
         },
         {
             key: 'products',
             icon: <ShopOutlined />,
-            label: 'Products',
+            label: 'Sản phẩm',
             onClick: () => navigate('/shop/products')
         },
     ];

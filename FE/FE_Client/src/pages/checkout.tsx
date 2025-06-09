@@ -133,6 +133,10 @@ const Checkout: React.FC = () => {
         fetchCheckoutInfo();
     }, [customerId]);
 
+    const formatPrice = (price: number) => {
+        return Math.floor(price).toLocaleString('vi-VN') + 'đ';
+    };
+
     const updateCartCount = async () => {
         try {
             const cartService = new CartService();
@@ -204,7 +208,7 @@ const Checkout: React.FC = () => {
                 }
 
                 // Nếu thanh toán qua ví, tiến hành xử lý thanh toán
-// Trong hàm handlePurchase
+                // Trong hàm handlePurchase
                 if (paymentMethod === 'wallet' && orderId) {
                     try {
                         const paymentResult = await PaymentService.payWithWallet(customerId, orderId, total);

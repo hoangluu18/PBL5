@@ -74,13 +74,12 @@ public class ReviewController {
                                          @RequestParam("customerId") Integer customerId){
         boolean isReviewed = reviewService.getReviewByProductIdAndCustomerId(productId, customerId);
         List<OrderDetail> orderDetail = orderDetailService.checkByProductIdAndCustomerIdWithStatusDelivered(productId, customerId);
-        if (orderDetail == null) {
-            return ResponseEntity.ok("Bạn chưa mua sản phẩm này hoặc đơn hàng chưa giao đến");
+        if (!isReviewed && orderDetail.size() > 0) {
+            return ResponseEntity.ok("Bạn có thể đánh giá sản phẩm này");
         } else if (isReviewed) {
             return ResponseEntity.ok("Bạn đã đánh giá sản phẩm này");
         } else {
-            return ResponseEntity.ok("Bạn có thể đánh giá sản phẩm này");
-            
+            return ResponseEntity.ok("Bạn chưa mua sản phẩm này hoặc đơn hàng chưa giao đến");
         }
     }
 

@@ -54,6 +54,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/r/vote-review", "/api/r/check-review").authenticated()
                         .requestMatchers("/api/p/**", "/api/r/**", "/api/c/**").permitAll()
                         .requestMatchers("/api/customers/checkUniqueEmail").permitAll()
+                        .requestMatchers("/api/store-request/**").permitAll()
                         .requestMatchers("/oauth2/**").permitAll()
                         .anyRequest().authenticated()
 

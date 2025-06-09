@@ -25,7 +25,7 @@ const WalletPage: React.FC = () => {
     const totalDeposit = transactions
         .filter(t => t.type === 'DEPOSIT' && t.status === 'COMPLETED')
         .reduce((sum, t) => sum + t.amount, 0);
-    
+
     const totalPayment = transactions
         .filter(t => t.type === 'PAYMENT' && t.status === 'COMPLETED')
         .reduce((sum, t) => sum + t.amount, 0);
@@ -44,20 +44,20 @@ const WalletPage: React.FC = () => {
 
     const filterTransactions = () => {
         let result = [...transactions];
-        
+
         // Filter by type
         if (filterType !== 'ALL') {
             result = result.filter(t => t.type === filterType);
         }
-        
+
         // Filter by search text
         if (searchText) {
-            result = result.filter(t => 
+            result = result.filter(t =>
                 t.description?.toLowerCase().includes(searchText.toLowerCase()) ||
                 t.id.toString().includes(searchText)
             );
         }
-        
+
         setFilteredTransactions(result);
     };
 
@@ -106,7 +106,9 @@ const WalletPage: React.FC = () => {
             default: return '#666';
         }
     };
-
+    const formatPrice = (price: number) => {
+        return Math.floor(price).toLocaleString('vi-VN') + 'đ';
+    };
     const getTypeIcon = (type: string) => {
         switch (type) {
             case 'DEPOSIT': return <ArrowUpOutlined />;
@@ -134,7 +136,7 @@ const WalletPage: React.FC = () => {
                     'PAYMENT': 'Thanh toán',
                     'REFUND': 'Hoàn tiền',
                 }[type] || type;
-                
+
                 return (
                     <Tag color={getTypeColor(type)} icon={getTypeIcon(type)}>
                         {label}
@@ -150,7 +152,7 @@ const WalletPage: React.FC = () => {
             render: (amount: number, record: TransactionInfo) => {
                 const color = record.type === 'PAYMENT' ? '#f5222d' : '#52c41a';
                 const prefix = record.type === 'PAYMENT' ? '-' : '+';
-                return <span style={{ color, fontWeight: 'bold' }}>{prefix} {amount.toLocaleString()} VNĐ</span>;
+                return <span style={{ color, fontWeight: 'bold' }}>{prefix} {formatPrice(amount)}</span>;
             }
         },
         {
@@ -164,7 +166,7 @@ const WalletPage: React.FC = () => {
                     'PENDING': 'Đang xử lý',
                     'FAILED': 'Thất bại',
                 }[status] || status;
-                
+
                 return <Tag color={getStatusColor(status)}>{label}</Tag>;
             }
         },
@@ -218,7 +220,7 @@ const WalletPage: React.FC = () => {
                         <div className="balance-display">
                             <Text>Số dư hiện tại:</Text>
                             <div className="balance-value">
-                                <DollarOutlined /> {walletInfo?.balance.toLocaleString()} VNĐ
+                                <DollarOutlined /> {formatPrice(walletInfo?.balance || 0)}
                             </div>
                         </div>
 
@@ -235,7 +237,7 @@ const WalletPage: React.FC = () => {
                         </div>
                     </Card>
                 </Col>
-                
+
                 {/* Thống kê */}
                 <Col xs={24} lg={16}>
                     <Card className="wallet-stats-card">
@@ -248,7 +250,7 @@ const WalletPage: React.FC = () => {
                                     precision={0}
                                     valueStyle={{ color: '#3f8600' }}
                                     prefix={<ArrowUpOutlined />}
-                                    suffix="VNĐ"
+                                    formatter={(value) => formatPrice(value as number)}
                                 />
                             </Col>
                             <Col xs={24} sm={8}>
@@ -258,7 +260,7 @@ const WalletPage: React.FC = () => {
                                     precision={0}
                                     valueStyle={{ color: '#cf1322' }}
                                     prefix={<ArrowDownOutlined />}
-                                    suffix="VNĐ"
+                                    formatter={(value) => formatPrice(value as number)}
                                 />
                             </Col>
                             <Col xs={24} sm={8}>
@@ -268,7 +270,7 @@ const WalletPage: React.FC = () => {
                                     precision={0}
                                     valueStyle={{ color: '#1890ff' }}
                                     prefix={<DollarOutlined />}
-                                    suffix="VNĐ"
+                                    formatter={(value) => formatPrice(value as number)}
                                 />
                             </Col>
                         </Row>
@@ -280,7 +282,7 @@ const WalletPage: React.FC = () => {
             <Card className="wallet-transactions-card">
                 <div className="transactions-header">
                     <Title level={4}>Lịch sử giao dịch</Title>
-                    
+
                     <div className="transaction-filters">
                         <Input
                             placeholder="Tìm kiếm giao dịch"
@@ -289,8 +291,8 @@ const WalletPage: React.FC = () => {
                             onChange={e => setSearchText(e.target.value)}
                             style={{ width: 250 }}
                         />
-                        
-                        <Select 
+
+                        <Select
                             defaultValue="ALL"
                             style={{ width: 150 }}
                             onChange={value => setFilterType(value)}
@@ -313,8 +315,8 @@ const WalletPage: React.FC = () => {
                         rowClassName="transaction-row"
                     />
                 ) : (
-                    <Empty 
-                        description="Chưa có giao dịch nào" 
+                    <Empty
+                        description="Chưa có giao dịch nào"
                         image={Empty.PRESENTED_IMAGE_SIMPLE}
                         className="empty-transactions"
                     />

@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class ProductServiceImpl implements ProductService {
@@ -85,5 +87,15 @@ public class ProductServiceImpl implements ProductService {
     public void updateReviewCount(Integer productId) {
 
         productRepository.updateReviewCount(productId);
+    }
+
+    @Override
+    public List<ProductDto> getTopRatedProducts() {
+        List<Product> products = productRepository.getTopRatedProducts();
+        return products.stream().map(product -> {
+            ProductDto productDto = new ProductDto();
+            productDto.clone(product);
+            return productDto;
+        }).toList();
     }
 }

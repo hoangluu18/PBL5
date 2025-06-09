@@ -2,7 +2,7 @@ package com.pbl5.admin.service.impl.admin;
 
 import com.pbl5.admin.dto.admin.ShopDto;
 import com.pbl5.admin.repository.shop.ShopRepository;
-import com.pbl5.admin.service.ShopService;
+import com.pbl5.admin.service.admin.ShopService;
 import com.pbl5.common.entity.Shop;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;

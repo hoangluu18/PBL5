@@ -6,7 +6,7 @@ import {
     Avatar, Button, Checkbox, Col, Divider, Layout, Rate,
     Row, Spin, Space, Select, notification, Breadcrumb,
     InputNumberProps, InputNumber, Card, Typography, Badge, Empty, Tag,
-    Pagination
+    Pagination, FloatButton
 } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
@@ -14,7 +14,8 @@ import ProductCard from "../components/ProductCard";
 import {
     SearchOutlined, FilterOutlined, HomeOutlined,
     AppstoreOutlined, TagOutlined, StarOutlined,
-    DollarOutlined, ClearOutlined, SortAscendingOutlined
+    DollarOutlined, ClearOutlined, SortAscendingOutlined,
+    VerticalAlignTopOutlined
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { ICategoryDto } from "../models/dto/CategoryDto";
@@ -37,6 +38,9 @@ const ProductFilterPage: React.FC = () => {
 
     const [clickFilterPrice, setClickFilterPrice] = useState<boolean>(false);
 
+    // State để theo dõi scroll position
+    const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
+
     const { alias } = useParams<{ alias: string }>();
     const navigate = useNavigate();
     const location = useLocation();
@@ -44,38 +48,55 @@ const ProductFilterPage: React.FC = () => {
     const query = new URLSearchParams(location.search);
     const keyword = query.get("keyword") || "";
 
+    // Effect để theo dõi scroll position
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            setShowScrollTop(scrollTop > 300); // Hiển thị khi scroll xuống hơn 300px
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Thêm useEffect riêng cho page để tránh loop
+    useEffect(() => {
+        if (page > 1) {
+            searchProducts();
+        }
+    }, [page]);
 
     useEffect(() => {
+        // Reset page về 1 khi thay đổi filter
+        setPage(1);
         updateUrlAndSearch();
         if (alias) {
             fetchBreadcrumb();
         }
-    }, [alias, selectedRating, selectedBrands,
-        clickFilterPrice, sortOption, location.search]);
+    }, [alias, selectedRating, selectedBrands, clickFilterPrice, sortOption, location.search]);
 
     document.title = `Tìm kiếm sản phẩm${keyword ? `: ${keyword}` : ""}`;
 
-    const searchProducts = async () => {
+    const searchProducts = async (currentPage?: number) => {
         setLoading(true);
+        const pageToUse = currentPage || page;
 
         try {
-
             if (alias) {
                 const categoryService = new CategoryService();
                 const data = await categoryService.searchProductByCategory(
                     alias, minPrice, maxPrice, selectedBrands,
-                    selectedRating, sortOption, keyword, page
+                    selectedRating, sortOption, keyword, pageToUse
                 );
                 setFilters(data);
             } else if (keyword) {
                 const productService = new ProductService();
                 const data = await productService.searchProducts(
                     minPrice, maxPrice, selectedBrands, selectedRating,
-                    sortOption, keyword, page
+                    sortOption, keyword, pageToUse
                 );
                 setFilters(data);
-            }
-            else {
+            } else {
                 notification.error({
                     message: "Lỗi",
                     description: "Không tìm thấy danh mục sản phẩm"
@@ -121,7 +142,7 @@ const ProductFilterPage: React.FC = () => {
         if (keyword) queryParams.set("keyword", keyword);
 
         navigate({ pathname: location.pathname, search: queryParams.toString() });
-        searchProducts();
+        searchProducts(1); // Luôn search từ trang 1 khi thay đổi filter
     };
 
     const changeMinPrice: InputNumberProps['onChange'] = (value) => {
@@ -158,12 +179,22 @@ const ProductFilterPage: React.FC = () => {
         setSelectedBrands([]);
         setSelectedRating(0);
         setSortOption("newest");
+        setPage(1);
         setClickFilterPrice(prev => !prev);
     };
 
+    const handlePageChange = (pageNumber: number) => {
+        setPage(pageNumber);
+        // Scroll to top khi chuyển trang
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
-    const handlePageChange = (page: number) => {
-        setPage(page);
+    // Hàm scroll to top
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     };
 
     const products = filters?.products || [];
@@ -206,6 +237,7 @@ const ProductFilterPage: React.FC = () => {
                         )}
                     </div>
 
+                    {/* Phần filter giữ nguyên ... */}
                     <Card
                         title={
                             <span>
@@ -353,7 +385,7 @@ const ProductFilterPage: React.FC = () => {
                         <div className="d-flex justify-content-between align-items-center">
                             <div>
                                 <Title level={5} style={{ margin: 0 }}>
-                                    Kết quả tìm kiếm: {products.length} sản phẩm
+                                    Kết quả tìm kiếm: {filters?.totalElements || 0} sản phẩm
                                 </Title>
                                 {activeFiltersCount > 0 && (
                                     <Space size={[0, 8]} wrap className="mt-2">
@@ -361,8 +393,7 @@ const ProductFilterPage: React.FC = () => {
                                             <Tag color="blue" closable onClose={() => navigate({ pathname: '/' })}>
                                                 Từ khóa: {keyword}
                                             </Tag>
-                                        )
-                                        }
+                                        )}
                                         {minPrice > 0 && (
                                             <Tag color="blue" closable onClose={() => setMinPrice(0)}>
                                                 Giá từ: {minPrice.toLocaleString()}₫
@@ -425,26 +456,28 @@ const ProductFilterPage: React.FC = () => {
                         </div>
                     ) : products.length > 0 ? (
                         <>
-                            <Row gutter={[24, 24]}  className="ms-2">
+                            <Row gutter={[24, 24]} className="ms-2">
                                 {products.map((product) => (
-                                    <Col span={6} key={product.id || product.name} >
+                                    <Col span={6} key={product.id || product.name}>
                                         <ProductCard {...product} />
                                     </Col>
                                 ))}
                             </Row>
-                            {
-                                filters?.totalPages && filters.totalPages > 1 && (
-                                    <div className="text-center mt-4">
-                                        <Pagination
-                                            current={filters.currentPage}
-                                            total={filters.totalElements}
-                                            pageSize={12}
-                                            showSizeChanger={false}
-                                            onChange={handlePageChange}
-                                        />
-                                    </div>
-                                )
-                            }
+                            {filters?.totalPages && filters.totalPages > 1 && (
+                                <div className="text-center mt-4">
+                                    <Pagination
+                                        current={page}
+                                        total={filters.totalElements}
+                                        pageSize={filters.pageSize || 12}
+                                        showSizeChanger={false}
+                                        showQuickJumper
+                                        showTotal={(total, range) =>
+                                            `${range[0]}-${range[1]} của ${total} sản phẩm`
+                                        }
+                                        onChange={handlePageChange}
+                                    />
+                                </div>
+                            )}
                         </>
                     ) : (
                         <Card className="text-center py-5">
@@ -468,6 +501,19 @@ const ProductFilterPage: React.FC = () => {
                     )}
                 </Content>
             </Layout>
+
+            {/* Nút Scroll to Top */}
+            <FloatButton
+                icon={<VerticalAlignTopOutlined />}
+                type="primary"
+                style={{
+                    right: 24,
+                    bottom: 24,
+                    display: showScrollTop ? 'block' : 'none'
+                }}
+                onClick={scrollToTop}
+                tooltip="Về đầu trang"
+            />
         </div>
     );
 };

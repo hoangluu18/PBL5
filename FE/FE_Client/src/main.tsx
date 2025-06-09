@@ -27,6 +27,8 @@ import OAuth2RedirectHandler from './pages/oauth2-redirect.tsx';
 import ChangePasswordPage from './pages/change_password_page.tsx';
 import WalletPage from './components/WalletPage.tsx';
 import WalletDepositPage from './components/WalletDepositPage.tsx';
+import StoreRequestForm from './pages/store_request.tsx';
+import SellerRegistrationForm from './pages/store_request.tsx';
 
 const router = createBrowserRouter([
   {
@@ -101,6 +103,10 @@ const router = createBrowserRouter([
       {
         path: '/wallet/deposit',
         element: <WalletDepositPage />,
+      },
+      {
+        path: '/store-request',
+        element: <SellerRegistrationForm />,
       }
 
     ]

@@ -1,5 +1,5 @@
 import CarouselComponent from "../utils/Carousel";
-import { Button, Col, Divider, Row, Spin } from "antd";
+import { Button, Col, Divider, Row, Spin, FloatButton } from "antd";
 import SectionHeader from "../utils/SectionHeader";
 import CategorySection from "../components/SectionCategory";
 import '../css/product.css'
@@ -9,18 +9,38 @@ import IProduct from "../models/dto/ProductDto";
 import { useEffect, useState } from "react";
 import ProductService from "../services/product.service";
 import '../css/homepage.css'
-import { DoubleRightOutlined } from "@ant-design/icons";
+
+import { DoubleRightOutlined, VerticalAlignTopOutlined } from "@ant-design/icons";
+
+
 import ChatBot from "../components/ChatBot"; // Import ChatBot component
+
 
 const Homepage = () => {
     const [page, setPage] = useState<number>(1);
     const [products, setProducts] = useState<IProduct[]>([]);
+    const [topProducts, setTopProducts] = useState<IProduct[]>([]);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
+
+
+    // State để theo dõi scroll position
+    const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
 
     useEffect(() => {
         fetchProducts();
     }, [page]);
+
+    // Effect để theo dõi scroll position
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            setShowScrollTop(scrollTop > 300); // Hiển thị khi scroll xuống hơn 300px
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     document.title = "Trang chủ";
 
@@ -29,8 +49,10 @@ const Homepage = () => {
         try {
             const productService = new ProductService();
             const data = await productService.getProducts(page);
+            const topProducts = await productService.getTopProducts();
             if (data.length > 0) {
                 setProducts([...products, ...data]);
+                setTopProducts(topProducts);
             } else {
                 setHasMore(false);
             }
@@ -40,6 +62,14 @@ const Homepage = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    // Hàm scroll to top
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     };
 
     return (
@@ -67,9 +97,9 @@ const Homepage = () => {
                         color="orange"
                         linkUrl="/" />
                     <Row gutter={[10, 10]}>
-                        {products.slice(0, 10).map((product, index) => (
+                        {topProducts.slice(0, 10).map((topProduct, index) => (
                             <Col className="gutter-row" key={index} span={4}>
-                                <ProductCard  {...product} />
+                                <ProductCard  {...topProduct} />
                             </Col>
                         ))}
                     </Row>
@@ -111,9 +141,24 @@ const Homepage = () => {
                     </div>
                 </div>
             </div>
-            
+
+
+            {/* Nút Scroll to Top */}
+            <FloatButton
+                icon={<VerticalAlignTopOutlined />}
+                type="primary"
+                style={{
+                    right: 24,
+                    bottom: 24,
+                    display: showScrollTop ? 'block' : 'none'
+                }}
+                onClick={scrollToTop}
+                tooltip="Về đầu trang"
+            />
+
             {/* Thêm ChatBot component */}
             <ChatBot />
+
         </>
     );
 }

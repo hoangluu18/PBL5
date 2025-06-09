@@ -1,7 +1,7 @@
-import { Breadcrumb, Button, Col, Rate, Row, Tabs, TabsProps, Typography, Divider, Tag, Badge, Tooltip, Image, Spin, notification } from "antd";
+import { Breadcrumb, Button, Col, Rate, Row, Tabs, TabsProps, Typography, Divider, Tag, Badge, Tooltip, Image, Spin, notification, FloatButton } from "antd";
 import CurrencyFormat from "../utils/CurrencyFormat";
 import { useContext, useEffect, useRef, useState } from "react";
-import { MinusOutlined, PlusOutlined, ShoppingCartOutlined, ThunderboltOutlined, HeartOutlined, ShareAltOutlined } from "@ant-design/icons";
+import { MinusOutlined, PlusOutlined, ShoppingCartOutlined, ThunderboltOutlined, HeartOutlined, ShareAltOutlined, VerticalAlignTopOutlined } from "@ant-design/icons";
 import ProductDescriptionTab from "../components/product_details/ProductDescriptionTab";
 import ProductDetailTab from "../components/product_details/ProductDetailTab";
 import ReviewList from "../components/product_details/ProductReviews";
@@ -26,6 +26,7 @@ const ProductDetailPage: React.FC = () => {
     const [selectedVariant, setSelectedVariant] = useState<Record<string, string>>({});
     const [selectedExtraImage, setSelectedExtraImage] = useState<string>("");
     const [selectedVariantImage, setSelectedVariantImage] = useState<string>("");
+    const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
 
     const { alias } = useParams();
     const tabsRef = useRef<HTMLDivElement>(null);
@@ -38,22 +39,55 @@ const ProductDetailPage: React.FC = () => {
     const reviewRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const [reloadHeader, setReloadHeader] = useState(false);
+
+    // Effect để theo dõi scroll position
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            setShowScrollTop(scrollTop > 300);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Helper function để kiểm tra xem sản phẩm có variants không
+    const hasVariants = () => {
+        return product.variantMap && Object.keys(product.variantMap).length > 0;
+    };
+
+    // Helper function để kiểm tra xem có đủ variants được chọn không
+    const hasAllRequiredVariantsSelected = () => {
+        if (!hasVariants()) return true; // Nếu không có variants thì luôn true
+        return Object.keys(product.variantMap || {}).length === Object.keys(selectedVariant).length;
+    };
+
+    // Helper function để lấy số lượng tối đa có thể mua
+    const getMaxQuantity = () => {
+        if (!hasVariants()) {
+            return 10; // Nếu không có variants, cho phép mua tối đa 10
+        }
+
+        const variantStock = getAvailableVariants().currentVariantQuantity;
+        return variantStock !== null ? variantStock : 0;
+    };
+
     useEffect(() => {
         fetchProduct();
         if (location.hash === "#ratingAndReview") {
             setActiveTab("ratingAndReview");
             setTimeout(() => {
                 reviewRef.current?.scrollIntoView({ behavior: "smooth" });
-            }, 300); // hoặc thử 500 nếu component load chậm
+            }, 300);
         }
     }, [reloadHeader]);
 
     useEffect(() => {
-        const variantStock = getAvailableVariants().currentVariantQuantity;
-        if (variantStock !== null && quantity > variantStock) {
-            setQuantity(Math.max(1, variantStock));
+        const maxQty = getMaxQuantity();
+        if (quantity > maxQty) {
+            setQuantity(Math.max(1, maxQty));
         }
-    }, [selectedVariant]);
+    }, [selectedVariant, product]);
 
     const getAvailableVariants = () => {
         // If no color is selected, show unique sizes (removing duplicates)
@@ -181,7 +215,6 @@ const ProductDetailPage: React.FC = () => {
         }
     };
 
-
     const handleBuyNow = async () => {
         if (!customer || !customer.id) {
             api.error({
@@ -213,6 +246,14 @@ const ProductDetailPage: React.FC = () => {
         }
     };
 
+    // Hàm scroll to top
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    };
+
     if (loading) {
         return <div className="text-center mt-4">
             <Spin size="large" />
@@ -227,7 +268,6 @@ const ProductDetailPage: React.FC = () => {
         }
         setActiveTab("ratingAndReview");
     };
-
 
     const items: TabsProps["items"] = [
         {
@@ -263,8 +303,7 @@ const ProductDetailPage: React.FC = () => {
         },
     ];
 
-    const handleHoverAndClickImage = (e: any) => {
-        const image = e.target.src; // Use src directly which already has the full path
+    const handleHoverAndClickImage = (image: string) => {
         setSelectedMainImage(image);
         setSelectedExtraImage(image);
     };
@@ -283,7 +322,6 @@ const ProductDetailPage: React.FC = () => {
             setSelectedMainImage(product.mainImage);
         }
     };
-
 
     const handleSelectVariant = (key: string, val: string, photo: string) => {
         if (photo) {
@@ -319,9 +357,9 @@ const ProductDetailPage: React.FC = () => {
 
             // After updating the variant, check if we need to adjust the quantity
             setTimeout(() => {
-                const newStock = getAvailableVariants().currentVariantQuantity;
-                if (newStock !== null && quantity > newStock) {
-                    setQuantity(Math.max(1, newStock));
+                const maxQty = getMaxQuantity();
+                if (quantity > maxQty) {
+                    setQuantity(Math.max(1, maxQty));
                 }
             }, 0);
 
@@ -365,12 +403,25 @@ const ProductDetailPage: React.FC = () => {
                 ]}
             />
             {contextHolder}
-            <Row gutter={[24, 24]} className="bg-white p-4 rounded shadow-sm">
+            <Row gutter={[32, 32]} className="bg-white p-4 rounded shadow-sm">
                 {/* Cột trái: Hình ảnh sản phẩm */}
-                <Col xs={24} md={8}>
-                    <div>
+                <Col xs={24} lg={10}>
+                    <div className="product-image-section">
                         {/* Ảnh chính */}
-                        <div className="mb-3" style={{ height: '600px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div
+                            className="main-image-container mb-4"
+                            style={{
+                                height: '500px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: '#f8f9fa',
+                                borderRadius: '12px',
+                                border: '1px solid #e9ecef',
+                                overflow: 'hidden',
+                                position: 'relative'
+                            }}
+                        >
                             <Image
                                 src={selectedMainImage}
                                 alt={product.name}
@@ -381,37 +432,91 @@ const ProductDetailPage: React.FC = () => {
                                     objectFit: 'contain'
                                 }}
                                 preview={{
-                                    mask: false,
-                                    toolbarRender: () => null
+                                    mask: (
+                                        <div style={{
+                                            backgroundColor: 'rgba(0,0,0,0.5)',
+                                            color: 'white',
+                                            padding: '8px 16px',
+                                            borderRadius: '20px',
+                                            fontSize: '14px'
+                                        }}>
+                                            Xem ảnh lớn
+                                        </div>
+                                    ),
                                 }}
                             />
                         </div>
 
-                        {/* Hình ảnh phụ */}
-                        <div className="thumbnail-gallery d-flex flex-wrap justify-content-start gap-2">
-                            {product.images && product.images.map((image, index) => (
+                        {/* Hình ảnh phụ - Grid layout */}
+                        {product.images && product.images.length > 0 && (
+                            <div className="thumbnail-gallery">
                                 <div
-                                    key={index}
-                                    className={`${selectedExtraImage.includes(image) ? "border-danger" : "border-secondary"} border rounded`}
-                                    style={{ width: '60px', height: '60px', cursor: 'pointer', borderRadius: '4px', overflow: 'hidden' }}
+                                    style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))',
+                                        gap: '12px',
+                                        maxWidth: '500px'
+                                    }}
                                 >
-                                    <img
-                                        src={image}
-                                        onMouseEnter={handleHoverAndClickImage}
-                                        alt={`Product thumbnail ${index + 1}`}
-                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                    />
+                                    {product.images.map((image, index) => (
+                                        <div
+                                            key={index}
+                                            className={`thumbnail-item ${selectedExtraImage.includes(image) ? "active" : ""}`}
+                                            style={{
+                                                width: '80px',
+                                                height: '80px',
+                                                cursor: 'pointer',
+                                                borderRadius: '8px',
+                                                overflow: 'hidden',
+                                                border: selectedExtraImage.includes(image) ? '2px solid #1890ff' : '2px solid #e9ecef',
+                                                transition: 'all 0.3s ease',
+                                                position: 'relative'
+                                            }}
+                                            onMouseEnter={() => handleHoverAndClickImage(image)}
+                                            onClick={() => handleHoverAndClickImage(image)}
+                                        >
+                                            <img
+                                                src={image}
+                                                alt={`Product thumbnail ${index + 1}`}
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover',
+                                                    transition: 'transform 0.3s ease'
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.transform = 'scale(1.05)';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.transform = 'scale(1)';
+                                                }}
+                                            />
+                                            {selectedExtraImage.includes(image) && (
+                                                <div
+                                                    style={{
+                                                        position: 'absolute',
+                                                        top: 0,
+                                                        left: 0,
+                                                        right: 0,
+                                                        bottom: 0,
+                                                        backgroundColor: 'rgba(24, 144, 255, 0.1)',
+                                                        pointerEvents: 'none'
+                                                    }}
+                                                />
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 </Col>
 
                 {/* Cột phải: Thông tin sản phẩm */}
-                <Col xs={24} md={16}>
+                <Col xs={24} lg={14}>
                     {/* Tên sản phẩm và đánh giá */}
                     <div className="product-header">
-                        <Title level={2} style={{ marginBottom: '8px' }}>{product.name}</Title>
+                        <Title level={2} style={{ marginBottom: '8px', lineHeight: '1.3' }}>{product.name}</Title>
 
                         <div className="product-ratings d-flex align-items-center mb-3">
                             <Rate
@@ -423,7 +528,7 @@ const ProductDetailPage: React.FC = () => {
                             <Text className="ms-2 text-primary"
                                 style={{ cursor: 'pointer' }}
                                 onClick={handleScrollToReviews}>
-                                {product.reviewCount} đánh giá
+                                ({product.reviewCount} đánh giá)
                             </Text>
 
                             <Divider type="vertical" style={{ margin: '0 16px' }} />
@@ -440,48 +545,53 @@ const ProductDetailPage: React.FC = () => {
                     </div>
 
                     {/* Giá và ưu đãi */}
-                    <div className="price-container p-3 my-3 bg-light rounded">
+                    <div className="price-container p-4 my-4 bg-light rounded" style={{ backgroundColor: '#f8f9fa' }}>
                         <div className="d-flex align-items-baseline">
-                            <Text className="text-danger fw-bold" style={{ fontSize: '28px' }}>
+                            <Text className="text-danger fw-bold" style={{ fontSize: '32px' }}>
                                 <CurrencyFormat price={discountedPrice} />
                             </Text>
 
                             {product.discountPercent > 0 && (
                                 <>
-                                    <Text className="ms-3 text-muted" delete style={{ fontSize: '18px' }}>
+                                    <Text className="ms-3 text-muted" delete style={{ fontSize: '20px' }}>
                                         <CurrencyFormat price={product.price} />
                                     </Text>
-                                    <Tag color="orange" className="ms-2">-{product.discountPercent}%</Tag>
+                                    <Tag color="orange" className="ms-2" style={{ fontSize: '12px', padding: '4px 8px' }}>
+                                        -{product.discountPercent}%
+                                    </Tag>
                                 </>
                             )}
                         </div>
                     </div>
 
                     {/* Trạng thái sản phẩm */}
-                    <div className="mb-3">
+                    <div className="mb-4">
                         {product.inStock ? (
-                            <Badge status="success" text={<Text className="text-success fs-6">Còn hàng</Text>} />
+                            <Badge status="success" text={<Text className="text-success fs-6 fw-semibold">Còn hàng</Text>} />
                         ) : (
-                            <Badge status="error" text={<Text className="text-danger fs-6">Hết hàng</Text>} />
+                            <Badge status="error" text={<Text className="text-danger fs-6 fw-semibold">Hết hàng</Text>} />
                         )}
                     </div>
 
-                    <Divider style={{ margin: '16px 0' }} />
+                    <Divider style={{ margin: '20px 0' }} />
 
                     {/* Phần variant */}
                     {product.variantMap?.Color && (
-                        <div className="variant-section mb-3">
-                            <Text strong className="d-block mb-2">Màu sắc:</Text>
-                            <div className="d-flex flex-wrap gap-2">
+                        <div className="variant-section mb-4">
+                            <Text strong className="d-block mb-3" style={{ fontSize: '16px' }}>Màu sắc:</Text>
+                            <div className="d-flex flex-wrap gap-3">
                                 {product.variantMap.Color.map((val, index) => (
                                     <div
                                         key={index}
                                         style={{
                                             cursor: 'pointer',
-                                            padding: '8px 12px',
-                                            transition: 'all 0.2s'
+                                            padding: '10px 16px',
+                                            transition: 'all 0.3s ease',
+                                            borderRadius: '8px',
+                                            border: selectedVariant["Color"] === val.value ? '2px solid #1890ff' : '2px solid #d9d9d9',
+                                            backgroundColor: selectedVariant["Color"] === val.value ? '#f0f8ff' : '#ffffff'
                                         }}
-                                        className={`${selectedVariant["Color"] === val.value ? 'border-danger' : 'border-secondary'} img-hover border`}
+                                        className="img-hover"
                                         onMouseEnter={() => handleVariantHover(val.photo)}
                                         onMouseLeave={() => handleVariantLeave("Color", val.photo)}
                                         onClick={() => handleSelectVariant("Color", val.value, val.photo)}
@@ -490,10 +600,12 @@ const ProductDetailPage: React.FC = () => {
                                             <img
                                                 src={val.photo}
                                                 alt={`Color - ${val.value}`}
-                                                style={{ height: '24px', marginRight: '8px' }}
+                                                style={{ height: '28px', marginRight: '8px', borderRadius: '4px' }}
                                             />
                                         )}
-                                        <Text>{val.value}</Text>
+                                        <Text style={{ fontWeight: selectedVariant["Color"] === val.value ? 'bold' : 'normal' }}>
+                                            {val.value}
+                                        </Text>
                                     </div>
                                 ))}
                             </div>
@@ -502,9 +614,9 @@ const ProductDetailPage: React.FC = () => {
 
                     {/* Size variants */}
                     {product.variantMap?.Size && (
-                        <div className="variant-section mb-3">
-                            <Text strong className="d-block mb-2">Kích thước:</Text>
-                            <div className="d-flex flex-wrap gap-2">
+                        <div className="variant-section mb-4">
+                            <Text strong className="d-block mb-3" style={{ fontSize: '16px' }}>Kích thước:</Text>
+                            <div className="d-flex flex-wrap gap-3">
                                 {/* Get available sizes based on selected color */}
                                 {getAvailableVariants().availableSizes.map((val, index) => {
                                     const available = isVariantAvailable("Size", val.value);
@@ -513,32 +625,40 @@ const ProductDetailPage: React.FC = () => {
                                             key={index}
                                             style={{
                                                 cursor: available ? 'pointer' : 'not-allowed',
-                                                padding: '8px 12px',
-                                                transition: 'all 0.2s',
-                                                opacity: available ? 1 : 0.5
+                                                padding: '10px 16px',
+                                                transition: 'all 0.3s ease',
+                                                borderRadius: '8px',
+                                                border: selectedVariant["Size"] === val.value ? '2px solid #1890ff' : '2px solid #d9d9d9',
+                                                backgroundColor: selectedVariant["Size"] === val.value ? '#f0f8ff' : '#ffffff',
+                                                opacity: available ? 1 : 0.5,
+                                                minWidth: '60px',
+                                                textAlign: 'center'
                                             }}
-                                            className={`${selectedVariant["Size"] === val.value ? 'border-danger' : 'border-secondary'} img-hover border`}
+                                            className="img-hover"
                                             onClick={() => available && handleSelectVariant("Size", val.value, val.photo)}
                                         >
-                                            <Text>{val.value}</Text>
+                                            <Text style={{ fontWeight: selectedVariant["Size"] === val.value ? 'bold' : 'normal' }}>
+                                                {val.value}
+                                            </Text>
                                         </div>
-
                                     );
                                 })}
                             </div>
                         </div>
                     )}
-                    {getAvailableVariants().currentVariantQuantity !== null && (
-                        <div className="mb-3">
-                            <Text strong className="d-flex align-items-center">
+
+                    {/* Hiển thị số lượng tồn kho */}
+                    {hasVariants() && getAvailableVariants().currentVariantQuantity !== null && (
+                        <div className="mb-4">
+                            <Text strong className="d-flex align-items-center" style={{ fontSize: '15px' }}>
                                 {getAvailableVariants().currentVariantQuantity !== null && getAvailableVariants().currentVariantQuantity > 0 ? (
                                     <>
-                                        <span className="text-success me-1">●</span>
+                                        <span className="text-success me-2" style={{ fontSize: '18px' }}>●</span>
                                         Còn {getAvailableVariants().currentVariantQuantity} sản phẩm
                                     </>
                                 ) : (
                                     <span className="text-danger d-flex align-items-center">
-                                        <span className="me-1">●</span>
+                                        <span className="me-2" style={{ fontSize: '18px' }}>●</span>
                                         Hết hàng
                                     </span>
                                 )}
@@ -546,41 +666,54 @@ const ProductDetailPage: React.FC = () => {
                         </div>
                     )}
 
-                    <Divider style={{ margin: '16px 0' }} />
+                    {/* Hiển thị thông tin cho sản phẩm không có variants */}
+                    {!hasVariants() && (
+                        <div className="mb-4">
+                            <Text strong className="d-flex align-items-center" style={{ fontSize: '15px' }}>
+                                <span className="text-info me-2" style={{ fontSize: '18px' }}>●</span>
+                                Có thể mua tối đa 10 sản phẩm
+                            </Text>
+                        </div>
+                    )}
+
+                    <Divider style={{ margin: '20px 0' }} />
 
                     {/* Số lượng */}
-                    <div className="quantity-section d-flex align-items-center mb-4">
+                    <div className="quantity-section d-flex align-items-center mb-5">
                         <div className="me-4">
-                            <Text strong>Số lượng:</Text>
-                            <div className="d-flex align-items-center mt-1">
+                            <Text strong style={{ fontSize: '16px' }}>Số lượng:</Text>
+                            <div className="d-flex align-items-center mt-2">
                                 <Button
                                     icon={<MinusOutlined />}
                                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
                                     className="rounded"
-                                    disabled={
-                                        !product.inStock ||
-                                        Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length
-                                    }
+                                    size="large"
+                                    disabled={!product.inStock || !hasAllRequiredVariantsSelected()}
                                 />
-                                <div className="mx-2 px-3 py-1 border text-center" style={{ minWidth: '50px' }}>
-                                    <Text disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length}>
+                                <div className="mx-3 px-4 py-2 border text-center" style={{
+                                    minWidth: '60px',
+                                    fontSize: '16px',
+                                    borderRadius: '6px',
+                                    backgroundColor: '#f8f9fa'
+                                }}>
+                                    <Text disabled={!product.inStock || !hasAllRequiredVariantsSelected()}>
                                         {quantity}
                                     </Text>
                                 </div>
                                 <Button
                                     icon={<PlusOutlined />}
                                     onClick={() => {
-                                        const variantStock = getAvailableVariants().currentVariantQuantity;
-                                        if (variantStock !== null && quantity < variantStock) {
+                                        const maxQty = getMaxQuantity();
+                                        if (quantity < maxQty) {
                                             setQuantity((q) => q + 1);
                                         }
                                     }}
                                     className="rounded"
+                                    size="large"
                                     disabled={
                                         !product.inStock ||
-                                        Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length ||
-                                        (getAvailableVariants().currentVariantQuantity !== null &&
-                                            getAvailableVariants().currentVariantQuantity !== null && quantity >= getAvailableVariants().currentVariantQuantity)
+                                        !hasAllRequiredVariantsSelected() ||
+                                        quantity >= getMaxQuantity()
                                     }
                                 />
                             </div>
@@ -588,17 +721,24 @@ const ProductDetailPage: React.FC = () => {
                     </div>
 
                     {/* Nút mua hàng */}
-                    <div className="buy-buttons d-flex flex-wrap gap-3 mt-4">
+                    <div className="buy-buttons d-flex flex-wrap gap-4 mt-4">
                         <Button
                             type="primary"
                             size="large"
                             icon={<ShoppingCartOutlined />}
-                            className="px-4 d-flex align-items-center"
+                            className="px-6 d-flex align-items-center"
+                            style={{
+                                height: '50px',
+                                fontSize: '16px',
+                                borderRadius: '8px',
+                                flex: '1',
+                                minWidth: '200px'
+                            }}
                             onClick={() => handleAddToCart()}
                             disabled={
                                 !product.inStock ||
-                                Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length ||
-                                (getAvailableVariants().currentVariantQuantity !== null && getAvailableVariants().currentVariantQuantity <= 0)
+                                !hasAllRequiredVariantsSelected() ||
+                                (hasVariants() && getAvailableVariants().currentVariantQuantity !== null && getAvailableVariants().currentVariantQuantity <= 0)
                             }
                         >
                             Thêm vào giỏ hàng
@@ -609,13 +749,20 @@ const ProductDetailPage: React.FC = () => {
                             danger
                             size="large"
                             icon={<ThunderboltOutlined />}
-                            className="px-4 d-flex align-items-center"
-
-
+                            className="px-6 d-flex align-items-center"
+                            style={{
+                                height: '50px',
+                                fontSize: '16px',
+                                borderRadius: '8px',
+                                flex: '1',
+                                minWidth: '150px'
+                            }}
                             onClick={() => handleBuyNow()}
-
-                            disabled={!product.inStock || Object.keys(product.variantMap || {}).length !== Object.keys(selectedVariant).length}
-
+                            disabled={
+                                !product.inStock ||
+                                !hasAllRequiredVariantsSelected() ||
+                                (hasVariants() && getAvailableVariants().currentVariantQuantity !== null && getAvailableVariants().currentVariantQuantity <= 0)
+                            }
                         >
                             Mua ngay
                         </Button>
@@ -648,6 +795,19 @@ const ProductDetailPage: React.FC = () => {
                     </div>
                 </Col>
             </Row>
+
+            {/* Nút Scroll to Top */}
+            <FloatButton
+                icon={<VerticalAlignTopOutlined />}
+                type="primary"
+                style={{
+                    right: 24,
+                    bottom: 24,
+                    display: showScrollTop ? 'block' : 'none'
+                }}
+                onClick={scrollToTop}
+                tooltip="Về đầu trang"
+            />
         </div>
     );
 };

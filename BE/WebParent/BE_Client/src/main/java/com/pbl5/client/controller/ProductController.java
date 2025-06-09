@@ -106,6 +106,12 @@ public class ProductController {
         return ResponseEntity.ok(map);
     }
 
+    @GetMapping("/top-rated")
+    public ResponseEntity<?> getTopRatedProducts() {
+
+        return ResponseEntity.ok(productService.getTopRatedProducts());
+    }
+
     @GetMapping("/{id}/details")
     public ResponseEntity<?> getDetails(@PathVariable("id") Integer id) {
         try {

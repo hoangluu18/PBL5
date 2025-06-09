@@ -6,6 +6,8 @@ import com.pbl5.client.exception.ProductNotFoundException;
 import com.pbl5.common.entity.product.Product;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface ProductService {
     Page<Product> listAll(int page);
 
@@ -19,4 +21,6 @@ public interface ProductService {
     Page<ProductDto> searchProducts(int page, SearchParam searchParam);
 
     void updateReviewCount(Integer productId);
+
+    List<ProductDto> getTopRatedProducts();
 }

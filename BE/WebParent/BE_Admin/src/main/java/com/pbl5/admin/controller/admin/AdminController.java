@@ -2,13 +2,15 @@ package com.pbl5.admin.controller.admin;
 
 import com.pbl5.admin.dto.ResponseDto;
 import com.pbl5.admin.dto.admin.CategoryDto;
-import com.pbl5.admin.service.ShopService;
-import com.pbl5.admin.service.ShopStatisticService;
+import com.pbl5.admin.service.admin.ShopService;
+import com.pbl5.admin.service.admin.ShopStatisticService;
+import com.pbl5.admin.service.admin.StoreRequestService;
 import com.pbl5.admin.service.shop.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -23,6 +25,9 @@ public class AdminController {
 
     @Autowired
     private ShopService shopService;
+
+    @Autowired
+    private StoreRequestService storeRequestService;
 
     @GetMapping("/shop-revenue")
     public ResponseEntity<ResponseDto> getShopRevenue(@RequestParam("date") String date) {
@@ -102,6 +107,34 @@ public class AdminController {
         try {
             categoryService.deleteCategory(id);
             responseDto.setMessage("Delete category successfully");
+            return ResponseEntity.ok(responseDto);
+        } catch (Exception e) {
+            responseDto.setMessage(e.getMessage());
+            return ResponseEntity.status(500).body(responseDto);
+        }
+    }
+
+    @GetMapping("/store-requests")
+    public ResponseEntity<ResponseDto> getStoreRequests() {
+        ResponseDto responseDto = new ResponseDto();
+        try {
+            responseDto.setData(storeRequestService.getAllStoreRequests());
+            responseDto.setMessage("Get store requests successfully");
+            return ResponseEntity.ok(responseDto);
+        } catch (Exception e) {
+            responseDto.setMessage(e.getMessage());
+            return ResponseEntity.status(500).body(responseDto);
+        }
+    }
+
+    @PutMapping("/store-requests/{id}/{response}")
+    public ResponseEntity<ResponseDto> respondToStoreRequest(@PathVariable Integer id, @PathVariable String response,
+                                                             @RequestBody Map<String, String> payload) {
+        ResponseDto responseDto = new ResponseDto();
+        try {
+            String note = storeRequestService.respondToStoreRequest(id, response, payload.get("note"));
+            responseDto.setMessage("Respond to store request successfully");
+            responseDto.setData(note);
             return ResponseEntity.ok(responseDto);
         } catch (Exception e) {
             responseDto.setMessage(e.getMessage());

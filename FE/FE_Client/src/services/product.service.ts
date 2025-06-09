@@ -22,6 +22,20 @@ class ProductService {
         return products;
     }
 
+    async getTopProducts(): Promise<IProduct[]> {
+
+        let products: IProduct[] | PromiseLike<IProduct[]> = [];
+
+        try {
+            const response = await axios.get<IProduct[]>(`/p/top-rated`);
+            products = response.data;
+        } catch (error) {
+            console.error(error);
+        }
+
+        return products;
+    }
+
     async getProductByAlias(alias: string): Promise<IProductFullInfoDto> {
         let productInfo: IProductFullInfoDto | PromiseLike<IProductFullInfoDto> = {} as IProductFullInfoDto;
 
