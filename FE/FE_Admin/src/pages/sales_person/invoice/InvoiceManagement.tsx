@@ -35,7 +35,7 @@ import OrderService from "../../../services/order.service";
 import InvoiceDetailComponent from "./InvoiceDetail";
 import { OrderOverviewDto, SearchOrderDto } from "../../../models/OrderDto";
 import axios from "axios";
-import {ShopProfileService} from '../../../services/shop/ShopProfileService.service';
+import { ShopProfileService } from '../../../services/shop/ShopProfileService.service';
 const { Title, Text } = Typography;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -104,17 +104,17 @@ const InvoiceManagementPage: React.FC = () => {
     const [provinces, setProvinces] = useState<{ value: string, label: string }[]>([]);
 
 
-        useEffect(() => {
+    useEffect(() => {
         const fetchShopId = async () => {
             try {
                 if (user && user.id) {
                     console.log("Calling API with userId:", user.id);
-                    
+
                     const userId = parseInt(String(user.id));
                     const fetchedShopId = await shopProfileService.getShopIdByUserId(userId);
                     console.log("Shop ID received:", fetchedShopId);
                     setShopId(fetchedShopId);
-                    
+
                     // Cập nhật searchParams với shopId mới
                     setSearchParams(prev => ({
                         ...prev,
@@ -128,7 +128,7 @@ const InvoiceManagementPage: React.FC = () => {
                 message.error("Không thể lấy thông tin Shop ID");
             }
         };
-        
+
         fetchShopId();
     }, [user]);
 
@@ -160,9 +160,9 @@ const InvoiceManagementPage: React.FC = () => {
         }
     };
 
-       const fetchData = async () => {
+    const fetchData = async () => {
         if (shopId === undefined) return; // Không fetch nếu chưa có shopId
-        
+
         setLoading(true);
         try {
             const orderService = new OrderService();
@@ -195,6 +195,10 @@ const InvoiceManagementPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const formatPrice = (price: number) => {
+        return Math.floor(price).toLocaleString('vi-VN') + 'đ';
     };
 
     // Update search params
@@ -427,7 +431,7 @@ const InvoiceManagementPage: React.FC = () => {
             key: 'totalAmount',
             align: 'right' as const,
             render: (amount: number) => (
-                <Text strong>{amount.toLocaleString('vi-VN')} ₫</Text>
+                <Text strong>{formatPrice(amount)}</Text>
             ),
         },
         {
@@ -711,7 +715,7 @@ const InvoiceManagementPage: React.FC = () => {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <Text>Số lượng hóa đơn: {invoices.length}</Text>
                                     <Text strong>
-                                        Tổng doanh thu: {invoices.reduce((sum, invoice) => sum + (invoice.totalAmount || 0), 0).toLocaleString('vi-VN')} ₫
+                                        Tổng doanh thu: {formatPrice(invoices.reduce((sum, invoice) => sum + (invoice.totalAmount || 0), 0))}
                                     </Text>
                                 </div>
                             )}

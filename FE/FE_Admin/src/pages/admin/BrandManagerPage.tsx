@@ -30,6 +30,8 @@ const BrandManagerPage: React.FC = () => {
         total: 0
     });
 
+    document.title = 'Admin - Quản lý thương hiệu';
+
     // Create instance of BrandService
     const brandService = new BrandService();
 

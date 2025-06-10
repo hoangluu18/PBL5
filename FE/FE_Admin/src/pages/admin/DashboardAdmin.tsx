@@ -12,6 +12,8 @@ const DashBoardAdmin: React.FC = () => {
     useEffect(() => {
     }, []);
 
+    document.title = 'Trang quản trị - Dashboard';
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">

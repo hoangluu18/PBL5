@@ -15,7 +15,7 @@ export interface ChatRequest {
 
 class ChatbotService {
     //private baseURL = 'https://pmshoanghot-chat-bot-pbl5.hf.space'; // URL của API chatbot
-    private baseURL = 'http://192.168.9.113:8000';
+    private baseURL = 'http://localhost:8000';
     // API không streaming (backup)
     async sendMessage(request: ChatRequest): Promise<string> {
         try {
@@ -57,7 +57,7 @@ class ChatbotService {
 
             while (true) {
                 const { done, value } = await reader.read();
-                
+
                 if (done) break;
 
                 const chunk = decoder.decode(value);
@@ -67,7 +67,7 @@ class ChatbotService {
                     if (line.startsWith('data: ')) {
                         try {
                             const data = JSON.parse(line.slice(6));
-                            
+
                             switch (data.type) {
                                 case 'start':
                                     onStart?.();

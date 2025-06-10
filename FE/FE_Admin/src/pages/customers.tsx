@@ -1,12 +1,12 @@
-import { useEffect, useState,useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import axios from '../axios.customize';
-import { 
-  Table, Card, Input, Button, Space, Tag, Typography, 
+import {
+  Table, Card, Input, Button, Space, Tag, Typography,
   Row, Col, Statistic, Breadcrumb, Spin,
   message, Alert, Avatar, Tooltip
 } from 'antd';
-import { 
-  SearchOutlined, ReloadOutlined, UserOutlined, 
+import {
+  SearchOutlined, ReloadOutlined, UserOutlined,
   TeamOutlined, DollarOutlined, ShoppingOutlined,
   EyeOutlined, HistoryOutlined
 } from '@ant-design/icons';
@@ -81,7 +81,7 @@ const Customers = () => {
     };
   }, []);
 
-   const fetchCustomers = async () => {
+  const fetchCustomers = async () => {
     if (shopId === undefined) {
       console.warn("Cannot fetch customers: shopId not available");
       return;
@@ -89,24 +89,24 @@ const Customers = () => {
 
     try {
       setLoading(true);
-      
+
       console.log("Fetching customers with shopId:", shopId);
-      
+
       // Sử dụng shopId từ state thay vì từ localStorage
       const response = await axios.get(`/saleperson/customers?shopId=${shopId}`);
       const data = response.data;
       setCustomers(data);
       setFilteredCustomers(data);
-  
+
       const totalSpending = data.reduce((sum: number, customer: Customer) =>
         sum + (customer.totalSpending || 0), 0);
-  
+
       setStatistics({
         totalCustomers: data.length,
         activeCustomers: data.filter((c: Customer) => c.totalSpending > 0).length,
         totalSpending: totalSpending
       });
-  
+
       message.success('Đã tải dữ liệu khách hàng thành công');
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -121,7 +121,7 @@ const Customers = () => {
       try {
         if (user && user.id) {
           console.log("Calling API with userId:", user.id);
-          
+
           const userId = parseInt(String(user.id));
           const fetchedShopId = await shopProfileService.getShopIdByUserId(userId);
           console.log("Shop ID received:", fetchedShopId);
@@ -134,7 +134,7 @@ const Customers = () => {
         message.error("Không thể lấy thông tin Shop ID");
       }
     };
-    
+
     fetchShopId();
   }, [user]);
 
@@ -147,7 +147,7 @@ const Customers = () => {
   }, [shopId]);
 
   useEffect(() => {
-    const filtered = customers.filter(customer => 
+    const filtered = customers.filter(customer =>
       customer.fullName.toLowerCase().includes(searchText.toLowerCase()) ||
       (customer.phone?.toLowerCase() || '').includes(searchText.toLowerCase()) ||
       customer.id.toString().includes(searchText)
@@ -168,6 +168,10 @@ const Customers = () => {
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
+  const formatPrice = (price: number) => {
+    return Math.floor(price).toLocaleString('vi-VN') + 'đ';
+  };
+
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
@@ -179,8 +183,8 @@ const Customers = () => {
 
   const getAvatarUrl = (avatarPath: string | undefined) => {
     if (!avatarPath) return undefined;
-    return avatarPath.startsWith('http') 
-      ? avatarPath 
+    return avatarPath.startsWith('http')
+      ? avatarPath
       : `http://localhost:8080/images/avatars/${avatarPath}`;
   };
 
@@ -197,9 +201,9 @@ const Customers = () => {
       key: 'fullName',
       render: (_: any, record: Customer) => (
         <Space>
-          <Avatar 
-            src={getAvatarUrl(record.avatar)} 
-            icon={<UserOutlined />} 
+          <Avatar
+            src={getAvatarUrl(record.avatar)}
+            icon={<UserOutlined />}
           />
           <Link to={`/shop/customers/${record.id}`}>
             <Text strong>{record.fullName}</Text>
@@ -226,15 +230,15 @@ const Customers = () => {
       dataIndex: 'totalSpending',
       key: 'totalSpending',
       render: (value: number) => {
-        const formattedValue = value ? value.toLocaleString() + '₫' : '0₫';
-        
+        const formattedValue = value ? formatPrice(value) : '0₫';
+
         let color = '';
         if (value > 10000000) color = 'green';
         else if (value > 1000000) color = 'blue';
         else if (value > 0) color = 'gray';
-        
+
         return value > 0 ? (
-          <Tag color={color} style={{fontSize: '14px'}}>
+          <Tag color={color} style={{ fontSize: '14px' }}>
             {formattedValue}
           </Tag>
         ) : formattedValue;
@@ -277,18 +281,18 @@ const Customers = () => {
 
   return (
     <div className="customer-fullwidth-container">
-    <Breadcrumb
-      style={{ marginBottom: '16px' }}
-      items={[
-        { title: <Link to="/">Trang chủ</Link> },
-        { title: 'Quản lý khách hàng' },
-      ]}
-    />
-      
+      <Breadcrumb
+        style={{ marginBottom: '16px' }}
+        items={[
+          { title: <Link to="/">Trang chủ</Link> },
+          { title: 'Quản lý khách hàng' },
+        ]}
+      />
+
       <Title level={2} style={{ marginBottom: '24px' }}>
         <TeamOutlined /> Quản lý khách hàng
       </Title>
-      
+
       {/* Statistical Cards */}
       <Row gutter={16} style={{ marginBottom: '24px' }}>
         <Col xs={24} sm={8}>
@@ -317,14 +321,13 @@ const Customers = () => {
               title="Tổng doanh thu"
               value={statistics.totalSpending}
               prefix={<DollarOutlined />}
-              suffix="₫"
               valueStyle={{ color: '#faad14' }}
-              formatter={(value) => `${value?.toLocaleString()}`}
+              formatter={(value) => `${formatPrice(value as number)}`}
             />
           </Card>
         </Col>
       </Row>
-      
+
       <Card bordered={false} bodyStyle={{ padding: '1px 0px 0px 0px' }}>
         <Card
           bordered={false}
@@ -344,8 +347,8 @@ const Customers = () => {
             </Col>
             <Col xs={24} sm={8} md={12} style={{ textAlign: 'right' }} className="action-col">
               <Tooltip title="Làm mới dữ liệu">
-                <Button 
-                  icon={<ReloadOutlined />} 
+                <Button
+                  icon={<ReloadOutlined />}
                   onClick={handleRefresh}
                   loading={loading}
                 />
@@ -353,7 +356,7 @@ const Customers = () => {
             </Col>
           </Row>
         </Card>
-        
+
         <Table
           rowKey="id"
           columns={columns}

@@ -44,7 +44,6 @@ const { TextArea } = Input;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-
 interface RequestStats {
     total: number;
     pending: number;
@@ -77,28 +76,43 @@ const StoreRequestPage: React.FC = () => {
         fetchRequests();
     }, []);
 
+    document.title = 'Admin - Quản lý yêu cầu đăng ký cửa hàng';
+
     useEffect(() => {
         applyFilters();
     }, [requests, searchText, statusFilter, dateRange]);
 
+    // Hàm tính toán và cập nhật stats
+    const calculateStats = (requestList: StoreRequest[]): RequestStats => {
+        return {
+            total: requestList.length,
+            pending: requestList.filter(r => r.status === 0).length,
+            approved: requestList.filter(r => r.status === 1).length,
+            rejected: requestList.filter(r => r.status === 2).length,
+        };
+    };
+
+    // Hàm cập nhật stats
+    const updateStats = (requestList: StoreRequest[]) => {
+        const newStats = calculateStats(requestList);
+        setStats(newStats);
+        console.log('📊 Stats updated:', newStats);
+    };
+
     const fetchRequests = async () => {
         setLoading(true);
         try {
-            // Simulate API call - replace with actual API
             const storeRequestService = new StoreRequestService();
-            const data = await storeRequestService.getAll()
+            const data = await storeRequestService.getAll();
+
+            console.log('📥 Fetched requests:', data);
             setRequests(data);
 
-            // Calculate stats
-            const statsData = {
-                total: requests.length,
-                pending: requests.filter(r => r.status === 0).length,
-                approved: requests.filter(r => r.status === 1).length,
-                rejected: requests.filter(r => r.status === 2).length,
-            };
-            setStats(statsData);
+            // Cập nhật stats sau khi fetch
+            updateStats(data);
 
         } catch (error) {
+            console.error('❌ Error fetching requests:', error);
             message.error('Không thể tải danh sách yêu cầu');
         } finally {
             setLoading(false);
@@ -152,66 +166,64 @@ const StoreRequestPage: React.FC = () => {
         setSelectedRequest(request);
         setDetailModalVisible(true);
     };
+
+    // Hàm phê duyệt nhanh
     const handleQuickApprove = async (request: StoreRequest) => {
         try {
+            console.log('🚀 Quick approve request:', request.id);
+
             const storeRequestService = new StoreRequestService();
-            const response = await storeRequestService.updateStatus(
+            await storeRequestService.updateStatus(
                 request.id,
                 'approve',
-                'Đã phê duyệt'  // Default message cho approve
+                'Đã phê duyệt nhanh'
             );
 
-            // Update local state
+            // Cập nhật local state
             const updatedRequests = requests.map(req => {
                 if (req.id === request.id) {
                     return {
                         ...req,
                         status: 1,
                         responseDate: new Date().toISOString(),
-                        responseNote: response
+                        responseNote: 'Đã phê duyệt nhanh'
                     };
                 }
                 return req;
             });
 
+            console.log('✅ Updated requests after quick approve');
             setRequests(updatedRequests);
 
-            // Update stats
-            const newStats = {
-                total: updatedRequests.length,
-                pending: updatedRequests.filter(r => r.status === 0).length,
-                approved: updatedRequests.filter(r => r.status === 1).length,
-                rejected: updatedRequests.filter(r => r.status === 2).length,
-            };
-            setStats(newStats);
+            // Cập nhật stats
+            updateStats(updatedRequests);
 
-            message.success('Đã phê duyệt yêu cầu thành công');
+            message.success(`Đã phê duyệt yêu cầu "${request.storeName}" thành công`);
 
         } catch (error) {
-            console.error('Error approving request:', error);
+            console.error('❌ Error quick approving request:', error);
             message.error('Có lỗi xảy ra khi phê duyệt yêu cầu');
         }
     };
+
     const showResponseModal = (request: StoreRequest, type: 'approve' | 'reject') => {
         setSelectedRequest(request);
         setResponseType(type);
-
         setResponseModalVisible(true);
         form.resetFields();
     };
 
+    // Hàm xử lý phản hồi với ghi chú
     const handleResponse = async (values: any) => {
         if (!selectedRequest) return;
 
         try {
-            // In ra thông tin yêu cầu được xử lý
-            console.log('=== XỬ LÝ YÊU CẦU ===');
-            console.log('Request ID:', selectedRequest.id);
+            console.log('🔄 Processing response for request:', selectedRequest.id);
+            console.log('📝 Response type:', responseType);
+            console.log('💬 Response note:', values.responseNote);
 
-            console.log('New Status:', responseType === 'approve' ? 1 : 2);
-            console.log('Response Type:', responseType);
-            console.log('Response note:', values.responseNote);
-            const note = values.responseNote || 'Không có ghi chú';
+            const note = values.responseNote || (responseType === 'approve' ? 'Đã phê duyệt' : 'Đã từ chối');
+
             const storeRequestService = new StoreRequestService();
             await storeRequestService.updateStatus(
                 selectedRequest.id,
@@ -219,54 +231,49 @@ const StoreRequestPage: React.FC = () => {
                 note
             );
 
-            // Simulate API call
+            // Cập nhật local state
             const updatedRequests = requests.map(request => {
                 if (request.id === selectedRequest.id) {
-                    const updatedRequest = {
+                    return {
                         ...request,
                         status: responseType === 'approve' ? 1 : 2,
                         responseDate: new Date().toISOString(),
-                        responseNote: values.responseNote || ''
+                        responseNote: note
                     };
-
-                    console.log('Updated Request:', updatedRequest);
-                    return updatedRequest;
                 }
                 return request;
             });
 
+            console.log('✅ Updated requests after response');
             setRequests(updatedRequests);
 
-            // Update stats
-            const newStats = {
-                total: updatedRequests.length,
-                pending: updatedRequests.filter(r => r.status === 0).length,
-                approved: updatedRequests.filter(r => r.status === 1).length,
-                rejected: updatedRequests.filter(r => r.status === 2).length,
-            };
+            // Cập nhật stats
+            updateStats(updatedRequests);
 
-            console.log('New Stats:', newStats);
-            setStats(newStats);
-
-            // Log success message
-            const successMessage = `Đã ${responseType === 'approve' ? 'phê duyệt' : 'từ chối'} yêu cầu thành công`;
-            console.log('Success Message:', successMessage);
-
+            const successMessage = `Đã ${responseType === 'approve' ? 'phê duyệt' : 'từ chối'} yêu cầu "${selectedRequest.storeName}" thành công`;
             message.success(successMessage);
-            setResponseModalVisible(false);
 
-            console.log('=== KẾT THÚC XỬ LÝ ===\n');
+            setResponseModalVisible(false);
+            form.resetFields();
 
         } catch (error) {
-            console.error('=== LỖI XỬ LÝ YÊU CẦU ===');
-            console.error('Error:', error);
-            console.error('Request ID:', selectedRequest.id);
-            console.error('Response Type:', responseType);
-            console.error('Form Values:', values);
-            console.error('=== KẾT THÚC LỖI ===\n');
-
+            console.error('❌ Error processing response:', error);
             message.error('Có lỗi xảy ra khi xử lý yêu cầu');
         }
+    };
+
+    // Hàm refresh
+    const handleRefresh = () => {
+        console.log('🔄 Refreshing data...');
+        fetchRequests();
+    };
+
+    // Hàm clear filters
+    const handleClearFilters = () => {
+        console.log('🧹 Clearing filters...');
+        setSearchText('');
+        setStatusFilter(undefined);
+        setDateRange(null);
     };
 
     const columns: ColumnsType<StoreRequest> = [
@@ -285,7 +292,7 @@ const StoreRequestPage: React.FC = () => {
                 <div>
                     <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
                         <Avatar icon={<UserOutlined />} size="small" style={{ marginRight: 8 }} />
-                        <Text strong>{record.customerEmail}</Text>
+                        <Text strong>{record.customerName}</Text>
                     </div>
                     <Text type="secondary" style={{ fontSize: '12px' }}>{record.customerEmail}</Text>
                 </div>
@@ -369,13 +376,14 @@ const StoreRequestPage: React.FC = () => {
 
                     {record.status === 0 && (
                         <>
-                            <Tooltip title="Phê duyệt">
+                            <Tooltip title="Phê duyệt nhanh">
                                 <Popconfirm
                                     title="Xác nhận phê duyệt"
-                                    description="Bạn có chắc chắn muốn phê duyệt yêu cầu này?"
-                                    onConfirm={() => handleQuickApprove(record)}  // ← Gọi trực tiếp
+                                    description={`Bạn có chắc chắn muốn phê duyệt cửa hàng "${record.storeName}"?`}
+                                    onConfirm={() => handleQuickApprove(record)}
                                     okText="Phê duyệt"
                                     cancelText="Hủy"
+                                    okType="primary"
                                 >
                                     <Button
                                         type="text"
@@ -385,12 +393,12 @@ const StoreRequestPage: React.FC = () => {
                                 </Popconfirm>
                             </Tooltip>
 
-                            <Tooltip title="Từ chối">
+                            <Tooltip title="Từ chối với ghi chú">
                                 <Button
                                     type="text"
                                     icon={<CloseOutlined />}
                                     style={{ color: '#ff4d4f' }}
-                                    onClick={() => showResponseModal(record, 'reject')}  // ← Giữ nguyên cho reject
+                                    onClick={() => showResponseModal(record, 'reject')}
                                 />
                             </Tooltip>
                         </>
@@ -493,18 +501,14 @@ const StoreRequestPage: React.FC = () => {
                         <Space>
                             <Button
                                 icon={<ReloadOutlined />}
-                                onClick={fetchRequests}
+                                onClick={handleRefresh}
                                 loading={loading}
                             >
                                 Làm mới
                             </Button>
                             <Button
                                 icon={<FilterOutlined />}
-                                onClick={() => {
-                                    setSearchText('');
-                                    setStatusFilter(undefined);
-                                    setDateRange(null);
-                                }}
+                                onClick={handleClearFilters}
                             >
                                 Xóa bộ lọc
                             </Button>
@@ -609,12 +613,9 @@ const StoreRequestPage: React.FC = () => {
                                                 </Col>
                                                 <Col span={24}>
                                                     <Text strong>Ghi chú phản hồi:</Text>
-                                                    <div
-                                                        style={{ marginTop: 8, marginBottom: 0 }}
-                                                        dangerouslySetInnerHTML={{
-                                                            __html: selectedRequest.responseNote || 'Không có ghi chú'
-                                                        }}
-                                                    />
+                                                    <Paragraph style={{ marginTop: 8, marginBottom: 0 }}>
+                                                        {selectedRequest.responseNote || 'Không có ghi chú'}
+                                                    </Paragraph>
                                                 </Col>
                                             </>
                                         )}
@@ -634,7 +635,7 @@ const StoreRequestPage: React.FC = () => {
                                             showResponseModal(selectedRequest, 'approve');
                                         }}
                                     >
-                                        Phê duyệt
+                                        Phê duyệt với ghi chú
                                     </Button>
                                     <Button
                                         danger
@@ -666,7 +667,10 @@ const StoreRequestPage: React.FC = () => {
                     </div>
                 }
                 open={responseModalVisible}
-                onCancel={() => setResponseModalVisible(false)}
+                onCancel={() => {
+                    setResponseModalVisible(false);
+                    form.resetFields();
+                }}
                 onOk={form.submit}
                 okText={responseType === 'approve' ? 'Phê duyệt' : 'Từ chối'}
                 cancelText="Hủy"

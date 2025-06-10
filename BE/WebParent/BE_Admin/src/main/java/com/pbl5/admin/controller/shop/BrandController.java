@@ -22,8 +22,10 @@ import java.util.List;
 public class BrandController {
 
     private final BrandService brandService;
+
     @Autowired
     private S3StorageService s3StorageService;
+
 
     @GetMapping
     public ResponseEntity<List<BrandDto>> getAllBrands() {

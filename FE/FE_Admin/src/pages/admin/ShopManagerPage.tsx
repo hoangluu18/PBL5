@@ -41,6 +41,8 @@ const ShopManagement: React.FC = () => {
         sortOrder: 'ascend',
     });
 
+    document.title = 'Admin - Quản lý Cửa hàng';
+
     const fetchShops = async (params: TableParams = {}) => {
         setLoading(true);
         try {

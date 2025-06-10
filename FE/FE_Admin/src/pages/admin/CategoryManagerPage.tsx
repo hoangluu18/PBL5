@@ -40,6 +40,7 @@ const CategoriesManagement = () => {
     const [searchText, setSearchText] = useState('');
     const [viewMode, setViewMode] = useState('table'); // 'table' or 'tree'
 
+    document.title = 'Admin - Quản lý Danh mục';
 
     useEffect(() => {
         loadCategories();

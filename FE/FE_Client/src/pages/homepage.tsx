@@ -12,9 +12,7 @@ import '../css/homepage.css'
 
 import { DoubleRightOutlined, VerticalAlignTopOutlined } from "@ant-design/icons";
 
-
 import ChatBot from "../components/ChatBot"; // Import ChatBot component
-
 
 const Homepage = () => {
     const [page, setPage] = useState<number>(1);
@@ -22,7 +20,6 @@ const Homepage = () => {
     const [topProducts, setTopProducts] = useState<IProduct[]>([]);
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
-
 
     // State để theo dõi scroll position
     const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
@@ -142,23 +139,22 @@ const Homepage = () => {
                 </div>
             </div>
 
-
-            {/* Nút Scroll to Top */}
+            {/* Nút Scroll to Top - Điều chỉnh vị trí để nằm trên ChatBot */}
             <FloatButton
                 icon={<VerticalAlignTopOutlined />}
                 type="primary"
                 style={{
                     right: 24,
-                    bottom: 24,
-                    display: showScrollTop ? 'block' : 'none'
+                    bottom: 130, // Tăng từ 24px lên 130px để nằm trên ChatBot
+                    display: showScrollTop ? 'block' : 'none',
+                    zIndex: 1001 // Đảm bảo nằm trên ChatBot
                 }}
                 onClick={scrollToTop}
                 tooltip="Về đầu trang"
             />
 
-            {/* Thêm ChatBot component */}
+            {/* ChatBot component */}
             <ChatBot />
-
         </>
     );
 }
