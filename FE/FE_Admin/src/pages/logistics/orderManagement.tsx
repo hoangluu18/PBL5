@@ -27,7 +27,7 @@ import {
   CarOutlined,
   SyncOutlined,
   InfoCircleOutlined,
-  CloseCircleOutlined
+  StopOutlined
 } from '@ant-design/icons';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -50,7 +50,6 @@ interface OrderProductsDto {
   image?: string;
 }
 
-
 interface StatusStep {
   status: string;
   title: string;
@@ -59,8 +58,40 @@ interface StatusStep {
   description: string;
 }
 
-// Định nghĩa các bước trạng thái và thông tin hiển thị tương ứng
-const statusSteps: StatusStep[] = [
+// Chỉ định nghĩa 4 trạng thái được phép cập nhật
+const allowedStatusSteps: StatusStep[] = [
+  {
+    status: 'PICKED',
+    title: 'Đã lấy hàng',
+    icon: <CheckCircleOutlined />,
+    color: '#722ed1',
+    description: 'Đơn hàng đã được lấy'
+  },
+  {
+    status: 'SHIPPING',
+    title: 'Đang giao hàng',
+    icon: <CarOutlined />,
+    color: '#fa8c16',
+    description: 'Đơn hàng đang được giao'
+  },
+  {
+    status: 'DELIVERED',
+    title: 'Đã giao',
+    icon: <CheckCircleOutlined />,
+    color: '#52c41a',
+    description: 'Đơn hàng đã giao thành công'
+  },
+  {
+    status: 'CANCELLED',
+    title: 'Đã hủy',
+    icon: <StopOutlined />,
+    color: '#f5222d',
+    description: 'Đơn hàng đã bị hủy'
+  }
+];
+
+// Định nghĩa tất cả trạng thái để hiển thị (bao gồm cả các trạng thái khác)
+const allStatusSteps: StatusStep[] = [
   {
     status: 'NEW',
     title: 'Mới',
@@ -89,34 +120,7 @@ const statusSteps: StatusStep[] = [
     color: '#2f54eb',
     description: 'Đơn hàng đã được đóng gói'
   },
-  {
-    status: 'PICKED',
-    title: 'Đã lấy hàng',
-    icon: <CheckCircleOutlined />,
-    color: '#722ed1',
-    description: 'Đơn hàng đã được lấy'
-  },
-  {
-    status: 'SHIPPING',
-    title: 'Đang giao hàng',
-    icon: <CarOutlined />,
-    color: '#fa8c16',
-    description: 'Đơn hàng đang được giao'
-  },
-  {
-    status: 'DELIVERED',
-    title: 'Đã giao',
-    icon: <CheckCircleOutlined />,
-    color: '#52c41a',
-    description: 'Đơn hàng đã giao thành công'
-  },
-  {
-    status: 'CANCELLED', // Thêm trạng thái hủy vào mảng chính
-    title: 'Đã hủy',
-    icon: <CloseCircleOutlined />,
-    color: '#f5222d',
-    description: 'Đơn hàng đã bị hủy'
-  },
+  ...allowedStatusSteps,
   {
     status: 'RETURN_REQUESTED',
     title: 'Yêu cầu trả hàng',
@@ -235,27 +239,25 @@ const OrderManagement: React.FC = () => {
     setDetailsVisible(true);
   };
 
-const showStatusUpdateModal = (order: Order) => {
-  // Nếu đơn hàng đã giao, không cho phép cập nhật trạng thái
-  if (order.orderStatus === 'DELIVERED') {
-    message.info('Đơn hàng đã giao không thể thay đổi trạng thái');
-    return;
-  }
-  
-  setSelectedOrder(order);
-  setNewStatus(order.orderStatus);
-  setStatusModalVisible(true);
-};
+  // Kiểm tra xem đơn hàng có thể cập nhật trạng thái hay không
+  const canUpdateStatus = (orderStatus: string): boolean => {
+    return orderStatus !== 'CANCELLED' && orderStatus !== 'DELIVERED';
+  };
+
+  const showStatusUpdateModal = (order: Order) => {
+    if (!canUpdateStatus(order.orderStatus)) {
+      message.warning('Không thể cập nhật trạng thái cho đơn hàng đã giao hoặc đã hủy');
+      return;
+    }
+    setSelectedOrder(order);
+    setNewStatus(order.orderStatus);
+    setStatusModalVisible(true);
+  };
 
   const handleStatusUpdate = async () => {
     if (!selectedOrder || !newStatus) {
       return;
     }
-      if (selectedOrder.orderStatus === 'DELIVERED') {
-    message.info('Đơn hàng đã giao không thể thay đổi trạng thái');
-    setStatusModalVisible(false);
-    return;
-  }
 
     setLoading(true);
     try {
@@ -286,7 +288,7 @@ const showStatusUpdateModal = (order: Order) => {
 
   // Hiển thị status tag với màu sắc tương ứng
   const renderStatusTag = (status: string) => {
-    const statusInfo = statusSteps.find(s => s.status === status) || {
+    const statusInfo = allStatusSteps.find(s => s.status === status) || {
       title: status,
       color: 'default'
     };
@@ -351,30 +353,41 @@ const showStatusUpdateModal = (order: Order) => {
       width: 120,
       render: renderStatusTag
     },
-{
-  title: 'Thao tác',
-  key: 'action',
-  width: 150,
-  render: (_: any, record: Order) => (
-    <Space size="small">
-      <Button
-        type="primary"
-        size="small"
-        onClick={() => showStatusUpdateModal(record)}
-        disabled={record.orderStatus === 'DELIVERED'} // Vô hiệu hóa nút nếu đơn hàng đã giao
-      >
-        Cập nhật
-      </Button>
-      <Button
-        size="small"
-        icon={<InfoCircleOutlined />}
-        onClick={() => showOrderDetails(record)}
-      >
-        Chi tiết
-      </Button>
-    </Space>
-  )
-}
+    {
+      title: 'Thao tác',
+      key: 'action',
+      width: 150,
+      render: (_: any, record: Order) => (
+        <Space size="small">
+          {canUpdateStatus(record.orderStatus) ? (
+            <Button
+              type="primary"
+              size="small"
+              onClick={() => showStatusUpdateModal(record)}
+            >
+              Cập nhật
+            </Button>
+          ) : (
+            <Tooltip title="Không thể cập nhật trạng thái cho đơn hàng đã giao hoặc đã hủy">
+              <Button
+                type="primary"
+                size="small"
+                disabled
+              >
+                Cập nhật
+              </Button>
+            </Tooltip>
+          )}
+          <Button
+            size="small"
+            icon={<InfoCircleOutlined />}
+            onClick={() => showOrderDetails(record)}
+          >
+            Chi tiết
+          </Button>
+        </Space>
+      )
+    }
   ];
 
   return (
@@ -392,19 +405,19 @@ const showStatusUpdateModal = (order: Order) => {
               />
             </Col>
             <Col xs={24} md={5}>
-<Select
-  placeholder="Lọc theo trạng thái"
-  style={{ width: '100%' }}
-  value={selectedStatus}
-  onChange={value => setSelectedStatus(value)}
-  allowClear
->
-  {statusSteps.map(status => (
-    <Option key={status.status} value={status.status}>
-      {status.title}
-    </Option>
-  ))}
-</Select>
+              <Select
+                placeholder="Lọc theo trạng thái"
+                style={{ width: '100%' }}
+                value={selectedStatus}
+                onChange={value => setSelectedStatus(value)}
+                allowClear
+              >
+                {allStatusSteps.map(status => (
+                  <Option key={status.status} value={status.status}>
+                    {status.title}
+                  </Option>
+                ))}
+              </Select>
             </Col>
             <Col xs={24} md={8}>
               <RangePicker
@@ -467,20 +480,18 @@ const showStatusUpdateModal = (order: Order) => {
                 value={newStatus}
                 onChange={value => setNewStatus(value)}
               >
-                {statusSteps.map(status => (
-                  <Option key={status.status} value={status.status} disabled={status.status === selectedOrder.orderStatus}>
+                {allowedStatusSteps.map(status => (
+                  <Option
+                    key={status.status}
+                    value={status.status}
+                    disabled={status.status === selectedOrder.orderStatus}
+                  >
                     <Space>
                       {status.icon}
                       {status.title}
                     </Space>
                   </Option>
                 ))}
-                {/* <Option value="CANCELLED" disabled={selectedOrder.orderStatus === 'DELIVERED'}>
-                  <Space>
-                    <Badge status="error" />
-                    Đã hủy
-                  </Space>
-                </Option> */}
               </Select>
             </div>
           </div>
@@ -506,16 +517,9 @@ const showStatusUpdateModal = (order: Order) => {
                 <Descriptions.Item label="Ngày giao hàng">{dayjs(selectedOrder.deliveryDate).format('DD/MM/YYYY HH:mm')}</Descriptions.Item>
               )}
               <Descriptions.Item label="Phương thức thanh toán">{selectedOrder.paymentMethod}</Descriptions.Item>
-<Descriptions.Item label="Trạng thái đơn hàng">
-  {renderStatusTag(selectedOrder.orderStatus)}
-  {selectedOrder.orderStatus === 'DELIVERED' && (
-    <div style={{ marginTop: 8 }}>
-      <Typography.Text type="secondary" italic>
-        (Đơn hàng đã giao không thể thay đổi trạng thái)
-      </Typography.Text>
-    </div>
-  )}
-</Descriptions.Item>
+              <Descriptions.Item label="Trạng thái đơn hàng">
+                {renderStatusTag(selectedOrder.orderStatus)}
+              </Descriptions.Item>
               <Descriptions.Item label="Tổng số sản phẩm">{selectedOrder.totalQuantity}</Descriptions.Item>
               {selectedOrder.note && (
                 <Descriptions.Item label="Ghi chú">{selectedOrder.note}</Descriptions.Item>

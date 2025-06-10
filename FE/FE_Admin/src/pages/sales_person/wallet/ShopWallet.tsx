@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { 
-    Card, Typography, Button, Table, Spin, message, Row, Col, 
-    Statistic, Tag, Input, Select, Empty, Breadcrumb 
+import {
+    Card, Typography, Button, Table, Spin, message, Row, Col,
+    Statistic, Tag, Input, Select, Empty, Breadcrumb
 } from 'antd';
-import { 
+import {
     WalletOutlined, ReloadOutlined, AreaChartOutlined, SearchOutlined,
     ArrowUpOutlined, ArrowDownOutlined, DollarOutlined, ShopOutlined
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../../utils/auth.context';
-import ShopWalletService, { 
-    ShopWalletInfo, 
-    ShopTransactionInfo, 
-    ShopWalletStatistics 
+import ShopWalletService, {
+    ShopWalletInfo,
+    ShopTransactionInfo,
+    ShopWalletStatistics
 } from '../../../services/shop/ShopWalletService.service';
 
 const { Title, Text } = Typography;
@@ -85,21 +85,25 @@ const ShopWallet: React.FC = () => {
         }
     };
 
+    const formatPrice = (price: number) => {
+        return Math.floor(price).toLocaleString('vi-VN') + 'đ';
+    };
+
     const filterTransactions = () => {
         let result = [...transactions];
-        
+
         if (filterType !== 'ALL') {
             result = result.filter(t => t.type === filterType);
         }
-        
+
         if (searchText) {
-            result = result.filter(t => 
+            result = result.filter(t =>
                 t.description?.toLowerCase().includes(searchText.toLowerCase()) ||
                 t.id.toString().includes(searchText) ||
                 t.orderId?.toString().includes(searchText)
             );
         }
-        
+
         setFilteredTransactions(result);
     };
 
@@ -142,7 +146,7 @@ const ShopWallet: React.FC = () => {
         };
         return labels[type] || type;
     };
-    
+
     const transactionColumns = [
         {
             title: 'Mã giao dịch',
@@ -171,7 +175,7 @@ const ShopWallet: React.FC = () => {
                 const prefix = record.type === 'REFUND' ? '-' : '+';
                 return (
                     <span style={{ color, fontWeight: 'bold' }}>
-                        {prefix} {amount.toLocaleString()} VNĐ
+                        {prefix} {formatPrice(amount)}
                     </span>
                 );
             }
@@ -214,12 +218,12 @@ const ShopWallet: React.FC = () => {
 
     if (loading) {
         return (
-            <div style={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
                 height: '50vh',
-                flexDirection: 'column' 
+                flexDirection: 'column'
             }}>
                 <Spin size="large" />
                 <Text style={{ marginTop: 16 }}>Đang tải thông tin ví...</Text>
@@ -250,13 +254,13 @@ const ShopWallet: React.FC = () => {
                             <Title level={4}>
                                 <ShopOutlined /> Số dư hiện tại
                             </Title>
-                            <div style={{ 
-                                fontSize: '36px', 
-                                fontWeight: 'bold', 
+                            <div style={{
+                                fontSize: '36px',
+                                fontWeight: 'bold',
                                 color: '#1890ff',
-                                margin: '16px 0' 
+                                margin: '16px 0'
                             }}>
-                                {walletInfo?.balance.toLocaleString()} VNĐ
+                                {walletInfo ? formatPrice(walletInfo.balance) : '0đ'}
                             </div>
                             <Button
                                 type="primary"
@@ -269,7 +273,7 @@ const ShopWallet: React.FC = () => {
                         </div>
                     </Card>
                 </Col>
-                
+
                 <Col xs={24} lg={16}>
                     <Card>
                         <Title level={4}>
@@ -279,21 +283,19 @@ const ShopWallet: React.FC = () => {
                             <Col xs={24} sm={8}>
                                 <Statistic
                                     title="Tổng tiền nhận"
-                                    value={statistics?.totalReceived || 0}
+                                    value={formatPrice(statistics?.totalReceived || 0)}
                                     precision={0}
                                     valueStyle={{ color: '#3f8600' }}
                                     prefix={<ArrowUpOutlined />}
-                                    suffix="VNĐ"
                                 />
                             </Col>
                             <Col xs={24} sm={8}>
                                 <Statistic
                                     title="Tổng hoàn tiền"
-                                    value={statistics?.totalRefunded || 0}
+                                    value={formatPrice(statistics?.totalRefunded || 0)}
                                     precision={0}
                                     valueStyle={{ color: '#cf1322' }}
                                     prefix={<ArrowDownOutlined />}
-                                    suffix="VNĐ"
                                 />
                             </Col>
                             <Col xs={24} sm={8}>
@@ -310,16 +312,16 @@ const ShopWallet: React.FC = () => {
 
             {/* Lịch sử giao dịch */}
             <Card>
-                <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
-                    marginBottom: 16 
+                    marginBottom: 16
                 }}>
                     <Title level={4} style={{ margin: 0 }}>
                         Lịch sử giao dịch
                     </Title>
-                    
+
                     <div style={{ display: 'flex', gap: 16 }}>
                         <Input
                             placeholder="Tìm kiếm giao dịch, đơn hàng..."
@@ -329,8 +331,8 @@ const ShopWallet: React.FC = () => {
                             style={{ width: 250 }}
                             allowClear
                         />
-                        
-                        <Select 
+
+                        <Select
                             defaultValue="ALL"
                             style={{ width: 180 }}
                             onChange={value => setFilterType(value)}
@@ -347,18 +349,18 @@ const ShopWallet: React.FC = () => {
                         columns={transactionColumns}
                         dataSource={filteredTransactions}
                         rowKey="id"
-                        pagination={{ 
+                        pagination={{
                             pageSize: 10,
                             showSizeChanger: true,
                             showQuickJumper: true,
-                            showTotal: (total, range) => 
+                            showTotal: (total, range) =>
                                 `${range[0]}-${range[1]} của ${total} giao dịch`
                         }}
                         scroll={{ x: 'max-content' }}
                     />
                 ) : (
-                    <Empty 
-                        description="Chưa có giao dịch nào" 
+                    <Empty
+                        description="Chưa có giao dịch nào"
                         image={Empty.PRESENTED_IMAGE_SIMPLE}
                     />
                 )}

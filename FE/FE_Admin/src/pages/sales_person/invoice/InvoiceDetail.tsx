@@ -235,6 +235,10 @@ const InvoiceDetailComponent: React.FC<InvoiceDetailProps> = ({
         }
     };
 
+    const formatPrice = (price: number) => {
+        return Math.floor(price).toLocaleString('vi-VN') + 'đ';
+    };
+
     // Thêm hàm handleConfirmReturn vào component InvoiceDetailComponent
     const handleConfirmReturn = async () => {
         try {
@@ -354,28 +358,28 @@ const InvoiceDetailComponent: React.FC<InvoiceDetailProps> = ({
             dataIndex: 'productPrice',
             key: 'productPrice',
             align: 'right',
-            render: (price: number) => price.toLocaleString(),
+            render: (price: number) => formatPrice(price),
         },
         {
             title: 'Giảm giá',
             dataIndex: 'discount',
             key: 'discount',
             align: 'right',
-            render: (price: number) => price.toLocaleString(),
+            render: (price: number) => formatPrice(price),
         },
         {
             title: 'Giá bán',
             dataIndex: 'productAfterDiscount',
             key: 'productAfterDiscount',
             align: 'right',
-            render: (price: number) => price.toLocaleString(),
+            render: (price: number) => formatPrice(price),
         },
         {
             title: 'Thành tiền',
             dataIndex: 'totalPrice',
             key: 'totalPrice',
             align: 'right',
-            render: (total: number) => total.toLocaleString(),
+            render: (total: number) => formatPrice(total),
         },
     ];
 
@@ -500,7 +504,7 @@ const InvoiceDetailComponent: React.FC<InvoiceDetailProps> = ({
                                         <Text strong>Tổng tiền hàng:</Text>
                                     </Table.Summary.Cell>
                                     <Table.Summary.Cell key='subtotal-value' index={1} align="right">
-                                        <Text strong>{invoiceDetails.summary.subtotal.toLocaleString()}</Text>
+                                        <Text strong>{formatPrice(invoiceDetails.summary.subtotal)}</Text>
                                     </Table.Summary.Cell>
                                 </Table.Summary.Row>
                                 <Table.Summary.Row key='discount'>
@@ -516,7 +520,7 @@ const InvoiceDetailComponent: React.FC<InvoiceDetailProps> = ({
                                         <Text strong>Phí vận chuyển:</Text>
                                     </Table.Summary.Cell>
                                     <Table.Summary.Cell key='shipping-value' index={1} align="right">
-                                        <Text strong>{invoiceDetails.summary.shippingFee.toLocaleString()}</Text>
+                                        <Text strong>{formatPrice(invoiceDetails.summary.shippingFee)}</Text>
                                     </Table.Summary.Cell>
                                 </Table.Summary.Row>
                                 <Table.Summary.Row key='total'>
@@ -525,8 +529,8 @@ const InvoiceDetailComponent: React.FC<InvoiceDetailProps> = ({
                                     </Table.Summary.Cell>
                                     <Table.Summary.Cell key='total-value' index={1} align="right">
                                         <Text strong type="danger">{(typeof invoiceDetails.summary.total === 'number'
-                                            ? invoiceDetails.summary.total.toLocaleString()
-                                            : invoiceDetails.summary.total)}</Text>
+                                            ? formatPrice(invoiceDetails.summary.total)
+                                            : formatPrice(invoiceDetails.summary.total))}</Text>
                                     </Table.Summary.Cell>
                                 </Table.Summary.Row>
                             </Table.Summary>
@@ -615,7 +619,7 @@ const InvoiceDetailComponent: React.FC<InvoiceDetailProps> = ({
                                     <Text strong>Tổng tiền hàng:</Text>
                                 </Table.Summary.Cell>
                                 <Table.Summary.Cell key='subtotal-value' index={0} align="right">
-                                    <Text strong>{invoiceDetails.summary.subtotal.toLocaleString()}</Text>
+                                    <Text strong>{formatPrice(invoiceDetails.summary.subtotal)}</Text>
                                 </Table.Summary.Cell>
                             </Table.Summary.Row>
                             <Table.Summary.Row key='discount'>
@@ -631,7 +635,7 @@ const InvoiceDetailComponent: React.FC<InvoiceDetailProps> = ({
                                     <Text strong>Phí vận chuyển:</Text>
                                 </Table.Summary.Cell>
                                 <Table.Summary.Cell key='shipping-value' index={0} align="right">
-                                    <Text strong>{invoiceDetails.summary.shippingFee.toLocaleString()}</Text>
+                                    <Text strong>{formatPrice(invoiceDetails.summary.shippingFee)}</Text>
                                 </Table.Summary.Cell>
                             </Table.Summary.Row>
                             <Table.Summary.Row key='total'>
@@ -640,7 +644,7 @@ const InvoiceDetailComponent: React.FC<InvoiceDetailProps> = ({
                                 </Table.Summary.Cell>
                                 <Table.Summary.Cell key='total-value' index={1} align="right">
                                     <Text strong type="danger">{(typeof invoiceDetails.summary.total === 'number'
-                                        ? invoiceDetails.summary.total.toLocaleString()
+                                        ? formatPrice(invoiceDetails.summary.total)
                                         : invoiceDetails.summary.total)}</Text>
                                 </Table.Summary.Cell>
                             </Table.Summary.Row>
@@ -675,7 +679,7 @@ const InvoiceDetailComponent: React.FC<InvoiceDetailProps> = ({
                         dataIndex: 'amount',
                         key: 'amount',
                         align: 'right',
-                        render: (amount) => amount?.toLocaleString(),
+                        render: (amount) => formatPrice(amount),
                     },
                     {
                         title: 'Phương thức',
