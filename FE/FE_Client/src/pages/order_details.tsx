@@ -7,6 +7,17 @@ import { OrderDetailsResponse } from '../models/order_detail/OrderDetailResponse
 import { AuthContext } from "../components/context/auth.context";
 import axios from 'axios';
 import TextArea from 'antd/es/input/TextArea';
+import { 
+  ClockCircleOutlined, 
+  CheckCircleOutlined, 
+  SyncOutlined, 
+  CarOutlined, 
+  CloseCircleOutlined, 
+  DollarCircleOutlined,
+  InboxOutlined,
+  BoxPlotOutlined
+} from '@ant-design/icons';
+import { Tag } from 'antd';
 
 const { Content } = Layout;
 
@@ -129,6 +140,64 @@ const OrderDetail: React.FC = () => {
       setIsRefunding(false);
     }
   };
+
+  const translateOrderStatus = (status: string) => {
+  switch (status) {
+    case 'NEW':
+      return 'Đơn hàng mới';
+    case 'PROCESSING':
+      return 'Đang xử lý';
+    case 'PACKAGED':
+      return 'Đã đóng gói';
+    case 'PICKED':
+      return 'Đã lấy hàng';
+    case 'SHIPPING':
+      return 'Đang giao hàng';
+    case 'DELIVERED':
+      return 'Đã giao';
+    case 'CANCELLED':
+      return 'Đã hủy';
+    case 'RETURNED':
+      return 'Đã trả hàng';
+    case 'REFUNDED':
+      return 'Đã hoàn tiền';
+    case 'RETURN_REQUESTED':
+      return 'Yêu cầu trả hàng';
+    case 'PAID':
+      return 'Đã thanh toán';
+    default:
+      return status;
+  }
+};
+
+const getStatusInfo = (status: string) => {
+  switch (status) {
+    case 'NEW':
+      return { color: '#1890ff', icon: <ClockCircleOutlined /> };
+    case 'PROCESSING':
+      return { color: '#faad14', icon: <SyncOutlined spin /> };
+    case 'PACKAGED':
+      return { color: '#2f54eb', icon: <BoxPlotOutlined /> };
+    case 'PICKED':
+      return { color: '#722ed1', icon: <InboxOutlined /> };
+    case 'SHIPPING':
+      return { color: '#fa8c16', icon: <CarOutlined /> };
+    case 'DELIVERED':
+      return { color: '#52c41a', icon: <CheckCircleOutlined /> };
+    case 'CANCELLED':
+      return { color: '#f5222d', icon: <CloseCircleOutlined /> };
+    case 'RETURNED':
+      return { color: '#eb2f96', icon: <SyncOutlined /> };
+    case 'REFUNDED':
+      return { color: '#eb2f96', icon: <DollarCircleOutlined /> };
+    case 'RETURN_REQUESTED':
+      return { color: '#fa541c', icon: <SyncOutlined /> };
+    case 'PAID':
+      return { color: '#13c2c2', icon: <DollarCircleOutlined /> };
+    default:
+      return { color: 'default', icon: <ClockCircleOutlined /> };
+  }
+};
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
@@ -418,7 +487,7 @@ const OrderDetail: React.FC = () => {
       <style dangerouslySetInnerHTML={{ __html: styles }} />
       <div className="mt-3 container">
         <div className="header">
-          <h1>Chi tiết đơn hàng #{orderDto.id} - {orderDto.orderStatus}</h1>
+          <h1>Chi tiết đơn hàng #{orderDto.id} - {translateOrderStatus(orderDto.orderStatus)}</h1>
           <span className="date">Ngày đặt hàng: {formatDate(orderDto.orderTime)}</span>
         </div>
 
@@ -439,7 +508,10 @@ const OrderDetail: React.FC = () => {
           <div className="info-block">
             <h3>Hình thức thanh toán</h3>
             <p>{orderDto.paymentMethod === 'COD' ? 'Thanh toán khi nhận hàng' : orderDto.paymentMethod}</p>
-            <p>{orderDto.orderStatus}</p>
+            <h3>Trạng thái đơn hàng</h3>
+  <Tag color={getStatusInfo(orderDto.orderStatus).color} style={{ fontSize: '14px', padding: '5px 10px', marginTop: '5px' }}>
+    {getStatusInfo(orderDto.orderStatus).icon} {translateOrderStatus(orderDto.orderStatus)}
+  </Tag>
           </div>
         </div>
 
