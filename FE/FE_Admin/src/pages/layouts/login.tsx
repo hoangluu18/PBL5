@@ -26,7 +26,7 @@ const LoginPage = () => {
             const values = await form.validateFields();
 
             const authService = new AuthService();
-            const response = await authService.login(values.email, values.password);
+            const response = await authService.login(values.email.trim(), values.password.trim());
 
             api.success({
                 message: 'Đăng nhập thành công',

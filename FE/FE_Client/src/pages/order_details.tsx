@@ -280,7 +280,7 @@ const getStatusInfo = (status: string) => {
   };
 
   const formatPrice = (price: number) => {
-    return price.toLocaleString('vi-VN') + ' đ';
+    return Math.round(price).toLocaleString('vi-VN') + ' đ';
   };
 
   const styles = `
@@ -569,7 +569,7 @@ const getStatusInfo = (status: string) => {
           <div className="summary-table">
             <div>
               <span>Tạm tính</span>
-              <span>{formatPrice(orderDto.productCost)}</span>
+              <span>{formatPrice(orderDto.subtotal)}</span>
             </div>
             <div>
               <span>Phí vận chuyển</span>

@@ -74,3 +74,37 @@ a:hover {
 .border-focus:focus {
     border: 1px solid red !important;
 }
+
+
+.thumbnail-gallery img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.thumbnail-gallery > div:hover {
+    border-color: #ff4d4f !important;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+    .thumbnail-gallery {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 6px !important;
+    }
+    
+    .thumbnail-gallery > div {
+        width: 60px !important;
+        height: 60px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .thumbnail-gallery {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+    
+    .thumbnail-gallery > div {
+        width: 50px !important;
+        height: 50px !important;
+    }
+}

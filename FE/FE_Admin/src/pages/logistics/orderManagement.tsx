@@ -239,6 +239,10 @@ const OrderManagement: React.FC = () => {
     setDetailsVisible(true);
   };
 
+  const formatPrice = (price: number) => {
+    return Math.round(price).toLocaleString('vi-VN') + 'đ';
+  };
+
   // Kiểm tra xem đơn hàng có thể cập nhật trạng thái hay không
   const canUpdateStatus = (orderStatus: string): boolean => {
     return orderStatus !== 'CANCELLED' && orderStatus !== 'DELIVERED';
@@ -329,7 +333,7 @@ const OrderManagement: React.FC = () => {
       dataIndex: 'total',
       key: 'total',
       width: 120,
-      render: (amount: number) => <span>{amount}</span> // `${amount.toLocaleString('vi-VN')} ₫` 
+      render: (amount: number) => <span>{formatPrice(amount)}</span> // `${amount.toLocaleString('vi-VN')} ₫` 
     },
     {
       title: 'Thanh toán',
