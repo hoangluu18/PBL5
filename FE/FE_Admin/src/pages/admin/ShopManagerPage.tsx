@@ -382,7 +382,7 @@ const ShopManagement: React.FC = () => {
                     <div className="space-y-6">
                         <div className="flex items-center justify-center mb-8">
                             <Avatar
-                                src={`/images/shops/${currentShop.photo}`}
+                                src={`${currentShop.photo}`}
                                 size={100}
                                 className="shadow-md"
                             />

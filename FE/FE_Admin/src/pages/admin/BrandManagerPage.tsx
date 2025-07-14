@@ -190,13 +190,13 @@ const BrandManagerPage: React.FC = () => {
             width: 80
         },
         {
-            title: 'Name',
+            title: 'Tên Thương Hiệu',
             dataIndex: 'name',
             key: 'name',
             sorter: (a: Brand, b: Brand) => a.name.localeCompare(b.name)
         },
         {
-            title: 'Logo',
+            title: 'Ảnh Thương Hiệu',
             dataIndex: 'logo',
             key: 'logo',
             render: (logo: string) => (
@@ -211,7 +211,7 @@ const BrandManagerPage: React.FC = () => {
             ),
         },
         {
-            title: 'Actions',
+            title: 'Hành Động',
             key: 'actions',
             width: 150,
             render: (_: any, record: Brand) => (
@@ -241,7 +241,7 @@ const BrandManagerPage: React.FC = () => {
 
     return (
         <div className="brand-manager">
-            <Card title={<Title level={3}>Brand Management</Title>} className="mb-4">
+            <Card title={<Title level={3}>Quản lý nhãn hàng</Title>} className="mb-4">
                 <Space style={{ marginBottom: 16 }} className="flex justify-between">
                     <Input
                         placeholder="Search brands"
@@ -256,7 +256,7 @@ const BrandManagerPage: React.FC = () => {
                         icon={<PlusOutlined />}
                         onClick={showCreateModal}
                     >
-                        Add Brand
+                        Thêm nhãn hàng
                     </Button>
                 </Space>
 

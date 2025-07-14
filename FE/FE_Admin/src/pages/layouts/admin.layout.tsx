@@ -50,12 +50,12 @@ const NavBar: React.FC = () => {
             label: 'Yêu cầu cửa hàng',
             onClick: () => navigate('/admin/store_requests')
         },
-        {
-            key: 'settings',
-            icon: <SettingOutlined />,
-            label: 'settings',
-            onClick: () => navigate('/admin/settings')
-        },
+        // {
+        //     key: 'settings',
+        //     icon: <SettingOutlined />,
+        //     label: 'settings',
+        //     onClick: () => navigate('/admin/settings')
+        // },
     ];
 
     const userMenuItems = [

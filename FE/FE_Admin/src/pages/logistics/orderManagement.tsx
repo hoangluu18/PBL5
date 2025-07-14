@@ -26,7 +26,8 @@ import {
   ClockCircleOutlined,
   CarOutlined,
   SyncOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
+  StopOutlined
 } from '@ant-design/icons';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -49,7 +50,6 @@ interface OrderProductsDto {
   image?: string;
 }
 
-
 interface StatusStep {
   status: string;
   title: string;
@@ -58,8 +58,40 @@ interface StatusStep {
   description: string;
 }
 
-// Định nghĩa các bước trạng thái và thông tin hiển thị tương ứng
-const statusSteps: StatusStep[] = [
+// Chỉ định nghĩa 4 trạng thái được phép cập nhật
+const allowedStatusSteps: StatusStep[] = [
+  {
+    status: 'PICKED',
+    title: 'Đã lấy hàng',
+    icon: <CheckCircleOutlined />,
+    color: '#722ed1',
+    description: 'Đơn hàng đã được lấy'
+  },
+  {
+    status: 'SHIPPING',
+    title: 'Đang giao hàng',
+    icon: <CarOutlined />,
+    color: '#fa8c16',
+    description: 'Đơn hàng đang được giao'
+  },
+  {
+    status: 'DELIVERED',
+    title: 'Đã giao',
+    icon: <CheckCircleOutlined />,
+    color: '#52c41a',
+    description: 'Đơn hàng đã giao thành công'
+  },
+  {
+    status: 'CANCELLED',
+    title: 'Đã hủy',
+    icon: <StopOutlined />,
+    color: '#f5222d',
+    description: 'Đơn hàng đã bị hủy'
+  }
+];
+
+// Định nghĩa tất cả trạng thái để hiển thị (bao gồm cả các trạng thái khác)
+const allStatusSteps: StatusStep[] = [
   {
     status: 'NEW',
     title: 'Mới',
@@ -88,27 +120,7 @@ const statusSteps: StatusStep[] = [
     color: '#2f54eb',
     description: 'Đơn hàng đã được đóng gói'
   },
-  {
-    status: 'PICKED',
-    title: 'Đã lấy hàng',
-    icon: <CheckCircleOutlined />,
-    color: '#722ed1',
-    description: 'Đơn hàng đã được lấy'
-  },
-  {
-    status: 'SHIPPING',
-    title: 'Đang giao hàng',
-    icon: <CarOutlined />,
-    color: '#fa8c16',
-    description: 'Đơn hàng đang được giao'
-  },
-  {
-    status: 'DELIVERED',
-    title: 'Đã giao',
-    icon: <CheckCircleOutlined />,
-    color: '#52c41a',
-    description: 'Đơn hàng đã giao thành công'
-  },
+  ...allowedStatusSteps,
   {
     status: 'RETURN_REQUESTED',
     title: 'Yêu cầu trả hàng',
@@ -227,7 +239,20 @@ const OrderManagement: React.FC = () => {
     setDetailsVisible(true);
   };
 
+  const formatPrice = (price: number) => {
+    return Math.round(price).toLocaleString('vi-VN') + 'đ';
+  };
+
+  // Kiểm tra xem đơn hàng có thể cập nhật trạng thái hay không
+  const canUpdateStatus = (orderStatus: string): boolean => {
+    return orderStatus !== 'CANCELLED' && orderStatus !== 'DELIVERED';
+  };
+
   const showStatusUpdateModal = (order: Order) => {
+    if (!canUpdateStatus(order.orderStatus)) {
+      message.warning('Không thể cập nhật trạng thái cho đơn hàng đã giao hoặc đã hủy');
+      return;
+    }
     setSelectedOrder(order);
     setNewStatus(order.orderStatus);
     setStatusModalVisible(true);
@@ -267,7 +292,7 @@ const OrderManagement: React.FC = () => {
 
   // Hiển thị status tag với màu sắc tương ứng
   const renderStatusTag = (status: string) => {
-    const statusInfo = statusSteps.find(s => s.status === status) || {
+    const statusInfo = allStatusSteps.find(s => s.status === status) || {
       title: status,
       color: 'default'
     };
@@ -308,7 +333,7 @@ const OrderManagement: React.FC = () => {
       dataIndex: 'total',
       key: 'total',
       width: 120,
-      render: (amount: number) => <span>{amount}</span> // `${amount.toLocaleString('vi-VN')} ₫` 
+      render: (amount: number) => <span>{formatPrice(amount)}</span> // `${amount.toLocaleString('vi-VN')} ₫` 
     },
     {
       title: 'Thanh toán',
@@ -338,13 +363,25 @@ const OrderManagement: React.FC = () => {
       width: 150,
       render: (_: any, record: Order) => (
         <Space size="small">
-          <Button
-            type="primary"
-            size="small"
-            onClick={() => showStatusUpdateModal(record)}
-          >
-            Cập nhật
-          </Button>
+          {canUpdateStatus(record.orderStatus) ? (
+            <Button
+              type="primary"
+              size="small"
+              onClick={() => showStatusUpdateModal(record)}
+            >
+              Cập nhật
+            </Button>
+          ) : (
+            <Tooltip title="Không thể cập nhật trạng thái cho đơn hàng đã giao hoặc đã hủy">
+              <Button
+                type="primary"
+                size="small"
+                disabled
+              >
+                Cập nhật
+              </Button>
+            </Tooltip>
+          )}
           <Button
             size="small"
             icon={<InfoCircleOutlined />}
@@ -379,14 +416,11 @@ const OrderManagement: React.FC = () => {
                 onChange={value => setSelectedStatus(value)}
                 allowClear
               >
-                {statusSteps.map(status => (
+                {allStatusSteps.map(status => (
                   <Option key={status.status} value={status.status}>
                     {status.title}
                   </Option>
                 ))}
-                <Option value="CANCELLED">Đã hủy</Option>
-                <Option value="RETURN_REQUESTED">Yêu cầu trả hàng</Option>
-                <Option value="RETURNED">Đã trả hàng</Option>
               </Select>
             </Col>
             <Col xs={24} md={8}>
@@ -450,20 +484,18 @@ const OrderManagement: React.FC = () => {
                 value={newStatus}
                 onChange={value => setNewStatus(value)}
               >
-                {statusSteps.map(status => (
-                  <Option key={status.status} value={status.status} disabled={status.status === selectedOrder.orderStatus}>
+                {allowedStatusSteps.map(status => (
+                  <Option
+                    key={status.status}
+                    value={status.status}
+                    disabled={status.status === selectedOrder.orderStatus}
+                  >
                     <Space>
                       {status.icon}
                       {status.title}
                     </Space>
                   </Option>
                 ))}
-                <Option value="CANCELLED" disabled={selectedOrder.orderStatus === 'DELIVERED'}>
-                  <Space>
-                    <Badge status="error" />
-                    Đã hủy
-                  </Space>
-                </Option>
               </Select>
             </div>
           </div>

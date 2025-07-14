@@ -15,7 +15,7 @@ export interface ChatRequest {
 
 class ChatbotService {
     //private baseURL = 'https://pmshoanghot-chat-bot-pbl5.hf.space'; // URL của API chatbot
-    private baseURL = 'http://192.168.9.113:8000';
+    private baseURL = 'http://192.168.101.90:8000';
     // API không streaming (backup)
     async sendMessage(request: ChatRequest): Promise<string> {
         try {
