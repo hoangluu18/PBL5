@@ -6,7 +6,7 @@ PBL5 Ecommerce là một giải pháp thương mại điện tử đầy đủ t
 
 ## Kiến trúc hệ thống
 
-<img src="https://lh3.googleusercontent.com/pw/AP1GczMcEqqUu2He194Kp0593U55ICd3GuTn4khnkiTtaMrNKgrfouuo9t5YCtcPJgbrfW4F-W03DCgdCbevH62PoaaeTejiNKRnv4IR9sTV9Wl-m-1IemquwcvusOm-TaCdpbN_d5_UW9uwSOwAIVVQwm8x=w951-h508-s-no-gm" alt="Sơ đồ hệ thống" width="600" />
+<img src="https://res.cloudinary.com/daku3kfyd/image/upload/v1760708257/s%C6%A1_%C4%91%E1%BB%93_ho%E1%BA%A1t_%C4%91%E1%BB%99ng_pbl5.drawio_2_km2zh9.png" alt="Sơ đồ hệ thống" width="600" />
 
 ### Thành phần chính:
 
@@ -21,7 +21,7 @@ PBL5 Ecommerce là một giải pháp thương mại điện tử đầy đủ t
 
 ## Giải pháp AI - RAG Chatbot
 
-<img src="https://lh3.googleusercontent.com/pw/AP1GczOI38wntZEXJh52Y8VeBn7GmZfBB4yMplYJb73vbXIbJY03yHAF0Zj3l5qDi284LNn95T0Ku7K9siLv1RcC-bKTatl5Xa2FtHqRKoGpTcC_6W1KrbT7L6cXa-7Dpd6DC3WpmCNBLwnZJjK3A5fUmKaJ=w1001-h620-s-no-gm" alt="Sơ đồ hoạt động Chatbot" width="600" />
+<img src="https://res.cloudinary.com/daku3kfyd/image/upload/v1760708257/s%C6%A1_%C4%91%E1%BB%93_ho%E1%BA%A1t_%C4%91%E1%BB%99ng_rag_chatbot_pbl5.drawio_1_n1x0ct.png" alt="Sơ đồ hoạt động Chatbot" width="600" />
 
 Chatbot tích hợp trong hệ thống sử dụng kỹ thuật RAG (Retrieval Augmented Generation) với mô hình Gemma 3-1b để hỗ trợ người dùng tìm kiếm sản phẩm thông minh:
 
